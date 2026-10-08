@@ -96,7 +96,7 @@ The proposed model is a pretrained **multi-label BERT classifier**, rather than 
 We will use chart rankings to give more popular chart entries more influence. One simple **proposed**, not yet finalized, rank weight is:
 
 $$
-w_i = 101 - \operatorname{rank}_i.
+w_i = 101 - r_i
 $$
 
 For emotion $k$ and forecast month $t$:
@@ -145,7 +145,7 @@ Here $\Phi$ is the standard normal CDF. The six music terms are the only planned
 3. Evaluate **both models on identical test months**.
 4. Compare the **Brier Score** as the primary metric:
 
-   $$\operatorname{BS}=\frac{1}{N}\sum_{t=1}^{N}(\hat p_t-Y_t)^2.$$
+   $$BS = \frac{1}{N}\sum_{t=1}^{N}(\hat{p}_t-Y_t)^2$$
 
 5. Report ROC-AUC and PR-AUC as supporting discrimination metrics, with caution where test periods contain few or no recession observations.
 6. Estimate uncertainty using **block-bootstrap confidence intervals**, while acknowledging that the small number of distinct recession episodes can make these estimates unstable.
