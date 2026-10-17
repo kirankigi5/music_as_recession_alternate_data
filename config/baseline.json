@@ -1,0 +1,15 @@
+{
+  "model": "probit",
+  "horizon_months": 6,
+  "training_start": "1953-04-01",
+  "min_training_months": 240,
+  "forecast_cutoff_month_offset": 1,
+  "forecast_cutoff_day": 15,
+  "training_target_lag_months": 1,
+  "standardize": false,
+  "optimizer": "newton",
+  "maxiter": 100,
+  "tolerance": 1e-10,
+  "max_average_score": 1e-6,
+  "max_condition_number": 1000000000000.0
+}

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "music-recession"
+version = "0.1.0"
+description = "Retrospective economic preparation and Probit baseline for NYU Team 5"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.26,<3",
+    "scipy>=1.11,<2",
+    "statsmodels>=0.14.4,<0.15",
+]
+
+[project.scripts]
+prepare-economic = "music_recession.economic:main"
+baseline-smoke = "music_recession.baseline:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

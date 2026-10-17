@@ -1,0 +1,194 @@
+{
+  "manifest_version": 1,
+  "dataset_status": "retrospective; historical real-time availability not established",
+  "horizon_calendar_months": 6,
+  "reproduce_from_repository_root": "python -m music_recession.economic",
+  "sources": [
+    {
+      "path": "fredgraph.csv",
+      "sha256": "9383b8f624ed88ca55a5181149e31e3fe876c13cdb5ddcc4ee76e06b6761f7b2",
+      "schema": {
+        "observation_date": "YYYY-MM-01",
+        "USREC": "nullable binary 0/1",
+        "GS10": "nullable finite decimal; percent",
+        "TB3MS": "nullable finite decimal; percent"
+      },
+      "monthly_coverage": {
+        "start": "1854-12-01",
+        "end": "2026-09-01",
+        "count": 2062
+      },
+      "series": {
+        "USREC": {
+          "non_missing_coverage": {
+            "start": "1854-12-01",
+            "end": "2026-09-01",
+            "count": 2062
+          },
+          "missing_values": 0,
+          "internal_missing_months": []
+        },
+        "GS10": {
+          "non_missing_coverage": {
+            "start": "1953-04-01",
+            "end": "2026-09-01",
+            "count": 882
+          },
+          "missing_values": 1180,
+          "internal_missing_months": []
+        },
+        "TB3MS": {
+          "non_missing_coverage": {
+            "start": "1934-01-01",
+            "end": "2026-09-01",
+            "count": 1113
+          },
+          "missing_values": 949,
+          "internal_missing_months": []
+        }
+      },
+      "validation": {
+        "status": "passed",
+        "ascending_dates": true,
+        "duplicate_dates": 0,
+        "missing_monthly_dates": [],
+        "invalid_values": 0
+      },
+      "provenance": {
+        "description": "Existing local FRED-format snapshot; not independently authenticated",
+        "series_reference_urls": {
+          "USREC": "https://fred.stlouisfed.org/series/USREC",
+          "GS10": "https://fred.stlouisfed.org/series/GS10",
+          "TB3MS": "https://fred.stlouisfed.org/series/TB3MS"
+        },
+        "retrieved_at": null,
+        "vintage_date": null,
+        "historical_release_times": null
+      }
+    },
+    {
+      "path": "GS10.csv",
+      "sha256": "40323f225e613a19a4eec7eef20523dec10764de21c70cd1416a7379fb7f13b6",
+      "schema": {
+        "observation_date": "YYYY-MM-01",
+        "GS10": "nullable finite decimal; percent"
+      },
+      "monthly_coverage": {
+        "start": "1953-04-01",
+        "end": "2026-09-01",
+        "count": 882
+      },
+      "series": {
+        "GS10": {
+          "non_missing_coverage": {
+            "start": "1953-04-01",
+            "end": "2026-09-01",
+            "count": 882
+          },
+          "missing_values": 0,
+          "internal_missing_months": []
+        }
+      },
+      "validation": {
+        "status": "passed",
+        "ascending_dates": true,
+        "duplicate_dates": 0,
+        "missing_monthly_dates": [],
+        "invalid_values": 0
+      },
+      "provenance": {
+        "description": "Existing local FRED-format snapshot; not independently authenticated",
+        "series_reference_urls": {
+          "GS10": "https://fred.stlouisfed.org/series/GS10"
+        },
+        "retrieved_at": null,
+        "vintage_date": null,
+        "historical_release_times": null
+      }
+    }
+  ],
+  "cross_check_gs10": {
+    "status": "passed",
+    "matched_months": 882,
+    "mismatches": 0,
+    "coverage": {
+      "start": "1953-04-01",
+      "end": "2026-09-01",
+      "count": 882
+    },
+    "comparison": "exact decimal equality",
+    "limitation": "Agreement between local files does not establish independent provenance or vintage accuracy"
+  },
+  "preparation": {
+    "input_rows": 2062,
+    "retained_rows": 876,
+    "excluded_rows": 1186,
+    "reason_priority": [
+      "missing_predictors",
+      "absent_target_month",
+      "missing_target_value"
+    ],
+    "exclusions_are_mutually_exclusive": true,
+    "exclusions": {
+      "missing_predictors": {
+        "start": "1854-12-01",
+        "end": "1953-03-01",
+        "count": 1180
+      },
+      "absent_target_month": {
+        "start": "2026-04-01",
+        "end": "2026-09-01",
+        "count": 6
+      },
+      "missing_target_value": {
+        "start": null,
+        "end": null,
+        "count": 0
+      }
+    },
+    "imputed_values": 0
+  },
+  "output": {
+    "path": "data/processed/economic_monthly.csv",
+    "sha256": "fcda68b547e62cd8c1fd314401c9788d8613ee84ad466318bd0c1d70c173e62b",
+    "rows": 876,
+    "columns": [
+      "predictor_month",
+      "target_month",
+      "USREC_t",
+      "GS10_t",
+      "TB3MS_t",
+      "spread_t",
+      "target_t"
+    ],
+    "schema": {
+      "predictor_month": "YYYY-MM-01; observation month, not release timestamp",
+      "target_month": "YYYY-MM-01; predictor_month + 6 calendar months",
+      "USREC_t": "nullable binary 0/1; reference only, not a predictor",
+      "GS10_t": "finite decimal; percent",
+      "TB3MS_t": "finite decimal; percent",
+      "spread_t": "finite decimal; percentage points; GS10_t - TB3MS_t",
+      "target_t": "binary 0/1; source USREC at target_month"
+    },
+    "predictor_coverage": {
+      "start": "1953-04-01",
+      "end": "2026-03-01",
+      "count": 876
+    },
+    "target_coverage": {
+      "start": "1953-10-01",
+      "end": "2026-09-01",
+      "count": 876
+    },
+    "target_counts": {
+      "0": 765,
+      "1": 111
+    }
+  },
+  "limitations": [
+    "Source retrieval dates, publication times and historical vintages are unknown.",
+    "USREC reflects retrospective NBER dating; target month is not label availability date.",
+    "Source authenticity is not established by local integrity and agreement checks.",
+    "No modeling or backtesting is implemented; no study-period restriction applied."
+  ]
+}

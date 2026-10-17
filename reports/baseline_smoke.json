@@ -1,0 +1,86 @@
+{
+  "status": "retrospective single-forecast smoke test; not a forecasting performance result",
+  "predictor_month": "1973-10-01",
+  "forecast_cutoff": "1973-11-15",
+  "target_month": "1974-04-01",
+  "latest_allowed_training_target_month": "1973-09-01",
+  "spread_t": -0.43,
+  "recession_probability": 0.3943827035972719,
+  "fit": {
+    "model": "statsmodels.discrete.discrete_model.Probit",
+    "formula": "Phi(intercept + spread_t_coefficient * spread_t)",
+    "coefficients": {
+      "intercept": -0.5260581048106249,
+      "spread_t": -0.6003347954859499
+    },
+    "standard_errors": {
+      "intercept": 0.1691930657892612,
+      "spread_t": 0.18011024428570624
+    },
+    "standard_errors_note": "Model-based diagnostics only; no time-series inference claimed",
+    "standardization": "none; spread is in percentage points",
+    "training": {
+      "sample_count": 240,
+      "predictor_start": "1953-04-01",
+      "predictor_end": "1973-03-01",
+      "target_start": "1953-10-01",
+      "target_end": "1973-09-01",
+      "class_counts": {
+        "0": 203,
+        "1": 37
+      },
+      "recession_share": 0.15416666666666667
+    },
+    "diagnostics": {
+      "converged": true,
+      "iterations": 6,
+      "optimizer_warnflag": 0,
+      "warnings": [],
+      "design_condition_number": 3.301330446091699,
+      "log_likelihood": -96.9779461743595,
+      "max_abs_average_score": 3.625945474977093e-17,
+      "information_min_eigenvalue": 18.18114858758146,
+      "information_condition_number": 9.070302729245466,
+      "separation_check": "class ranges overlap; no separation warning"
+    },
+    "config": {
+      "model": "probit",
+      "horizon_months": 6,
+      "training_start": "1953-04-01",
+      "min_training_months": 240,
+      "forecast_cutoff_month_offset": 1,
+      "forecast_cutoff_day": 15,
+      "training_target_lag_months": 1,
+      "standardize": false,
+      "optimizer": "newton",
+      "maxiter": 100,
+      "tolerance": 1e-10,
+      "max_average_score": 1e-06,
+      "max_condition_number": 1000000000000.0
+    }
+  },
+  "limitations": [
+    "Final FRED observations and NBER classifications contain historical hindsight.",
+    "The cutoff convention does not establish historical publication or label availability.",
+    "No full backtest or aggregate forecast score has been calculated.",
+    "Later music comparisons must rerun both models on compatible training windows and identical evaluation months."
+  ],
+  "first_eligible_forecast_month": "1973-10-01",
+  "inputs": {
+    "economic_csv": {
+      "path": "data/processed/economic_monthly.csv",
+      "sha256": "fcda68b547e62cd8c1fd314401c9788d8613ee84ad466318bd0c1d70c173e62b"
+    },
+    "config": {
+      "path": "config/baseline.json",
+      "sha256": "ce5b1c12cfaa1e07a1fd0cf39ef1a1c743dd11888fc5e30e5d3a142d50536a96"
+    }
+  },
+  "software": {
+    "python": "3.9.6",
+    "numpy": "2.0.2",
+    "scipy": "1.13.1",
+    "statsmodels": "0.14.6",
+    "pandas": "2.3.3"
+  }
+}

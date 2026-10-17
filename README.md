@@ -5,7 +5,7 @@
 **NYU Courant | Predictive Analytics | Fall 2026 | Team 5**  
 **Team:** Keefer Wu · Nathan Starkman · Kiran Reddy Bhumireddy
 
-> **Project status:** Research design and data-source identification are underway. Historical lyrics availability, permissions, song matching, and final coverage are **not yet verified**. The models and results described below are **planned**, not completed.
+> **Project status:** Economic data preparation and Model A (statsmodels Probit) are implemented and tested, including one October 1973 smoke forecast. Data and timing conventions are **retrospective**, with historical release/vintage availability unverified. The smoke prediction is not a forecasting-performance result. Full backtesting, music features, and comparative results remain planned; usable lyrics coverage is unverified.
 
 ## Overview
 
@@ -37,9 +37,9 @@ where $Y_t=1$ means the U.S. is classified as being **in a recession six calenda
 
 | Data | Source | Frequency / role | Status |
 |---|---|---|---|
-| U.S. recession indicator (`USREC`) | [FRED — USREC](https://fred.stlouisfed.org/series/USREC) | Monthly binary recession label; future target | Source identified |
-| 10-year Treasury yield (`GS10`) | [FRED — GS10](https://fred.stlouisfed.org/series/GS10) | Monthly long-term yield | Source identified |
-| 3-month Treasury bill rate (`TB3MS`) | [FRED — TB3MS](https://fred.stlouisfed.org/series/TB3MS) | Monthly short-term yield | Source identified |
+| U.S. recession indicator (`USREC`) | [FRED — USREC](https://fred.stlouisfed.org/series/USREC) | Monthly binary recession label; future target | Local snapshot validated, Dec 1854–Sep 2026 |
+| 10-year Treasury yield (`GS10`) | [FRED — GS10](https://fred.stlouisfed.org/series/GS10) | Monthly long-term yield | Local snapshots agree, Apr 1953–Sep 2026 |
+| 3-month Treasury bill rate (`TB3MS`) | [FRED — TB3MS](https://fred.stlouisfed.org/series/TB3MS) | Monthly short-term yield | Local snapshot validated, Jan 1934–Sep 2026 |
 | Billboard Hot 100 | [Historical weekly Billboard archive](https://github.com/mhollingshead/billboard-hot-100) | Chart date, song, artist, rank | Historical source identified; matching pending |
 | Historical lyrics, candidate 1 | [Foramitti et al. (2025) OSF repository](https://osf.io/2k7ut/) | Candidate research files associated with Billboard lyrics, 1973–2023 | File contents and reuse permissions to verify |
 | Historical lyrics, candidate 2 | [Kaggle: Top 100 Songs & Lyrics](https://www.kaggle.com/datasets/brianblakely/top-100-songs-and-lyrics-from-1959-to-2019) | Candidate year-end song and lyrics lookup | Reported dataset size is **not** verified usable coverage |
@@ -150,7 +150,7 @@ Here $\Phi$ is the standard normal CDF. The six music terms are the only planned
 5. Report ROC-AUC and PR-AUC as supporting discrimination metrics, with caution where test periods contain few or no recession observations.
 6. Estimate uncertainty using **block-bootstrap confidence intervals**, while acknowledging that the small number of distinct recession episodes can make these estimates unstable.
 
-The historical sample has relatively few independent recession episodes; strong claims about generalizable improvements would therefore be unwarranted. **No modeling results are available yet.**
+The historical sample has relatively few independent recession episodes; strong claims about generalizable improvements would therefore be unwarranted. **No backtest or comparative forecasting results are available yet.**
 
 ## Project Plan
 
@@ -177,10 +177,115 @@ Three workstreams run in parallel: **economic baseline**, **music/NLP pipeline**
 
 ## Reproducibility and Repository Status
 
-This repository documents a **proposed research pipeline**. Dataset ingestion, song-matching rules, model training, backtesting scripts, experimental results, and a final reproducibility manifest will be added as implementation progresses. We will document any departures from this plan, including study-period restrictions and data-source substitutions.
+The economic preparation step is implemented in `src/music_recession/economic.py`
+and uses only Python's standard library. Model A is implemented in
+`src/music_recession/baseline.py` and uses statsmodels Probit, NumPy and SciPy.
+Python 3.9 or newer is required; the verified environment is Python 3.9.6 with
+statsmodels 0.14.6, NumPy 2.0.2, SciPy 1.13.1 and transitive dependency pandas
+2.3.3. Runtime version constraints are recorded in `requirements-baseline.txt`;
+availability of those exact versions on newer Python versions may differ.
+Tests use `unittest`; setuptools is a packaging build dependency.
+
+From the repository root, create an isolated environment and install the package:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install --upgrade 'pip>=21.3'
+.venv/bin/python -m pip install -e . -c requirements-baseline.txt
+```
+
+Generate the economic dataset and manifest, then run all tests:
+
+```bash
+.venv/bin/python -m music_recession.economic
+.venv/bin/python -m unittest discover -s tests -v
+```
+
+The equivalent installed command is `.venv/bin/prepare-economic`. Use `--help`
+to inspect optional input and output paths. Defaults are relative to the current
+working directory, so run the commands above from the repository root.
+
+For an offline, economic-preparation-only setup, skip package installation and
+run only the economic tests. Model A and its tests require the numerical packages:
+
+```bash
+python3 -m venv .venv
+PYTHONPATH=src .venv/bin/python -m music_recession.economic
+PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_economic.py' -v
+```
+
+The pipeline reads the original `fredgraph.csv` and `GS10.csv` without modifying
+them. It validates monthly calendars, source values and cross-file GS10 equality,
+computes `spread_t = GS10_t - TB3MS_t`, and looks up `USREC` exactly six calendar
+months ahead. Rows lacking a predictor or future label are excluded and counted.
+Malformed input, duplicate/missing dates and cross-file mismatches stop the run.
+
+Outputs:
+
+- [`data/processed/economic_monthly.csv`](data/processed/economic_monthly.csv):
+  **876 rows × 7 columns**, predictor months **April 1953–March 2026**, target
+  months **October 1953–September 2026**. Columns: `predictor_month`,
+  `target_month`, `USREC_t`, `GS10_t`, `TB3MS_t`, `spread_t`, `target_t`.
+  `USREC_t` is retained for reference only and must not enter the baseline model.
+- [`docs/data_manifest.json`](docs/data_manifest.json): input/output SHA-256
+  hashes, schemas, coverage, validation findings and exclusions. The current
+  snapshots yield 882 matching GS10 observations; 1,180 source rows lack valid
+  predictors and six final predictor months lack future labels.
+- [`docs/forecast_protocol.md`](docs/forecast_protocol.md): target definition,
+  validation policy, source provenance limitations and forecasting prerequisites.
+
+Outputs are deterministic for the same inputs, paths and implementation. A
+successful rerun replaces the processed CSV and manifest. Validation failures
+leave previous artifacts untouched; inspect the command's exit status before
+using them. Tests use temporary fixtures and independently verify all 876 output
+rows against the original local files. Snapshot-specific regression expectations
+must be deliberately reviewed if the source snapshots change.
+
+**Retrospective limitation:** observation months are not publication timestamps.
+These snapshots provide no historical release or vintage evidence. NBER recession
+announcements can occur after the months being labeled; six elapsed months alone
+do not establish training-label availability. No real-time forecasting claim is
+made. See the protocol for the implemented Probit timing convention and before
+implementing chronological evaluation.
+
+### Model A: single-forecast verification
+
+```bash
+.venv/bin/python -m music_recession.baseline --predictor-month 1973-10-01
+```
+
+The equivalent installed command is `.venv/bin/baseline-smoke`. It writes
+[`reports/baseline_smoke.json`](reports/baseline_smoke.json), including coefficients,
+training coverage, class counts, convergence diagnostics, configuration, input
+hashes and software versions. See `--help` for input/config/output overrides.
+
+[`config/baseline.json`](config/baseline.json) specifies the protocol: issue the
+forecast on the 15th of t+1, predict USREC in t+6, and train only on rows whose
+target month is at most t-1. Start training history in April 1953 and require at
+least 240 eligible observations. This makes **October 1973** the first eligible
+predictor month: training predictors run April 1953–March 1973, with targets
+October 1953–September 1973. September 1973 has only 239 eligible observations.
+
+The model includes an intercept and only the spread in percentage points, without
+standardization. Invalid data, single-class samples, constant spread, separation
+and optimization failures produce explicit errors; no alternative model is
+silently substituted. The full settings and failure policy are documented in
+[`docs/forecast_protocol.md`](docs/forecast_protocol.md).
+
+The October 1973 smoke fit uses 240 months (37 recession labels, 203 non-recession
+labels). It converges in six iterations without warnings: intercept **-0.526058**,
+spread coefficient **-0.600335**. With October's spread of **-0.43**, the probability
+for April 1974 is **0.394383**. The assumed issuance date is November 15, 1973.
+**This is one execution check, not a measured forecasting result.** Final FRED
+observations and NBER classifications still contain historical hindsight.
+
+Full backtesting, aggregate Brier Scores, song matching, emotion extraction and
+comparative results remain future work. The later music comparison must rerun
+both models on compatible training windows and identical evaluation months.
+We will document any departures from the research plan.
 
 **Data rights:** Do not commit copyrighted full lyrics or redistribution-restricted datasets to the repository. Only share data, derived features, or metadata when the relevant terms permit it. Source datasets should be obtained from their original publishers or repositories.
 
 ---
 
-*Prepared for the NYU Courant Predictive Analytics course, Fall 2026. Research design and source availability remain subject to verification.*
+*Prepared for the NYU Courant Predictive Analytics course, Fall 2026. Economic preparation and the Probit baseline are implemented; music-source availability and historical real-time availability remain subject to verification.*
