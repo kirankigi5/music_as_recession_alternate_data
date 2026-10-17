@@ -12,11 +12,13 @@ dependencies = [
     "numpy>=1.26,<3",
     "scipy>=1.11,<2",
     "statsmodels>=0.14.4,<0.15",
+    "matplotlib>=3.7,<4",
 ]
 
 [project.scripts]
 prepare-economic = "music_recession.economic:main"
 baseline-smoke = "music_recession.baseline:main"
+baseline-backtest = "music_recession.backtest:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

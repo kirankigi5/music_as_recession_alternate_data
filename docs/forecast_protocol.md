@@ -1,4 +1,4 @@
-# Economic dataset and Model A protocol — Steps 2 and 3
+# Economic dataset and Model A protocol — Steps 2–4
 
 ## Status and scope
 
@@ -9,7 +9,8 @@ release timestamps are not supplied in these inputs. Local consistency checks
 do not independently authenticate the observations or establish their vintages.
 The original files are preserved byte for byte. No observations are downloaded,
 imputed or fabricated. Step 2 prepares the economic dataset. Step 3 implements
-Model A and a single-forecast smoke test; a full backtest is not implemented.
+Model A and a single-forecast smoke test. Step 4 implements the retrospective
+expanding-window evaluation described below.
 
 ## Observation and target definitions
 
@@ -202,9 +203,157 @@ forecasting result**. No aggregate Brier Score or full backtest is calculated.
 The Step 2 data manifest remains the record of the economic preparation stage;
 the Step 3 smoke report records the model execution separately.
 
-## Next phase, not implemented here
+## Step 4: retrospective expanding-window evaluation
 
-The full expanding-window backtest and evaluation remain future work. When music
-features become available, **rerun both models on compatible training windows
-and identical evaluation months**; do not compare this full-history economic
-fit against a music model trained on an incompatible subset.
+The evaluation predictor months are fixed at **October 1973–March 2026**.
+The associated target months are **April 1974–September 2026**. Inclusive calendar
+arithmetic gives `(2026 - 1973) * 12 + (3 - 10) + 1 = 630` forecasts; the input
+contains all 630 predictor months and future labels. All 630 fits converge with
+no model warnings or exclusions. Training expands from 240 rows to 869 rows,
+adding one row each month in this complete snapshot. The final training predictor
+month is August 2025, whose target month is February 2026. The final assumed
+forecast cutoff is April 15, 2026.
+
+`src/music_recession/backtest.py` calls the existing `select_training` and
+`fit_probit` functions for every forecast, then uses `predict_probability`.
+The Step 3 implementation and `config/baseline.json` are unchanged. Every fit
+starts from zero coefficients, uses an intercept and the unstandardized spread,
+and retains the same optimizer and acceptance checks. There are no warm starts,
+retries, random splits, shuffled observations, tuning or alternate estimators.
+The forecast's actual label is used only after fitting for evaluation.
+
+This is **retrospective pseudo-out-of-sample evaluation**, because each fitted
+model excludes its future evaluation target and respects the stated chronological
+boundary. It is **not a historically executable real-time forecasting record**:
+final FRED values and retrospective NBER labels still carry historical hindsight.
+The 15th-of-next-month convention does not resolve publication/vintage uncertainty.
+
+### Metrics and the reference forecast
+
+For each forecast, the reference probability is the recession fraction in that
+same eligible training sample. It does not use the evaluation label, overall
+dataset prevalence, or a fixed prevalence estimated from future observations.
+Model and reference are evaluated on exactly the same successful, labeled months.
+
+- **Brier Score (primary):** mean of `(probability - actual_label)^2`.
+- **Reference Brier Score:** the same calculation for the expanding training
+  prevalence forecast on the paired evaluation months.
+- **Brier Skill Score:** `1 - model_BS / reference_BS`. Positive values mean
+  smaller squared probability error than the reference. A zero reference score
+  makes skill undefined and is recorded as null.
+- **ROC-AUC:** the pairwise ranking interpretation, implemented with average
+  ranks for ties. It is null if only one outcome class occurs.
+- **Log loss:** negative mean natural log of the observed-outcome likelihood
+  (`p` for a recession, `1-p` otherwise). Only an exactly zero likelihood is
+  floored to float64 epsilon, approximately 2.22e-16. Positive likelihoods,
+  including values below epsilon, are unchanged. The saved probabilities and
+  all other metrics are never clipped. **No clipping was needed in this run.**
+- **Calibration:** ten bins fixed before evaluation: `[0,0.1)`, `[0.1,0.2)`, …,
+  `[0.9,1]`. Each records its sample count, mean predicted risk and observed
+  recession frequency. Empty bins remain with count zero and null rates.
+  There is no fitted recalibration or threshold optimization.
+
+Accuracy at a 0.5 threshold is not used as the primary measure. The evaluation
+has 70 recession months out of 630 (11.11%), and monthly observations are not
+independent recession episodes. No significance claim or confidence interval is
+inferred from these point estimates; block-bootstrap uncertainty remains future work.
+
+### Record schema and failure accounting
+
+`reports/baseline_backtest/forecasts.csv` uses schema version 1 and one row for
+**every scheduled predictor month**. It records `model_id`, predictor/cutoff/target
+dates, spread, probability, actual label, reference probability, training counts
+and boundaries, training prevalence, coefficients, convergence and numerical
+diagnostics. `coefficients_json` supports future model-specific coefficient sets;
+the fixed intercept/spread columns are convenient Model A fields. JSON-valued
+fields are CSV-quoted. `training_months_sha256` hashes the ordered eligible
+predictor-month list (newline separated, no trailing newline) to help audit
+training-window compatibility in the future Model B comparison.
+
+Statuses are `ok` (forecast and label available), `missing_actual` (forecast
+available but label absent), and `failed` (missing predictor row, ineligible
+training window, or model failure). Non-OK records include reasons and available
+diagnostics and are also saved in `failures.json`. Blank CSV cells mean unavailable,
+not zero. Non-finite failure diagnostics are represented as explicit strings such
+as `"inf"` in JSON; they do not become valid probabilities.
+
+Metrics use paired `ok` months only and explicitly report scheduled, successful,
+failed, missing-label and evaluated counts, all excluded months, and whether
+coverage is complete. Missing source months are not filled: windows count actual
+eligible observations. Malformed source data aborts input validation rather than
+silently dropping rows. CLI exit code 0 indicates full evaluation coverage; code 2
+indicates incomplete coverage with the reports still saved; code 1 indicates an
+aborted run. After an aborted run, older reports must not be treated as new output.
+
+### Artifacts and reproduction
+
+From the repository root:
+
+```bash
+.venv/bin/python -m pip install -e . -c requirements-baseline.txt
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python -m music_recession.backtest
+```
+
+The installed `baseline-backtest` entry point is equivalent; no separate wrapper
+script is required. Defaults read the validated economic CSV and existing model
+configuration. `--data`, `--config`, `--start`, `--end` and `--output-dir` provide
+explicit overrides for diagnostics or future compatible-sample comparisons.
+The reported project run uses the prescribed defaults without tuning.
+
+The output directory contains:
+
+- `forecasts.csv`: all forecast records, including failures if any;
+- `metrics.json`: metrics, complete calibration table, coverage audit, model
+  settings, input/code hashes, and numerical-library versions;
+- `calibration.csv`: the same ten-bin table in tabular form;
+- `failures.json`: all non-evaluated records (empty for this run);
+- `probability_timeline.png/.svg`, `calibration.png/.svg`, and
+  `brier_comparison.png/.svg`: locally saved raster and vector figures.
+
+The timeline places each probability at its **target month**, with actual USREC
+recession target months shaded. It does not suggest those forecasts were issued
+in the target month: issuance is on day 15 of predictor month + 1. Calibration
+figures show bin counts, and Brier charts compare identical evaluation months.
+Metrics and forecast records are deterministic in the pinned environment;
+small floating-point/platform or figure-rendering differences are possible elsewhere.
+
+### Verified results and interpretation
+
+| Metric | Value |
+|---|---:|
+| Model A Brier Score | 0.0949210112 |
+| Expanding-prevalence Brier Score | 0.1018706841 |
+| Brier Skill Score | 0.0682205383 |
+| ROC-AUC | 0.7202040816 |
+| Log loss | 0.3381485845 |
+| Mean predicted recession probability | 14.55% |
+| Observed recession frequency | 11.11% |
+
+Model A reduces Brier error by **6.82% relative to expanding prevalence** in this
+retrospective sample. This is a modest aggregate improvement, not a significance
+claim, causal result, or guarantee about real-time forecasting.
+
+Calibration is uneven. The 0–10% bin has 345 months, mean prediction 3.66% and
+observed frequency 5.22%. The 20–30% bin has 82 months, mean prediction 24.06%
+and observed frequency 7.32%. High-probability bins are sparse: the 90–100% bin
+contains only five months, with one recession label. Do not overinterpret its
+20% observed rate as a stable population calibration estimate.
+
+The timeline shows elevated risk around 1980–81, but also large errors in exact
+six-month timing: September 1980's target has a 97.13% forecast and label 0.
+For the 18 recession target months January 2008–June 2009, mean predicted risk
+is only 8.97%; the earlier target-month peak is September 2007 (40.57%). For
+March–April 2020, probabilities are 33.20% and 28.77%. Risk rises again for
+2023–25 targets, peaking at 57.55% in November 2023, although all those target
+months are labeled 0 in the supplied snapshot. These are descriptive findings,
+not evidence of causal effects or a reason to retune the horizon after evaluation.
+
+## Recommended next phase
+
+Audit lyrics-source feasibility, permissions, matching coverage and potential
+year-end selection bias before implementing Model B. When music features become
+available, **rerun both models on compatible training windows and identical
+evaluation months**. Retain this baseline as the reference implementation and
+add uncertainty analysis before making claims about improvement. No lyric
+processing or Model B is implemented in Step 4.

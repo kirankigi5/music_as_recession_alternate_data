@@ -5,7 +5,7 @@
 **NYU Courant | Predictive Analytics | Fall 2026 | Team 5**  
 **Team:** Keefer Wu · Nathan Starkman · Kiran Reddy Bhumireddy
 
-> **Project status:** Economic data preparation and Model A (statsmodels Probit) are implemented and tested, including one October 1973 smoke forecast. Data and timing conventions are **retrospective**, with historical release/vintage availability unverified. The smoke prediction is not a forecasting-performance result. Full backtesting, music features, and comparative results remain planned; usable lyrics coverage is unverified.
+> **Project status:** Economic preparation, Model A (statsmodels Probit), and its expanding-window backtest are implemented and tested. All **630 forecasts** from October 1973–March 2026 were evaluated. Results are **retrospective pseudo-out-of-sample**, with historical release/vintage availability unverified. Music features, Model B, and music-versus-economic comparisons remain planned; usable lyrics coverage is unverified.
 
 ## Overview
 
@@ -150,7 +150,7 @@ Here $\Phi$ is the standard normal CDF. The six music terms are the only planned
 5. Report ROC-AUC and PR-AUC as supporting discrimination metrics, with caution where test periods contain few or no recession observations.
 6. Estimate uncertainty using **block-bootstrap confidence intervals**, while acknowledging that the small number of distinct recession episodes can make these estimates unstable.
 
-The historical sample has relatively few independent recession episodes; strong claims about generalizable improvements would therefore be unwarranted. **No backtest or comparative forecasting results are available yet.**
+The historical sample has relatively few independent recession episodes; strong claims about generalizable improvements would therefore be unwarranted. **Model A's retrospective backtest is available below. Model B comparisons and uncertainty intervals remain future work.**
 
 ## Project Plan
 
@@ -182,7 +182,7 @@ and uses only Python's standard library. Model A is implemented in
 `src/music_recession/baseline.py` and uses statsmodels Probit, NumPy and SciPy.
 Python 3.9 or newer is required; the verified environment is Python 3.9.6 with
 statsmodels 0.14.6, NumPy 2.0.2, SciPy 1.13.1 and transitive dependency pandas
-2.3.3. Runtime version constraints are recorded in `requirements-baseline.txt`;
+2.3.3. Backtest plots use matplotlib 3.9.4. Runtime version constraints are recorded in `requirements-baseline.txt`;
 availability of those exact versions on newer Python versions may differ.
 Tests use `unittest`; setuptools is a packaging build dependency.
 
@@ -245,8 +245,8 @@ must be deliberately reviewed if the source snapshots change.
 These snapshots provide no historical release or vintage evidence. NBER recession
 announcements can occur after the months being labeled; six elapsed months alone
 do not establish training-label availability. No real-time forecasting claim is
-made. See the protocol for the implemented Probit timing convention and before
-implementing chronological evaluation.
+made. See the protocol for the implemented Probit timing convention and the
+limits of retrospective chronological evaluation.
 
 ### Model A: single-forecast verification
 
@@ -279,13 +279,78 @@ for April 1974 is **0.394383**. The assumed issuance date is November 15, 1973.
 **This is one execution check, not a measured forecasting result.** Final FRED
 observations and NBER classifications still contain historical hindsight.
 
-Full backtesting, aggregate Brier Scores, song matching, emotion extraction and
-comparative results remain future work. The later music comparison must rerun
-both models on compatible training windows and identical evaluation months.
-We will document any departures from the research plan.
+### Model A: expanding-window backtest (Step 4)
+
+```bash
+.venv/bin/python -m music_recession.backtest
+.venv/bin/python -m unittest discover -s tests -v
+```
+
+The equivalent installed command is `.venv/bin/baseline-backtest`. It reuses the
+Step 3 fitting and eligibility functions without altering the model or numerical
+settings. For each predictor month t, training begins in April 1953 and includes
+only rows with target months at most t-1. The assumed cutoff remains the 15th
+calendar day of t+1. A new fit is made for each month; there are no random splits,
+warm starts, hyperparameter searches or fallback estimators.
+
+**630 of 630 forecasts succeeded**, with no model warnings. Predictor months run
+October 1973–March 2026; target months run April 1974–September 2026. Training grows
+from 240 to 869 observations. The calendar count and every training window were
+checked independently against the raw economic snapshot.
+
+| Metric | Retrospective result |
+|---|---:|
+| **Model A Brier Score** | **0.094921** |
+| Expanding-training-prevalence Brier Score | 0.101871 |
+| Brier Skill Score | 0.068221 |
+| ROC-AUC | 0.720204 |
+| Log loss | 0.338149 |
+| Mean predicted recession probability | 14.55% |
+| Observed recession frequency | 11.11% (70 / 630) |
+
+The reference predicts the recession frequency in each forecast's eligible
+training sample. On identical evaluation months, Model A reduces Brier error
+by **6.82%** relative to this benchmark. Brier Score remains the primary measure;
+this point estimate does not establish statistical significance or causation.
+
+Outputs in [`reports/baseline_backtest/`](reports/baseline_backtest/):
+
+- [`forecasts.csv`](reports/baseline_backtest/forecasts.csv): all scheduled months,
+  probabilities, actual labels, reference probabilities, training coverage,
+  coefficients, convergence and diagnostics in a stable versioned schema.
+- [`metrics.json`](reports/baseline_backtest/metrics.json) and
+  [`calibration.csv`](reports/baseline_backtest/calibration.csv): paired metrics,
+  ten fixed calibration bins with counts, coverage, input/code hashes and versions.
+- [`failures.json`](reports/baseline_backtest/failures.json): all non-evaluated
+  records and reasons; empty for this run. Failed months are never silently removed.
+- [Probability timeline](reports/baseline_backtest/probability_timeline.png),
+  [calibration plot](reports/baseline_backtest/calibration.png), and
+  [Brier comparison](reports/baseline_backtest/brier_comparison.png), each also
+  saved as SVG for export.
+
+The timeline is indexed by **target month**, with actual recession target months
+shaded. It shows high risk around 1980–81, timing errors around the 2008–09 recession,
+and elevated 2023–25 probabilities despite non-recession labels in the supplied
+snapshot. Calibration is uneven: the 20–30% bin averages 24.06% predicted risk
+but only 7.32% observed recessions (82 months); high-probability bins have few
+observations. Read the protocol for fuller interpretation and limitations.
+
+No probability clipping is used for Brier Score, ROC-AUC or saved forecasts.
+Log loss floors only an exactly zero observed-outcome likelihood to float64
+epsilon; none needed this treatment in the actual run. Incomplete coverage is
+reported explicitly and returns CLI exit code 2; malformed input aborts with code
+1. Successful full coverage returns 0. Defaults are fixed to the requested sample;
+`--help` describes overrides for diagnostics and later compatible-sample work.
+
+These results remain **retrospective pseudo-out-of-sample**, not evidence of
+historically executable real-time forecasts. Final FRED data and retrospective
+NBER labels contain hindsight, monthly errors are dependent, and no uncertainty
+intervals have yet been calculated. Lyrics feasibility and coverage auditing is
+the recommended next step. The later music comparison must rerun both models on
+compatible training windows and identical evaluation months.
 
 **Data rights:** Do not commit copyrighted full lyrics or redistribution-restricted datasets to the repository. Only share data, derived features, or metadata when the relevant terms permit it. Source datasets should be obtained from their original publishers or repositories.
 
 ---
 
-*Prepared for the NYU Courant Predictive Analytics course, Fall 2026. Economic preparation and the Probit baseline are implemented; music-source availability and historical real-time availability remain subject to verification.*
+*Prepared for the NYU Courant Predictive Analytics course, Fall 2026. Economic preparation, the Probit baseline and retrospective backtesting are implemented; music-source availability and historical real-time availability remain subject to verification.*

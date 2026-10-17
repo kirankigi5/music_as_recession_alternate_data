@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "status": "retrospective pseudo-out-of-sample evaluation; not historically executable real-time forecasts",
+  "coverage": {
+    "scheduled_forecasts": 630,
+    "successful_forecasts": 630,
+    "failed_forecasts": 0,
+    "forecasts_missing_actual": 0,
+    "evaluated_forecasts": 630,
+    "full_evaluation_coverage": true,
+    "scheduled_predictor_start": "1973-10-01",
+    "scheduled_predictor_end": "2026-03-01",
+    "evaluated_predictor_start": "1973-10-01",
+    "evaluated_predictor_end": "2026-03-01",
+    "evaluated_target_start": "1974-04-01",
+    "evaluated_target_end": "2026-09-01",
+    "not_evaluated_months": [],
+    "forecasts_with_warnings": 0
+  },
+  "comparison_policy": "Model and expanding-training-prevalence reference are evaluated on identical status=ok months only; every other month is retained and reported",
+  "brier_score": 0.0949210111743599,
+  "reference_brier_score": 0.10187068407390236,
+  "brier_skill_score": 0.06822053825122842,
+  "roc_auc": 0.720204081632653,
+  "log_loss": {
+    "value": 0.3381485844864871,
+    "clipped_observations": 0,
+    "epsilon": 2.220446049250313e-16,
+    "policy": "Only zero observed-outcome likelihoods are floored to float64 epsilon; saved probabilities, Brier and AUC are unchanged"
+  },
+  "calibration": [
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "upper_inclusive": false,
+      "count": 345,
+      "mean_predicted_probability": 0.03659875340684688,
+      "observed_recession_frequency": 0.05217391304347826
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "upper_inclusive": false,
+      "count": 115,
+      "mean_predicted_probability": 0.14127953564471524,
+      "observed_recession_frequency": 0.14782608695652175
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "upper_inclusive": false,
+      "count": 82,
+      "mean_predicted_probability": 0.24063632953766895,
+      "observed_recession_frequency": 0.07317073170731707
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "upper_inclusive": false,
+      "count": 32,
+      "mean_predicted_probability": 0.3503276106772919,
+      "observed_recession_frequency": 0.1875
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "upper_inclusive": false,
+      "count": 25,
+      "mean_predicted_probability": 0.4407295022688659,
+      "observed_recession_frequency": 0.32
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "upper_inclusive": false,
+      "count": 17,
+      "mean_predicted_probability": 0.5448432956948168,
+      "observed_recession_frequency": 0.35294117647058826
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "upper_inclusive": false,
+      "count": 2,
+      "mean_predicted_probability": 0.6701822570682251,
+      "observed_recession_frequency": 0.5
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "upper_inclusive": false,
+      "count": 4,
+      "mean_predicted_probability": 0.7525141089035863,
+      "observed_recession_frequency": 1.0
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "upper_inclusive": false,
+      "count": 3,
+      "mean_predicted_probability": 0.8494236709657864,
+      "observed_recession_frequency": 1.0
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "upper_inclusive": true,
+      "count": 5,
+      "mean_predicted_probability": 0.9355442809895823,
+      "observed_recession_frequency": 0.2
+    }
+  ],
+  "limitations": [
+    "Final FRED observations and retrospective NBER classifications contain historical hindsight.",
+    "The t+1 day-15 cutoff and t-1 training-label boundary do not establish historical publication or announcement availability.",
+    "Monthly outcomes and forecast errors are dependent; few independent recession episodes limit inference.",
+    "No uncertainty interval or causal interpretation is provided.",
+    "Model B must be compared after rerunning both models on compatible training windows and identical evaluation months."
+  ],
+  "brier_skill_interpretation": "Model A improves on expanding prevalence",
+  "roc_auc_note": "Undefined when evaluated labels contain only one class; ties receive half credit",
+  "mean_predicted_probability": 0.14551327942761305,
+  "mean_reference_probability": 0.16253616942911447,
+  "observed_recession_frequency": 0.1111111111111111,
+  "actual_recession_count": 70,
+  "actual_nonrecession_count": 560,
+  "calibration_policy": "Ten fixed bins [0,.1), ... [.9,1]; empty bins have count 0 and null frequencies",
+  "config": {
+    "model": "probit",
+    "horizon_months": 6,
+    "training_start": "1953-04-01",
+    "min_training_months": 240,
+    "forecast_cutoff_month_offset": 1,
+    "forecast_cutoff_day": 15,
+    "training_target_lag_months": 1,
+    "standardize": false,
+    "optimizer": "newton",
+    "maxiter": 100,
+    "tolerance": 1e-10,
+    "max_average_score": 1e-06,
+    "max_condition_number": 1000000000000.0
+  },
+  "calendar_audit": {
+    "expected_months_by_calendar_arithmetic": 630,
+    "scheduled_records": 630,
+    "available_input_months": 630,
+    "record_count_discrepancy": 0,
+    "input_month_discrepancy": 0,
+    "project_expected_months": 630,
+    "uses_project_evaluation_bounds": true
+  },
+  "provenance": {
+    "inputs": {
+      "economic_csv": {
+        "path": "data/processed/economic_monthly.csv",
+        "sha256": "fcda68b547e62cd8c1fd314401c9788d8613ee84ad466318bd0c1d70c173e62b"
+      },
+      "baseline_config": {
+        "path": "config/baseline.json",
+        "sha256": "ce5b1c12cfaa1e07a1fd0cf39ef1a1c743dd11888fc5e30e5d3a142d50536a96"
+      }
+    },
+    "implementation_sha256": {
+      "baseline.py": "8dc72e2ad6be4b662598d8447ca1a2faa5da7600125c8299852267fb322c2b94",
+      "backtest.py": "945e896d24aa8a852889e04a66db4e97f14e1f5463f89630a2a7df8cf28970e2",
+      "economic.py": "b927bf63c4b7ea4c4940a399c25031b37a004a6d62d0476303f6437a821bdc31"
+    },
+    "software": {
+      "python": "3.9.6",
+      "numpy": "2.0.2",
+      "scipy": "1.13.1",
+      "statsmodels": "0.14.6",
+      "pandas": "2.3.3",
+      "matplotlib": "3.9.4"
+    }
+  }
+}
