@@ -1,0 +1,204 @@
+{
+  "status": "complete",
+  "analysis_months": 612,
+  "eligible_feature_months": 348,
+  "evaluated_months": 102,
+  "forecast_start": "1993-11-01",
+  "forecast_end": "2020-02-01",
+  "target_start": "1994-05-01",
+  "target_end": "2020-08-01",
+  "recession_months": 9,
+  "fit_failures": [],
+  "model_a": {
+    "brier_score": 0.07398584090287659,
+    "roc_auc": 0.8721624850657109,
+    "calibration": [
+      {
+        "bin_lower": 0.0,
+        "bin_upper": 0.1,
+        "upper_inclusive": false,
+        "count": 33,
+        "mean_predicted_probability": 0.04006933729123601,
+        "observed_recession_frequency": 0.0
+      },
+      {
+        "bin_lower": 0.1,
+        "bin_upper": 0.2,
+        "upper_inclusive": false,
+        "count": 25,
+        "mean_predicted_probability": 0.136542387847722,
+        "observed_recession_frequency": 0.04
+      },
+      {
+        "bin_lower": 0.2,
+        "bin_upper": 0.3,
+        "upper_inclusive": false,
+        "count": 27,
+        "mean_predicted_probability": 0.252690259659691,
+        "observed_recession_frequency": 0.07407407407407407
+      },
+      {
+        "bin_lower": 0.3,
+        "bin_upper": 0.4,
+        "upper_inclusive": false,
+        "count": 12,
+        "mean_predicted_probability": 0.34405680141442657,
+        "observed_recession_frequency": 0.16666666666666666
+      },
+      {
+        "bin_lower": 0.4,
+        "bin_upper": 0.5,
+        "upper_inclusive": false,
+        "count": 5,
+        "mean_predicted_probability": 0.42854088226529424,
+        "observed_recession_frequency": 0.8
+      },
+      {
+        "bin_lower": 0.5,
+        "bin_upper": 0.6,
+        "upper_inclusive": false,
+        "count": 0,
+        "mean_predicted_probability": null,
+        "observed_recession_frequency": null
+      },
+      {
+        "bin_lower": 0.6,
+        "bin_upper": 0.7,
+        "upper_inclusive": false,
+        "count": 0,
+        "mean_predicted_probability": null,
+        "observed_recession_frequency": null
+      },
+      {
+        "bin_lower": 0.7,
+        "bin_upper": 0.8,
+        "upper_inclusive": false,
+        "count": 0,
+        "mean_predicted_probability": null,
+        "observed_recession_frequency": null
+      },
+      {
+        "bin_lower": 0.8,
+        "bin_upper": 0.9,
+        "upper_inclusive": false,
+        "count": 0,
+        "mean_predicted_probability": null,
+        "observed_recession_frequency": null
+      },
+      {
+        "bin_lower": 0.9,
+        "bin_upper": 1.0,
+        "upper_inclusive": true,
+        "count": 0,
+        "mean_predicted_probability": null,
+        "observed_recession_frequency": null
+      }
+    ]
+  },
+  "model_b": {
+    "brier_score": 0.11464959912864661,
+    "roc_auc": 0.5424133811230586,
+    "calibration": [
+      {
+        "bin_lower": 0.0,
+        "bin_upper": 0.1,
+        "upper_inclusive": false,
+        "count": 56,
+        "mean_predicted_probability": 0.02848655363286982,
+        "observed_recession_frequency": 0.07142857142857142
+      },
+      {
+        "bin_lower": 0.1,
+        "bin_upper": 0.2,
+        "upper_inclusive": false,
+        "count": 14,
+        "mean_predicted_probability": 0.1491467015319077,
+        "observed_recession_frequency": 0.21428571428571427
+      },
+      {
+        "bin_lower": 0.2,
+        "bin_upper": 0.3,
+        "upper_inclusive": false,
+        "count": 14,
+        "mean_predicted_probability": 0.2614073738240493,
+        "observed_recession_frequency": 0.07142857142857142
+      },
+      {
+        "bin_lower": 0.3,
+        "bin_upper": 0.4,
+        "upper_inclusive": false,
+        "count": 9,
+        "mean_predicted_probability": 0.33852617556810183,
+        "observed_recession_frequency": 0.1111111111111111
+      },
+      {
+        "bin_lower": 0.4,
+        "bin_upper": 0.5,
+        "upper_inclusive": false,
+        "count": 5,
+        "mean_predicted_probability": 0.4393342325876192,
+        "observed_recession_frequency": 0.0
+      },
+      {
+        "bin_lower": 0.5,
+        "bin_upper": 0.6,
+        "upper_inclusive": false,
+        "count": 2,
+        "mean_predicted_probability": 0.5618240099445071,
+        "observed_recession_frequency": 0.0
+      },
+      {
+        "bin_lower": 0.6,
+        "bin_upper": 0.7,
+        "upper_inclusive": false,
+        "count": 0,
+        "mean_predicted_probability": null,
+        "observed_recession_frequency": null
+      },
+      {
+        "bin_lower": 0.7,
+        "bin_upper": 0.8,
+        "upper_inclusive": false,
+        "count": 2,
+        "mean_predicted_probability": 0.7496993741624169,
+        "observed_recession_frequency": 0.0
+      },
+      {
+        "bin_lower": 0.8,
+        "bin_upper": 0.9,
+        "upper_inclusive": false,
+        "count": 0,
+        "mean_predicted_probability": null,
+        "observed_recession_frequency": null
+      },
+      {
+        "bin_lower": 0.9,
+        "bin_upper": 1.0,
+        "upper_inclusive": true,
+        "count": 0,
+        "mean_predicted_probability": null,
+        "observed_recession_frequency": null
+      }
+    ]
+  },
+  "brier_difference_b_minus_a": 0.04066375822577002,
+  "comparison": "Both models refit on the same eligible training observations; metrics use paired successful forecasts only.",
+  "timing": "Retrospective: cutoff 15th of t+1; target t+6; training targets <= t-1; at least 240 eligible months from January 1973.",
+  "analysis_policy": "exploratory_course",
+  "eligibility_basis": "exploratory_automated_screen",
+  "coverage_threshold": 0.75,
+  "exploratory_eligible_songs": 16290,
+  "scored_song_count": 16290,
+  "emotion_cache_hits": 16290,
+  "inference_executed": false,
+  "preparation_eligible_months": 348,
+  "source_use_basis": "reported_instructor_guidance_course_project_not_a_license",
+  "evidence_status": {
+    "recording_identity": "automated metadata and chart-slot match only; NOT independently verified",
+    "language": "automated langid screen; NOT human reviewed",
+    "release_date": "no verified release date; chart observability only",
+    "rights": "reported instructor guidance for a course project; NOT a licence or rights clearance"
+  },
+  "strict_policy_note": "The strict primary policy and its results are unchanged. These numbers are exploratory and must not be presented as verified-evidence findings.",
+  "banner": "EXPLORATORY COURSE ANALYSIS: automated screens only; recordings not independently verified; language not human reviewed; no verified release dates; source use rests on reported instructor guidance, not a licence."
+}

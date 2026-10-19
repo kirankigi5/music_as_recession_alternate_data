@@ -5,7 +5,62 @@
 **NYU Courant | Predictive Analytics | Fall 2026 | Team 5**  
 **Team:** Keefer Wu · Nathan Starkman · Kiran Reddy Bhumireddy
 
-> **Project status:** Model A reproduces all **630 forecasts** from October 1973–March 2026. The paired Model A/B runner, cached GoEmotions adapter, monthly aggregation and multivariate Probit are implemented and tested with synthetic fixtures. The actual music experiment is **blocked: zero records satisfy the current source-use evidence policy**. No real lyrics were scored and no Model B forecasting result is claimed. All analysis remains retrospective, with historical release/vintage limitations.
+> **Project status: the experiment is complete.** Model A reproduces all **630
+> forecasts** from October 1973–March 2026. Real GoEmotions inference was run on
+> **16,290 songs**, and the paired Model A/B comparison completed at three
+> predeclared coverage thresholds. **Result: lyric emotions made six-month-ahead
+> recession forecasts worse, not better** (primary 70% coverage, 183 paired
+> forecasts: Model A Brier **0.0904** vs Model B **0.1202**, difference
+> **+0.0299**). 191 tests pass.
+>
+> These are **exploratory coursework results**. The records used passed only
+> *automated* risk and English-language screens: no recording is independently
+> verified, no language is human-reviewed, and no release date is verified. Source
+> use rests on **reported instructor guidance for a course project**, which is
+> **not** a copyright licence, a fair-use determination, or institutional
+> approval. The separate **strict** evidence policy is unchanged and still yields
+> **zero** eligible records. All analysis is retrospective.
+
+## Start here
+
+| If you want to… | Read |
+|---|---|
+| **Understand everything we did** | [Complete research report](docs/COMPLETE_RESEARCH_REPORT.md) — 18 sections, full history, methods, results |
+| **Get oriented in 10 minutes** | [Team handoff](docs/TEAM_HANDOFF.md) — what's done, where things live, what's next |
+| **See the numbers** | [Exploratory results](docs/exploratory_results.md) · [committed metrics](docs/results/) |
+| **See the graphs** | [Figures](docs/figures/music_recession/) — 10 figures, interpreted in [report §11](docs/COMPLETE_RESEARCH_REPORT.md#11-figures-and-visualisations) |
+| **Check the methodology** | [Forecast protocol](docs/forecast_protocol.md) · [Model B execution requirements](docs/model_comparison.md) · [lyrics validation](docs/lyrics_validation.md) |
+| **Check the rights position** | [OSF source-use review](docs/osf_source_use_review.md) · [exploratory course policy](docs/exploratory_course_policy.md) |
+| **Reproduce it** | [Report §14](docs/COMPLETE_RESEARCH_REPORT.md#14-reproducibility-and-exact-commands) — exact tested commands |
+| **Know what is unverified** | [Report §15](docs/COMPLETE_RESEARCH_REPORT.md#15-code-provenance-and-reproducibility-caveat) — code-provenance caveat |
+| **Help close the data gap** | [Missing-lyrics tracker](reports/missing_song_links_1973_2023.csv) — 632 unresolved songs |
+
+### How to understand this project
+
+Suggested reading order:
+
+1. **This README** — the question, the data, the two models.
+2. **[Team handoff](docs/TEAM_HANDOFF.md)** §1–7 — what was built and what it found.
+3. **[Figures](docs/figures/music_recession/)** with
+   [report §11](docs/COMPLETE_RESEARCH_REPORT.md#11-figures-and-visualisations) —
+   start with Figure 4 (the headline), then Figure 2 (why coverage is the central
+   problem), then Figure 10 (where Model B actually failed).
+4. **[Report §10](docs/COMPLETE_RESEARCH_REPORT.md#10-actual-results)** — the
+   verified numbers, and why the three thresholds must not be compared with one
+   another.
+5. **[Report §13](docs/COMPLETE_RESEARCH_REPORT.md#13-dataset-bias-and-limitations)**
+   — the limitations, before drawing any conclusion.
+6. **[Report §3](docs/COMPLETE_RESEARCH_REPORT.md#3-project-history-and-development-timeline)**
+   — the full development history, including what went wrong.
+7. **[Report §16–17](docs/COMPLETE_RESEARCH_REPORT.md#16-what-we-tried-that-did-not-work)**
+   — failures and prioritised next steps.
+
+**The one thing not to miss:** Model A's broad-period Brier of 0.094921 (630
+forecasts, 1973–2026) must **never** be compared with Model B. Different samples
+produce different Brier scores for reasons unrelated to model quality. Model A was
+re-estimated and re-scored on exactly Model B's dates for every comparison in this
+repository. See
+[report §7.6](docs/COMPLETE_RESEARCH_REPORT.md#76-why-0094921-must-not-be-compared-with-model-b).
 
 ## Overview
 
@@ -390,3 +445,44 @@ returns exit 2 (`blocked_no_policy_eligible_lyrics`), saving coverage and foreca
 status reports without model downloads or lyric inference. The 925 newly recovered
 candidates are not automatically admitted. The original Model A baseline remains
 unchanged and its broad-period score is not a paired Model B comparison.
+
+**This strict behaviour is intentional and unchanged.** It is what the evidence
+policy requires while no recording has been verified.
+
+## Completed exploratory experiment
+
+The experiment that actually produced results runs under a separate, explicitly
+labelled exploratory course policy. See
+[`docs/exploratory_course_policy.md`](docs/exploratory_course_policy.md) for what
+it admits and what it refuses to assert.
+
+```sh
+.venv/bin/python -m pip install -e '.[music]'          # adds torch + transformers
+.venv/bin/python scripts/run_exploratory_comparison.py \
+    --output-dir reports/model_comparison/exploratory_primary_cov70
+
+# predeclared sensitivity analyses
+.venv/bin/python scripts/run_exploratory_comparison.py \
+    --output-dir reports/model_comparison/exploratory_sensitivity_cov75 \
+    --coverage-threshold 0.75
+.venv/bin/python scripts/run_exploratory_comparison.py \
+    --output-dir reports/model_comparison/exploratory_sensitivity_cov80 \
+    --coverage-threshold 0.80
+```
+
+| Coverage | Paired forecasts | Recession months | Model A Brier | Model B Brier | B − A |
+|---|---|---|---|---|---|
+| **70% (primary)** | **183** | **15** | **0.0903818731** | **0.1202485779** | **+0.0298667048** |
+| 75% (sensitivity) | 102 | 9 | 0.0739858409 | 0.1146495991 | +0.0406637582 |
+| 80% (sensitivity) | 45 | 4 | 0.0640448014 | 0.1206001394 | +0.0565553380 |
+
+Brier is a loss, so positive `B − A` means **Model B is worse**. Zero fit failures
+in any run. Full interpretation in
+[`docs/COMPLETE_RESEARCH_REPORT.md`](docs/COMPLETE_RESEARCH_REPORT.md).
+
+To rebuild every figure from the saved outputs without re-running the ~50-minute
+inference:
+
+```sh
+.venv/bin/python scripts/make_research_figures.py
+```
