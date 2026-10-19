@@ -15,3 +15,6 @@ data/raw/
 
 # Research lyrics — keep out of GitHub
 /data/raw/lyrics/
+
+# Agent working directory: API response caches, pilot inputs and scratch analysis
+/.agents/
