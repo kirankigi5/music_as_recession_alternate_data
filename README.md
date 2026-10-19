@@ -5,7 +5,62 @@
 **NYU Courant | Predictive Analytics | Fall 2026 | Team 5**  
 **Team:** Keefer Wu · Nathan Starkman · Kiran Reddy Bhumireddy
 
-> **Project status:** Economic preparation, Model A (statsmodels Probit), and its expanding-window backtest are implemented and tested. All **630 forecasts** from October 1973–March 2026 were evaluated. Results are **retrospective pseudo-out-of-sample**, with historical release/vintage availability unverified. Music features, Model B, and music-versus-economic comparisons remain planned; usable lyrics coverage is unverified.
+> **Project status: the experiment is complete.** Model A reproduces all **630
+> forecasts** from October 1973–March 2026. Real GoEmotions inference was run on
+> **16,290 songs**, and the paired Model A/B comparison completed at three
+> predeclared coverage thresholds. **Result: lyric emotions made six-month-ahead
+> recession forecasts worse, not better** (primary 70% coverage, 183 paired
+> forecasts: Model A Brier **0.0904** vs Model B **0.1202**, difference
+> **+0.0299**). 191 tests pass.
+>
+> These are **exploratory coursework results**. The records used passed only
+> *automated* risk and English-language screens: no recording is independently
+> verified, no language is human-reviewed, and no release date is verified. Source
+> use rests on **reported instructor guidance for a course project**, which is
+> **not** a copyright licence, a fair-use determination, or institutional
+> approval. The separate **strict** evidence policy is unchanged and still yields
+> **zero** eligible records. All analysis is retrospective.
+
+## Start here
+
+| If you want to… | Read |
+|---|---|
+| **Understand everything we did** | [Complete research report](docs/COMPLETE_RESEARCH_REPORT.md) — 18 sections, full history, methods, results |
+| **Get oriented in 10 minutes** | [Team handoff](docs/TEAM_HANDOFF.md) — what's done, where things live, what's next |
+| **See the numbers** | [Exploratory results](docs/exploratory_results.md) · [committed metrics](docs/results/) |
+| **See the graphs** | [Figures](docs/figures/music_recession/) — 10 figures, interpreted in [report §11](docs/COMPLETE_RESEARCH_REPORT.md#11-figures-and-visualisations) |
+| **Check the methodology** | [Forecast protocol](docs/forecast_protocol.md) · [Model B execution requirements](docs/model_comparison.md) · [lyrics validation](docs/lyrics_validation.md) |
+| **Check the rights position** | [OSF source-use review](docs/osf_source_use_review.md) · [exploratory course policy](docs/exploratory_course_policy.md) |
+| **Reproduce it** | [Report §14](docs/COMPLETE_RESEARCH_REPORT.md#14-reproducibility-and-exact-commands) — exact tested commands |
+| **Know what is unverified** | [Report §15](docs/COMPLETE_RESEARCH_REPORT.md#15-code-provenance-and-reproducibility-caveat) — code-provenance caveat |
+| **Help close the data gap** | [Missing-lyrics tracker](reports/missing_song_links_1973_2023.csv) — 632 unresolved songs |
+
+### How to understand this project
+
+Suggested reading order:
+
+1. **This README** — the question, the data, the two models.
+2. **[Team handoff](docs/TEAM_HANDOFF.md)** §1–7 — what was built and what it found.
+3. **[Figures](docs/figures/music_recession/)** with
+   [report §11](docs/COMPLETE_RESEARCH_REPORT.md#11-figures-and-visualisations) —
+   start with Figure 4 (the headline), then Figure 2 (why coverage is the central
+   problem), then Figure 10 (where Model B actually failed).
+4. **[Report §10](docs/COMPLETE_RESEARCH_REPORT.md#10-actual-results)** — the
+   verified numbers, and why the three thresholds must not be compared with one
+   another.
+5. **[Report §13](docs/COMPLETE_RESEARCH_REPORT.md#13-dataset-bias-and-limitations)**
+   — the limitations, before drawing any conclusion.
+6. **[Report §3](docs/COMPLETE_RESEARCH_REPORT.md#3-project-history-and-development-timeline)**
+   — the full development history, including what went wrong.
+7. **[Report §16–17](docs/COMPLETE_RESEARCH_REPORT.md#16-what-we-tried-that-did-not-work)**
+   — failures and prioritised next steps.
+
+**The one thing not to miss:** Model A's broad-period Brier of 0.094921 (630
+forecasts, 1973–2026) must **never** be compared with Model B. Different samples
+produce different Brier scores for reasons unrelated to model quality. Model A was
+re-estimated and re-scored on exactly Model B's dates for every comparison in this
+repository. See
+[report §7.6](docs/COMPLETE_RESEARCH_REPORT.md#76-why-0094921-must-not-be-compared-with-model-b).
 
 ## Overview
 
@@ -87,13 +142,13 @@ GoEmotions provides **27 emotion categories plus neutral**. We propose selecting
 
 **Joy · Sadness · Fear · Anger · Nervousness · Optimism**
 
-The proposed model is a pretrained **multi-label BERT classifier**, rather than a model trained from scratch. Long lyrics may require chunking, followed by a documented rule for pooling chunk scores into one score per song.
+The implemented adapter uses a pinned pretrained **RoBERTa GoEmotions classifier**. It pools nonoverlapping 480-token chunks by content-token count; see [the execution protocol](docs/model_comparison.md). Actual lyric inference is blocked until eligible records exist.
 
 **Domain-shift check:** GoEmotions was trained on **Reddit comments**, not lyrics. We plan a small manual review of predictions on a sample of songs before trusting the emotion indicators. The precise sampling and agreement protocol will be documented during implementation.
 
 ### Aggregate: Weekly charts → monthly indicators
 
-We will use chart rankings to give more popular chart entries more influence. One simple **proposed**, not yet finalized, rank weight is:
+The implemented preparation uses chart rankings to give more popular chart entries more influence. Its rank weight is:
 
 $$
 w_i = 101 - r_i
@@ -107,7 +162,7 @@ E_{t,k} =
      {\sum_{i\in \mathcal C_t^{\mathrm{matched}}}w_i},
 $$
 
-where $\mathcal C_t^{\mathrm{matched}}$ contains only **eligible chart observations known by the forecast cutoff** for month $t$. We will report match coverage in both song counts and chart-weight terms. The aggregation window and handling of weeks crossing month boundaries will be specified before modeling.
+where $\mathcal C_t^{\mathrm{matched}}$ contains only **eligible chart observations known by the forecast cutoff** for month $t$. Each observation belongs to its chart-issue month, and repeated weeks contribute separate rank weights. Coverage retains unmatched and excluded observations in its denominator.
 
 ### Join 2: Monthly music features ↔ FRED
 
@@ -136,7 +191,7 @@ $$
 \Phi\left(\beta_0+\beta_1S_t+\sum_{k=1}^{6}\gamma_kE_{t,k}\right).
 $$
 
-Here $\Phi$ is the standard normal CDF. The six music terms are the only planned added inputs in the main comparison. We will keep the feature set small and consider regularization if necessary to reduce overfitting.
+Here $\Phi$ is the standard normal CDF. The six music terms are the only added inputs in the main comparison. The implemented Probit is unregularized; separation and optimization failures are reported rather than silently changing the model.
 
 ### Evaluation protocol
 
@@ -354,3 +409,80 @@ compatible training windows and identical evaluation months.
 ---
 
 *Prepared for the NYU Courant Predictive Analytics course, Fall 2026. Economic preparation, the Probit baseline and retrospective backtesting are implemented; music-source availability and historical real-time availability remain subject to verification.*
+
+## Local lyrics validation (1973–2023)
+
+The new offline audit preserves the master inventory and historical reports, and
+writes only metadata, exact source locators, content hashes, and coverage statistics.
+Candidate availability is **provisional**, not verified recording identity or proof
+of historical real-time availability. Raw lyric files remain under ignored
+`data/raw/lyrics/`; no lyrics are exported to reports.
+
+```sh
+.venv/bin/python -m music_recession.lyrics_audit --output reports/lyrics_validation/new_run
+.venv/bin/python -m unittest discover -s tests -q
+```
+
+Choose a fresh output directory. See [validation protocol](docs/lyrics_validation.md),
+[source registry](config/lyrics_sources.json), and
+[review checklist](docs/music_review_checklist.md). Existing `scripts/tally_osf_lyrics.py`
+and `scripts/apply_osf_aliases.py` overwrite the original inventory and predate these
+checks; use the new audit for reproducible validation. The audit runs no BERT or Model B.
+
+## Current Model A/B comparison runner
+
+The paired comparison is implemented with eligibility-gated local GoEmotions
+scoring, source/content-keyed caches, monthly Billboard weighting and expanding
+Probit fits. See [execution and evidence requirements](docs/model_comparison.md).
+
+```sh
+.venv/bin/python -m unittest discover -s tests -q
+.venv/bin/python -m music_recession.music_model --output-dir reports/model_comparison/new_run
+```
+
+Use a fresh output directory. With the current empty review registry, the command
+returns exit 2 (`blocked_no_policy_eligible_lyrics`), saving coverage and forecast
+status reports without model downloads or lyric inference. The 925 newly recovered
+candidates are not automatically admitted. The original Model A baseline remains
+unchanged and its broad-period score is not a paired Model B comparison.
+
+**This strict behaviour is intentional and unchanged.** It is what the evidence
+policy requires while no recording has been verified.
+
+## Completed exploratory experiment
+
+The experiment that actually produced results runs under a separate, explicitly
+labelled exploratory course policy. See
+[`docs/exploratory_course_policy.md`](docs/exploratory_course_policy.md) for what
+it admits and what it refuses to assert.
+
+```sh
+.venv/bin/python -m pip install -e '.[music]'          # adds torch + transformers
+.venv/bin/python scripts/run_exploratory_comparison.py \
+    --output-dir reports/model_comparison/exploratory_primary_cov70
+
+# predeclared sensitivity analyses
+.venv/bin/python scripts/run_exploratory_comparison.py \
+    --output-dir reports/model_comparison/exploratory_sensitivity_cov75 \
+    --coverage-threshold 0.75
+.venv/bin/python scripts/run_exploratory_comparison.py \
+    --output-dir reports/model_comparison/exploratory_sensitivity_cov80 \
+    --coverage-threshold 0.80
+```
+
+| Coverage | Paired forecasts | Recession months | Model A Brier | Model B Brier | B − A |
+|---|---|---|---|---|---|
+| **70% (primary)** | **183** | **15** | **0.0903818731** | **0.1202485779** | **+0.0298667048** |
+| 75% (sensitivity) | 102 | 9 | 0.0739858409 | 0.1146495991 | +0.0406637582 |
+| 80% (sensitivity) | 45 | 4 | 0.0640448014 | 0.1206001394 | +0.0565553380 |
+
+Brier is a loss, so positive `B − A` means **Model B is worse**. Zero fit failures
+in any run. Full interpretation in
+[`docs/COMPLETE_RESEARCH_REPORT.md`](docs/COMPLETE_RESEARCH_REPORT.md).
+
+To rebuild every figure from the saved outputs without re-running the ~50-minute
+inference:
+
+```sh
+.venv/bin/python scripts/make_research_figures.py
+```

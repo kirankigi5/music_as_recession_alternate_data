@@ -1,0 +1,69 @@
+{
+  "analysis": "exploratory_course_policy",
+  "caveat": "Exploratory course analysis: automated screens only; recordings, language and release dates unverified.",
+  "emotion_model": "SamLowe/roberta-base-go_emotions",
+  "songs_scored": 16290,
+  "runs": [
+    {
+      "label": "70% (primary)",
+      "coverage_threshold": 0.7,
+      "analysis_months": 612,
+      "eligible_feature_months": 429,
+      "paired_forecasts": 183,
+      "recession_positive_months": 15,
+      "fit_failures": 0,
+      "forecast_start": "1993-11-01",
+      "forecast_end": "2023-12-01",
+      "target_start": "1994-05-01",
+      "target_end": "2024-06-01",
+      "model_a_brier": 0.09038187314132133,
+      "model_b_brier": 0.12024857793242896,
+      "brier_difference_b_minus_a": 0.02986670479110763,
+      "model_a_roc_auc": 0.6462301587301588,
+      "model_b_roc_auc": 0.4305555555555556
+    },
+    {
+      "label": "75% sensitivity",
+      "coverage_threshold": 0.75,
+      "analysis_months": 612,
+      "eligible_feature_months": 348,
+      "paired_forecasts": 102,
+      "recession_positive_months": 9,
+      "fit_failures": 0,
+      "forecast_start": "1993-11-01",
+      "forecast_end": "2020-02-01",
+      "target_start": "1994-05-01",
+      "target_end": "2020-08-01",
+      "model_a_brier": 0.07398584090287659,
+      "model_b_brier": 0.11464959912864661,
+      "brier_difference_b_minus_a": 0.04066375822577002,
+      "model_a_roc_auc": 0.8721624850657109,
+      "model_b_roc_auc": 0.5424133811230586
+    },
+    {
+      "label": "80% sensitivity",
+      "coverage_threshold": 0.8,
+      "analysis_months": 612,
+      "eligible_feature_months": 291,
+      "paired_forecasts": 45,
+      "recession_positive_months": 4,
+      "fit_failures": 0,
+      "forecast_start": "1994-05-01",
+      "forecast_end": "2016-03-01",
+      "target_start": "1994-11-01",
+      "target_end": "2016-09-01",
+      "model_a_brier": 0.0640448013828281,
+      "model_b_brier": 0.1206001393850548,
+      "brier_difference_b_minus_a": 0.0565553380022267,
+      "model_a_roc_auc": 0.9878048780487805,
+      "model_b_roc_auc": 0.7012195121951219
+    }
+  ],
+  "primary_error_analysis": {
+    "paired_forecasts": 183,
+    "months_model_b_worse": 86,
+    "months_model_b_better": 97,
+    "mean_per_month_brier_difference": 0.02986670479110764,
+    "recession_positive_months": 15
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "analysis_mode": "exploratory_course",
+  "start_month": "1973-01-01",
+  "end_month": "2023-12-01",
+  "allowed_sources": ["osf"],
+  "minimum_ready_weight_coverage": 0.7,
+  "chart_publication_delay_days": 0,
+  "chart_timing_basis": "retrospective_chart_date_convention",
+  "emotions": ["joy", "sadness", "fear", "anger", "nervousness", "optimism"],
+  "instrumentals": "exclude_no_zero_vector",
+  "combined_singles": "exclude_pending_component_and_weight_evidence",
+  "languages": "automated_screen_english_unreviewed",
+  "unknown_languages": "block_nlp",
+  "year_end_sources": "exclude_from_primary_mapping",
+  "ambiguous_versions": "exclude_no_automatic_resolution",
+  "unresolved_aliases": "exclude_target_identity",
+  "recording_and_permission_evidence": "reported_instructor_guidance_exploratory_not_verified",
+  "release_date_evidence": "chart_observability_only_no_verified_release_date",
+  "source_use_basis": "reported_instructor_guidance_course_project_not_a_license"
+}
