@@ -357,3 +357,25 @@ available, **rerun both models on compatible training windows and identical
 evaluation months**. Retain this baseline as the reference implementation and
 add uncertainty analysis before making claims about improvement. No lyric
 processing or Model B is implemented in Step 4.
+
+## Subsequent paired Model A/B implementation (2026-10-18)
+
+The evidence-gated comparison is now implemented; see
+[`model_comparison.md`](model_comparison.md) for reproduction, exclusions,
+GoEmotions caching, aggregation and multivariate Probit diagnostics.
+The original Model A code/configuration/results are preserved.
+
+The new analysis uses predictor months January 1973–December 2023. Both models
+refit on identical eligible training rows and evaluate identical successful
+forecast dates, retaining the six-month target, day-15 cutoff, target-month <= t-1
+training boundary and minimum 240 observations. Eligible training starts in 1973
+for **both** models. Model B's means/scales are learned only within each window;
+Model A remains unstandardized. The old 0.0949210112 score is not directly compared
+with Model B.
+
+The actual execution is blocked by zero policy-eligible lyric records; all six
+emotion columns remain missing, not zeros. Brier/AUC values for the paired
+comparison are null. No real lyric inference or fitted Model B result is claimed.
+The eligibility policy requires documented recording, English-language, permission
+and release evidence; the current review registry is empty. July 1993 is only the
+earliest hypothetical forecast with complete eligible music starting January 1973.

@@ -12,3 +12,6 @@ htmlcov/
 .env
 data/raw/
 # The small, reproducible economic CSV and its manifest are intentionally tracked.
+
+# Research lyrics — keep out of GitHub
+/data/raw/lyrics/

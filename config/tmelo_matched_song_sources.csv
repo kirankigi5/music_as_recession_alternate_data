@@ -1,0 +1,7 @@
+song,billboard_artist,source_year,source_title,source_artist,source_csv,source_record_number,lyrics_sha256,review_status
+Titi Me Pregunto,Bad Bunny,2022,Titi Me Pregunto,Bad Bunny,billboard-year-end-2022-lyrics.csv,22,03b03620b5f1cc556a447941bdb0dacffe7e344e14d8ea185eb327c6b57fca96,provisional
+La Bebe,Yng Lvcas x Peso Pluma,2023,La Bebe,Yng Lvcas & Peso Pluma,billboard-year-end-2023-lyrics.csv,40,2989d2637523b4dbaac2a6100927fe35d4aae039054e83596b8ca20090d85ac7,provisional
+Telepatia,Kali Uchis,2021,Telepatia,Kali Uchis,billboard-year-end-2021-lyrics.csv,49,479a4bb702bbccd1773310fa77b18457a362b6a7f801db117fd310afc52f6d55,provisional
+Despues de La Playa,Bad Bunny,2022,Despues de la Playa,Bad Bunny,billboard-year-end-2022-lyrics.csv,78,552ab5cc34de5ff16c1cbe0249b0a01b621f5dcf88997eed5ea3be6ca5f5a2dc,provisional
+Yonaguni,Bad Bunny,2021,Yonaguni,Bad Bunny,billboard-year-end-2021-lyrics.csv,83,107f56591937e5173dc63f009f415b3206fee859088ded92773eaf059ecbd4c5,provisional
+Por Las Noches,Peso Pluma,2023,Por Las Noches,Peso Pluma,billboard-year-end-2023-lyrics.csv,86,9d338a56756553dabef708bfc10f24d30cdef9d357f4b99dd9d8977983675250,provisional

@@ -5,7 +5,7 @@
 **NYU Courant | Predictive Analytics | Fall 2026 | Team 5**  
 **Team:** Keefer Wu · Nathan Starkman · Kiran Reddy Bhumireddy
 
-> **Project status:** Economic preparation, Model A (statsmodels Probit), and its expanding-window backtest are implemented and tested. All **630 forecasts** from October 1973–March 2026 were evaluated. Results are **retrospective pseudo-out-of-sample**, with historical release/vintage availability unverified. Music features, Model B, and music-versus-economic comparisons remain planned; usable lyrics coverage is unverified.
+> **Project status:** Model A reproduces all **630 forecasts** from October 1973–March 2026. The paired Model A/B runner, cached GoEmotions adapter, monthly aggregation and multivariate Probit are implemented and tested with synthetic fixtures. The actual music experiment is **blocked: zero records satisfy the current source-use evidence policy**. No real lyrics were scored and no Model B forecasting result is claimed. All analysis remains retrospective, with historical release/vintage limitations.
 
 ## Overview
 
@@ -87,13 +87,13 @@ GoEmotions provides **27 emotion categories plus neutral**. We propose selecting
 
 **Joy · Sadness · Fear · Anger · Nervousness · Optimism**
 
-The proposed model is a pretrained **multi-label BERT classifier**, rather than a model trained from scratch. Long lyrics may require chunking, followed by a documented rule for pooling chunk scores into one score per song.
+The implemented adapter uses a pinned pretrained **RoBERTa GoEmotions classifier**. It pools nonoverlapping 480-token chunks by content-token count; see [the execution protocol](docs/model_comparison.md). Actual lyric inference is blocked until eligible records exist.
 
 **Domain-shift check:** GoEmotions was trained on **Reddit comments**, not lyrics. We plan a small manual review of predictions on a sample of songs before trusting the emotion indicators. The precise sampling and agreement protocol will be documented during implementation.
 
 ### Aggregate: Weekly charts → monthly indicators
 
-We will use chart rankings to give more popular chart entries more influence. One simple **proposed**, not yet finalized, rank weight is:
+The implemented preparation uses chart rankings to give more popular chart entries more influence. Its rank weight is:
 
 $$
 w_i = 101 - r_i
@@ -107,7 +107,7 @@ E_{t,k} =
      {\sum_{i\in \mathcal C_t^{\mathrm{matched}}}w_i},
 $$
 
-where $\mathcal C_t^{\mathrm{matched}}$ contains only **eligible chart observations known by the forecast cutoff** for month $t$. We will report match coverage in both song counts and chart-weight terms. The aggregation window and handling of weeks crossing month boundaries will be specified before modeling.
+where $\mathcal C_t^{\mathrm{matched}}$ contains only **eligible chart observations known by the forecast cutoff** for month $t$. Each observation belongs to its chart-issue month, and repeated weeks contribute separate rank weights. Coverage retains unmatched and excluded observations in its denominator.
 
 ### Join 2: Monthly music features ↔ FRED
 
@@ -136,7 +136,7 @@ $$
 \Phi\left(\beta_0+\beta_1S_t+\sum_{k=1}^{6}\gamma_kE_{t,k}\right).
 $$
 
-Here $\Phi$ is the standard normal CDF. The six music terms are the only planned added inputs in the main comparison. We will keep the feature set small and consider regularization if necessary to reduce overfitting.
+Here $\Phi$ is the standard normal CDF. The six music terms are the only added inputs in the main comparison. The implemented Probit is unregularized; separation and optimization failures are reported rather than silently changing the model.
 
 ### Evaluation protocol
 
@@ -354,3 +354,39 @@ compatible training windows and identical evaluation months.
 ---
 
 *Prepared for the NYU Courant Predictive Analytics course, Fall 2026. Economic preparation, the Probit baseline and retrospective backtesting are implemented; music-source availability and historical real-time availability remain subject to verification.*
+
+## Local lyrics validation (1973–2023)
+
+The new offline audit preserves the master inventory and historical reports, and
+writes only metadata, exact source locators, content hashes, and coverage statistics.
+Candidate availability is **provisional**, not verified recording identity or proof
+of historical real-time availability. Raw lyric files remain under ignored
+`data/raw/lyrics/`; no lyrics are exported to reports.
+
+```sh
+.venv/bin/python -m music_recession.lyrics_audit --output reports/lyrics_validation/new_run
+.venv/bin/python -m unittest discover -s tests -q
+```
+
+Choose a fresh output directory. See [validation protocol](docs/lyrics_validation.md),
+[source registry](config/lyrics_sources.json), and
+[review checklist](docs/music_review_checklist.md). Existing `scripts/tally_osf_lyrics.py`
+and `scripts/apply_osf_aliases.py` overwrite the original inventory and predate these
+checks; use the new audit for reproducible validation. The audit runs no BERT or Model B.
+
+## Current Model A/B comparison runner
+
+The paired comparison is implemented with eligibility-gated local GoEmotions
+scoring, source/content-keyed caches, monthly Billboard weighting and expanding
+Probit fits. See [execution and evidence requirements](docs/model_comparison.md).
+
+```sh
+.venv/bin/python -m unittest discover -s tests -q
+.venv/bin/python -m music_recession.music_model --output-dir reports/model_comparison/new_run
+```
+
+Use a fresh output directory. With the current empty review registry, the command
+returns exit 2 (`blocked_no_policy_eligible_lyrics`), saving coverage and forecast
+status reports without model downloads or lyric inference. The 925 newly recovered
+candidates are not automatically admitted. The original Model A baseline remains
+unchanged and its broad-period score is not a paired Model B comparison.
