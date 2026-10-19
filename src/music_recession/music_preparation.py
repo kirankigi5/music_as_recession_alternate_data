@@ -28,14 +28,37 @@ def reference_id(r):
         'record_number', 'content_sha256']], separators=(',', ':')).encode())
 
 
+EXPLORATORY_MODE = 'exploratory_course'
+EXPLORATORY_BASIS = 'exploratory_automated_screen'
+
+
 def validate_policy(policy, baseline):
-    fixed = dict(schema_version=1, start_month='1973-01-01', end_month='2023-12-01',
-        allowed_sources=['osf'], emotions=EMOTIONS, instrumentals='exclude_no_zero_vector',
-        combined_singles='exclude_pending_component_and_weight_evidence',
-        languages='reviewed_english_only', unknown_languages='block_nlp',
-        year_end_sources='exclude_from_primary_mapping', ambiguous_versions='exclude_no_automatic_resolution',
-        unresolved_aliases='exclude_target_identity', recording_and_permission_evidence='required_for_nlp',
-        chart_timing_basis='retrospective_chart_date_convention')
+    """Strict policy by default; an explicitly declared exploratory course policy
+    is also accepted. The exploratory policy admits automatically screened
+    provisional records and NEVER asserts verified recordings, reviewed language,
+    verified release dates or cleared rights. See docs/exploratory_course_policy.md.
+    """
+    if policy.get('analysis_mode') == EXPLORATORY_MODE:
+        fixed = dict(schema_version=1, analysis_mode=EXPLORATORY_MODE,
+            start_month='1973-01-01', end_month='2023-12-01',
+            allowed_sources=['osf'], emotions=EMOTIONS, instrumentals='exclude_no_zero_vector',
+            combined_singles='exclude_pending_component_and_weight_evidence',
+            languages='automated_screen_english_unreviewed', unknown_languages='block_nlp',
+            year_end_sources='exclude_from_primary_mapping',
+            ambiguous_versions='exclude_no_automatic_resolution',
+            unresolved_aliases='exclude_target_identity',
+            recording_and_permission_evidence='reported_instructor_guidance_exploratory_not_verified',
+            release_date_evidence='chart_observability_only_no_verified_release_date',
+            source_use_basis='reported_instructor_guidance_course_project_not_a_license',
+            chart_timing_basis='retrospective_chart_date_convention')
+    else:
+        fixed = dict(schema_version=1, start_month='1973-01-01', end_month='2023-12-01',
+            allowed_sources=['osf'], emotions=EMOTIONS, instrumentals='exclude_no_zero_vector',
+            combined_singles='exclude_pending_component_and_weight_evidence',
+            languages='reviewed_english_only', unknown_languages='block_nlp',
+            year_end_sources='exclude_from_primary_mapping', ambiguous_versions='exclude_no_automatic_resolution',
+            unresolved_aliases='exclude_target_identity', recording_and_permission_evidence='required_for_nlp',
+            chart_timing_basis='retrospective_chart_date_convention')
     for key, value in fixed.items():
         if policy.get(key) != value:
             raise ValueError('Unsupported preparation policy: '+key)
@@ -49,7 +72,7 @@ def validate_policy(policy, baseline):
         raise ValueError('Model A timing contract changed; review comparison protocol')
 
 
-def select_mapping(song, references, alias_excluded=False, review=None):
+def select_mapping(song, references, alias_excluded=False, review=None, screen=None):
     """One selected locator or an explicit exclusion; never infer approval."""
     reasons = set()
     aggregate = flags(song['flags'])
@@ -84,7 +107,35 @@ def select_mapping(song, references, alias_excluded=False, review=None):
         quality_flags=song['flags'], exclusion_reasons=';'.join(sorted(reasons)),
         language='unknown', release_date='', recording_verified=False, nlp_ready=False,
         readiness_blockers='source_excluded' if not selected else 'recording_evidence_missing;language_unknown;permission_evidence_missing;release_evidence_missing',
-        reviewer='', recording_evidence='', language_evidence='', permission_evidence='', release_evidence='')
+        reviewer='', recording_evidence='', language_evidence='', permission_evidence='', release_evidence='',
+        eligibility_basis='')
+    if review and screen:
+        raise ValueError('Supply a strict review record or an exploratory screen row, not both')
+    if screen is not None:
+        # EXPLORATORY COURSE POLICY ONLY. Automated screens are not verification:
+        # recording_verified stays False, release_date is left EMPTY rather than
+        # back-filled from a chart date, and every outstanding gap is recorded in
+        # readiness_blockers so nothing here can be mistaken for approved evidence.
+        if not selected:
+            return row
+        if screen.get('automated_screen_pass') not in (True, 'True'):
+            row['readiness_blockers'] = 'exploratory_automated_screen_not_passed'
+            return row
+        if screen.get('language_status') != 'english_automated_consistent':
+            row['readiness_blockers'] = 'exploratory_language_screen_not_consistent_english'
+            return row
+        row.update(language='en', nlp_ready=True, recording_verified=False,
+            eligibility_basis=EXPLORATORY_BASIS,
+            reviewer='exploratory_course_policy_no_human_review',
+            recording_evidence='automated_metadata_and_chart_slot_match_only_not_independently_verified',
+            language_evidence='automated_langid_consistent_english_not_human_reviewed',
+            permission_evidence=('reported_instructor_guidance_for_course_project'
+                                 '_not_a_license_or_rights_clearance'),
+            release_date='',
+            release_evidence='chart_observability_only_no_verified_release_date',
+            readiness_blockers=('recording_not_independently_verified;language_not_human_reviewed;'
+                                'release_date_not_verified;source_use_rights_unresolved'))
+        return row
     if review:
         if not selected or review['source_reference_id'] != row['source_reference_id'] or review['content_sha256'] != row['content_sha256']:
             raise ValueError('Review points to excluded, stale, or different source: '+song['song_id'])
@@ -195,7 +246,12 @@ def prepare_months(charts, mapping, economic, policy):
                 continue
             c['provisional_weight'] += w
             if mapped['nlp_ready']:
-                if date.fromisoformat(mapped['release_date']) > day:
+                # Strict policy always carries a validated release_date, so this
+                # branch is unchanged for it. The exploratory policy has no verified
+                # release date and relies on chart observability alone, which is
+                # recorded in release_evidence rather than invented here.
+                release = mapped['release_date']
+                if release and date.fromisoformat(release) > day:
                     c['reasons'].add('recording_release_after_chart')
                 else:
                     c['nlp_ready_weight'] += w

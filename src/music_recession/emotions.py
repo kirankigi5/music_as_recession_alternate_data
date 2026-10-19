@@ -32,8 +32,37 @@ def validate_scores(scores):
     return values
 
 
+EXPLORATORY_BASIS = 'exploratory_automated_screen'
+
+
+def require_exploratory_eligible(row):
+    """Explicitly labelled exploratory course policy.
+
+    Admits automatically screened provisional OSF records. It must NOT assert a
+    verified recording, reviewed language, verified release date or cleared
+    rights, so recording_verified is required to be False and release_date is
+    required to be EMPTY rather than back-filled from a chart date.
+    """
+    if (row.get('nlp_ready') not in (True, 'True') or
+        row.get('language') != 'en' or row.get('source') != 'osf' or
+        row.get('mapping_status') != 'provisional_selected' or
+        row.get('exclusion_reasons')):
+        raise ValueError('Source is not eligible under the exploratory course policy')
+    if row.get('recording_verified') in (True, 'True'):
+        raise ValueError('Exploratory eligibility must not claim a verified recording')
+    if str(row.get('release_date', '')).strip():
+        raise ValueError('Exploratory eligibility must not assert a release date')
+    for field in ('song_id', 'source_reference_id', 'content_sha256', 'reviewer',
+                  'recording_evidence', 'language_evidence', 'permission_evidence',
+                  'release_evidence'):
+        if not str(row.get(field, '')).strip():
+            raise ValueError('Missing exploratory evidence annotation: '+field)
+
+
 def require_eligible(row):
     # CSV values are strings; bool('False') must never authorize inference.
+    if row.get('eligibility_basis') == EXPLORATORY_BASIS:
+        return require_exploratory_eligible(row)
     if (row.get('nlp_ready') not in (True, 'True') or
         row.get('recording_verified') not in (True, 'True') or
         row.get('language') != 'en' or row.get('source') != 'osf' or
@@ -93,8 +122,12 @@ class GoEmotions:
             chunk = tokens[start:start+size]
             encoded = self.tokenizer.prepare_for_model(chunk, add_special_tokens=True,
                 return_attention_mask=True, return_tensors='pt', truncation=False)
+            # prepare_for_model returns unbatched 1-D tensors; RoBERTa needs a batch
+            # axis. Non-tensor values pass through for synthetic test backends.
+            batched = {k: v.unsqueeze(0) if hasattr(v, 'dim') and v.dim() == 1 else v
+                       for k, v in encoded.items()}
             with self.torch.inference_mode():
-                probabilities = self.torch.sigmoid(self.model(**encoded).logits)[0].cpu().numpy()
+                probabilities = self.torch.sigmoid(self.model(**batched).logits)[0].cpu().numpy()
             weighted += len(chunk)*probabilities[[labels[e] for e in EMOTIONS]]
             chunks += 1
         return dict(scores=dict(zip(EMOTIONS, (weighted/len(tokens)).tolist())),
