@@ -1,0 +1,394 @@
+{
+  "source": "<run>/predictions.csv",
+  "runs": [
+    {
+      "label": "70% (primary)",
+      "run": "docs/results/exploratory_primary_cov70",
+      "forecasts": 183,
+      "first_predictor_month": "1993-11-01",
+      "last_predictor_month": "2023-12-01",
+      "calendar_span_months": 362,
+      "recession_target_months": 15,
+      "recession_episodes_reached": [
+        "2001-04 to 2001-11",
+        "2008-01 to 2009-06",
+        "2020-03 to 2020-04"
+      ],
+      "pr_auc_no_skill_level": 0.08196721311475409,
+      "training_prevalence_brier_score": 0.08297080327236554,
+      "model_a": {
+        "brier_score": 0.09038187314132133,
+        "brier_skill_vs_training_prevalence": -0.08932141882039768,
+        "roc_auc": 0.6462301587301588,
+        "pr_auc": 0.16878548981022162
+      },
+      "model_b": {
+        "brier_score": 0.12024857793242896,
+        "brier_skill_vs_training_prevalence": -0.4492878601849002,
+        "roc_auc": 0.4305555555555556,
+        "pr_auc": 0.07224872234656919
+      },
+      "loss_differential": {
+        "definition": "Brier loss of Model B minus Model A per forecast month; positive = B worse",
+        "mean": 0.02986670479110764,
+        "months_b_worse": 86,
+        "months_b_better": 97,
+        "autocorrelation_by_calendar_lag": {
+          "1": {
+            "value": 0.7404049570965585,
+            "pairs": 161
+          },
+          "3": {
+            "value": 0.44152489848111337,
+            "pairs": 139
+          },
+          "6": {
+            "value": 0.054860738062749055,
+            "pairs": 128
+          },
+          "12": {
+            "value": -0.13220230569593988,
+            "pairs": 111
+          },
+          "24": {
+            "value": 0.3247926948401817,
+            "pairs": 109
+          }
+        },
+        "iid_bootstrap": {
+          "method": "iid_rows",
+          "replications": 10000,
+          "ci_lower": 0.01489360723030649,
+          "ci_upper": 0.04555276147540937,
+          "share_at_or_below_zero": 0.0
+        },
+        "block_bootstrap": [
+          {
+            "method": "circular_calendar_blocks",
+            "block_length_months": 6,
+            "calendar_span_months": 362,
+            "empty_replicates_dropped": 0,
+            "replications": 10000,
+            "ci_lower": 0.003055203918805122,
+            "ci_upper": 0.05942160530556544,
+            "share_at_or_below_zero": 0.0135
+          },
+          {
+            "method": "circular_calendar_blocks",
+            "block_length_months": 12,
+            "calendar_span_months": 362,
+            "empty_replicates_dropped": 0,
+            "replications": 10000,
+            "ci_lower": -0.0009913412553267007,
+            "ci_upper": 0.061378402668879666,
+            "share_at_or_below_zero": 0.0288
+          },
+          {
+            "method": "circular_calendar_blocks",
+            "block_length_months": 24,
+            "calendar_span_months": 362,
+            "empty_replicates_dropped": 0,
+            "replications": 10000,
+            "ci_lower": -0.003891111023225448,
+            "ci_upper": 0.0583211661000807,
+            "share_at_or_below_zero": 0.0383
+          }
+        ],
+        "diebold_mariano": [
+          {
+            "max_lag": 5,
+            "kernel": "bartlett",
+            "mean": 0.02986670479110764,
+            "standard_error": 0.014433183971915172,
+            "statistic": 2.069308120039473,
+            "p_value_two_sided": 0.03993014550682698,
+            "effective_observations": 55.7409079801135
+          },
+          {
+            "max_lag": 12,
+            "kernel": "bartlett",
+            "mean": 0.02986670479110764,
+            "standard_error": 0.015772826334079712,
+            "statistic": 1.8935544054381586,
+            "p_value_two_sided": 0.05987076503145922,
+            "effective_observations": 46.674458744155125
+          },
+          {
+            "max_lag": 24,
+            "kernel": "bartlett",
+            "mean": 0.02986670479110764,
+            "standard_error": 0.014996851799701158,
+            "statistic": 1.9915316354398322,
+            "p_value_two_sided": 0.04791813312379606,
+            "effective_observations": 51.62952553914395
+          }
+        ]
+      },
+      "settings": {
+        "horizon_months": 6,
+        "confidence_level": 0.95,
+        "replications": 10000,
+        "seed": 20261026
+      }
+    },
+    {
+      "label": "75% sensitivity",
+      "run": "docs/results/exploratory_sensitivity_cov75",
+      "forecasts": 102,
+      "first_predictor_month": "1993-11-01",
+      "last_predictor_month": "2020-02-01",
+      "calendar_span_months": 316,
+      "recession_target_months": 9,
+      "recession_episodes_reached": [
+        "2001-04 to 2001-11",
+        "2020-03 to 2020-04"
+      ],
+      "pr_auc_no_skill_level": 0.08823529411764706,
+      "training_prevalence_brier_score": 0.08906266559316882,
+      "model_a": {
+        "brier_score": 0.07398584090287659,
+        "brier_skill_vs_training_prevalence": 0.16928333089829095,
+        "roc_auc": 0.8721624850657109,
+        "pr_auc": 0.6295469956760279
+      },
+      "model_b": {
+        "brier_score": 0.11464959912864661,
+        "brier_skill_vs_training_prevalence": -0.2872913511521975,
+        "roc_auc": 0.5424133811230586,
+        "pr_auc": 0.09998152796501009
+      },
+      "loss_differential": {
+        "definition": "Brier loss of Model B minus Model A per forecast month; positive = B worse",
+        "mean": 0.04066375822577004,
+        "months_b_worse": 39,
+        "months_b_better": 63,
+        "autocorrelation_by_calendar_lag": {
+          "1": {
+            "value": 0.6758343838881883,
+            "pairs": 90
+          },
+          "3": {
+            "value": 0.3441383282326532,
+            "pairs": 77
+          },
+          "6": {
+            "value": -0.03961854599652784,
+            "pairs": 65
+          },
+          "12": {
+            "value": -0.22396055414522328,
+            "pairs": 63
+          },
+          "24": {
+            "value": 0.42452941619311574,
+            "pairs": 48
+          }
+        },
+        "iid_bootstrap": {
+          "method": "iid_rows",
+          "replications": 10000,
+          "ci_lower": 0.018954660055441986,
+          "ci_upper": 0.06581792886179845,
+          "share_at_or_below_zero": 0.0
+        },
+        "block_bootstrap": [
+          {
+            "method": "circular_calendar_blocks",
+            "block_length_months": 6,
+            "calendar_span_months": 316,
+            "empty_replicates_dropped": 0,
+            "replications": 10000,
+            "ci_lower": 0.005030535968863587,
+            "ci_upper": 0.08464610359527737,
+            "share_at_or_below_zero": 0.0088
+          },
+          {
+            "method": "circular_calendar_blocks",
+            "block_length_months": 12,
+            "calendar_span_months": 316,
+            "empty_replicates_dropped": 0,
+            "replications": 10000,
+            "ci_lower": 0.003819144620344941,
+            "ci_upper": 0.08693831650141298,
+            "share_at_or_below_zero": 0.0106
+          },
+          {
+            "method": "circular_calendar_blocks",
+            "block_length_months": 24,
+            "calendar_span_months": 316,
+            "empty_replicates_dropped": 0,
+            "replications": 10000,
+            "ci_lower": 0.004438080788687624,
+            "ci_upper": 0.07790227214518276,
+            "share_at_or_below_zero": 0.0067
+          }
+        ],
+        "diebold_mariano": [
+          {
+            "max_lag": 5,
+            "kernel": "bartlett",
+            "mean": 0.04066375822577004,
+            "standard_error": 0.02004313998282762,
+            "statistic": 2.0288117660511062,
+            "p_value_two_sided": 0.045108979255045874,
+            "effective_observations": 35.72196334415991
+          },
+          {
+            "max_lag": 12,
+            "kernel": "bartlett",
+            "mean": 0.04066375822577004,
+            "standard_error": 0.02061385786302519,
+            "statistic": 1.9726418264825674,
+            "p_value_two_sided": 0.051270045608408935,
+            "effective_observations": 33.771339396095506
+          },
+          {
+            "max_lag": 24,
+            "kernel": "bartlett",
+            "mean": 0.04066375822577004,
+            "standard_error": 0.017824680680913817,
+            "statistic": 2.2813176265935406,
+            "p_value_two_sided": 0.024628752724213297,
+            "effective_observations": 45.167216034976995
+          }
+        ]
+      },
+      "settings": {
+        "horizon_months": 6,
+        "confidence_level": 0.95,
+        "replications": 10000,
+        "seed": 20261026
+      },
+      "forecast_months_also_in_primary": 102
+    },
+    {
+      "label": "80% sensitivity",
+      "run": "docs/results/exploratory_sensitivity_cov80",
+      "forecasts": 45,
+      "first_predictor_month": "1994-05-01",
+      "last_predictor_month": "2016-03-01",
+      "calendar_span_months": 263,
+      "recession_target_months": 4,
+      "recession_episodes_reached": [
+        "2001-04 to 2001-11"
+      ],
+      "pr_auc_no_skill_level": 0.08888888888888889,
+      "training_prevalence_brier_score": 0.09007147935253879,
+      "model_a": {
+        "brier_score": 0.0640448013828281,
+        "brier_skill_vs_training_prevalence": 0.28895581772164025,
+        "roc_auc": 0.9878048780487805,
+        "pr_auc": 0.9166666666666666
+      },
+      "model_b": {
+        "brier_score": 0.1206001393850548,
+        "brier_skill_vs_training_prevalence": -0.33893814392708244,
+        "roc_auc": 0.7012195121951219,
+        "pr_auc": 0.16038748832866478
+      },
+      "loss_differential": {
+        "definition": "Brier loss of Model B minus Model A per forecast month; positive = B worse",
+        "mean": 0.05655533800222671,
+        "months_b_worse": 16,
+        "months_b_better": 29,
+        "autocorrelation_by_calendar_lag": {
+          "1": {
+            "value": 0.7541160524685747,
+            "pairs": 38
+          },
+          "3": {
+            "value": 0.0772762642115517,
+            "pairs": 30
+          },
+          "6": {
+            "value": -0.042798777244782905,
+            "pairs": 22
+          },
+          "12": {
+            "value": -0.09477048146319976,
+            "pairs": 17
+          },
+          "24": {
+            "value": 3.356575256001446,
+            "pairs": 3
+          }
+        },
+        "iid_bootstrap": {
+          "method": "iid_rows",
+          "replications": 10000,
+          "ci_lower": 0.018562727435867215,
+          "ci_upper": 0.09990891297598109,
+          "share_at_or_below_zero": 0.0005
+        },
+        "block_bootstrap": [
+          {
+            "method": "circular_calendar_blocks",
+            "block_length_months": 6,
+            "calendar_span_months": 263,
+            "empty_replicates_dropped": 1,
+            "replications": 9999,
+            "ci_lower": -0.001972265809111637,
+            "ci_upper": 0.13371931047332505,
+            "share_at_or_below_zero": 0.0318031803180318
+          },
+          {
+            "method": "circular_calendar_blocks",
+            "block_length_months": 12,
+            "calendar_span_months": 263,
+            "empty_replicates_dropped": 4,
+            "replications": 9996,
+            "ci_lower": -0.0027449360077969813,
+            "ci_upper": 0.1454520361711045,
+            "share_at_or_below_zero": 0.046318527410964386
+          },
+          {
+            "method": "circular_calendar_blocks",
+            "block_length_months": 24,
+            "calendar_span_months": 263,
+            "empty_replicates_dropped": 31,
+            "replications": 9969,
+            "ci_lower": -0.002191365374749841,
+            "ci_upper": 0.14280056761705964,
+            "share_at_or_below_zero": 0.048048951750426325
+          }
+        ],
+        "diebold_mariano": [
+          {
+            "max_lag": 5,
+            "kernel": "bartlett",
+            "mean": 0.05655533800222671,
+            "standard_error": 0.032739787412407906,
+            "statistic": 1.7274192190018025,
+            "p_value_two_sided": 0.09110682346049684,
+            "effective_observations": 18.076563128003073
+          },
+          {
+            "max_lag": 12,
+            "kernel": "bartlett",
+            "mean": 0.05655533800222671,
+            "standard_error": 0.033691336241442695,
+            "statistic": 1.6786314913998484,
+            "p_value_two_sided": 0.10031337051596753,
+            "effective_observations": 17.069904853363006
+          },
+          {
+            "max_lag": 24,
+            "kernel": "bartlett",
+            "mean": 0.05655533800222671,
+            "standard_error": 0.033313087554734985,
+            "statistic": 1.6976912725157522,
+            "p_value_two_sided": 0.0966291565114849,
+            "effective_observations": 17.459741114867633
+          }
+        ]
+      },
+      "settings": {
+        "horizon_months": 6,
+        "confidence_level": 0.95,
+        "replications": 10000,
+        "seed": 20261026
+      },
+      "forecast_months_also_in_primary": 45
+    }
+  ]
+}
