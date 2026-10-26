@@ -39,8 +39,9 @@ The question is whether Model B beats Model A out of sample. It does not.
 | Synthetic end-to-end pipeline validation | **Done** |
 | **Real GoEmotions inference on 16,290 songs** | **Done** |
 | **70% primary + 75% / 80% sensitivity comparisons** | **Done** |
+| Calendar-block bootstrap, Diebold–Mariano (HAC), PR-AUC | **Done**, from committed predictions |
 | Figures, report, handoff | **Done** |
-| Test suite | **191 passing** |
+| Test suite | **208 passing** |
 | Strict-policy Model B result | **Still blocked by design** — 0 eligible records |
 
 ---
@@ -56,10 +57,12 @@ src/music_recession/
   music_preparation.py     identity mapping, monthly aggregation, BOTH policies
   emotions.py              GoEmotions adapter, score cache, eligibility gates
   music_model.py           Model B fit, paired evaluate(), plots
+  inference.py             calendar-block bootstrap, Diebold–Mariano/HAC, PR-AUC
   recording_metadata.py    MusicBrainz corroboration logic
 
 scripts/
   run_exploratory_comparison.py   THE EXPERIMENT DRIVER
+  run_paired_inference.py         intervals + tests from predictions.csv, seconds
   make_research_figures.py        rebuilds every figure, no inference
   measure_model_b_readiness.py    coverage feasibility, blind to performance
   audit_osf_evidence.py           per-candidate evidence screening
@@ -89,6 +92,9 @@ pairing is enforced).
   and [`results/exploratory_sensitivity_cov80/`](results/exploratory_sensitivity_cov80/)
 - [`figures/music_recession/`](figures/music_recession/) — 10 figures plus
   `results_summary.json`
+- [`results/paired_inference.json`](results/paired_inference.json): block-bootstrap
+  intervals, Diebold–Mariano tests, PR-AUC and skill against the base rate for all
+  three runs
 
 **Local only, not committed** (too large or unnecessary):
 
@@ -150,7 +156,7 @@ reused for every chart appearance.
 Brier is a loss, so **positive B − A means Model B is worse**. Zero fit failures
 anywhere.
 
-Four things worth knowing beyond the table:
+Six things worth knowing beyond the table:
 
 1. **Model B's AUC of 0.4306 is below chance** at the primary threshold.
 2. **Model B fails hardest exactly when it matters.** Mean per-month penalty is
@@ -161,6 +167,20 @@ Four things worth knowing beyond the table:
    signature.
 4. **Its one good period is 2023**, where it correctly damped a Model A false alarm
    on the inverted curve.
+5. **The evidence is thinner than 183 forecasts suggests.** Allowing for serial
+   dependence, the primary 95% interval on B − A is [−0.0010, +0.0614] with
+   12-month calendar blocks, and the Diebold–Mariano p-value is 0.04 to 0.06
+   depending on the HAC lag. The 183 forecasts carry about as much information as
+   50 independent months. The 75% and 80% runs reuse a subset of the 70% months and
+   reach two and one recession episodes, so they do not independently confirm the
+   result. Quote these intervals, not the i.i.d. [+0.0147, +0.0458].
+6. **Model A does not beat the base rate in the primary window either.** Against a
+   forecast that repeats the training recession share, its Brier skill is −0.089
+   (Model B −0.449). PR-AUC is 0.169 for A and 0.072 for B, against a no-skill
+   level of 0.082.
+
+Tables for all three runs are in
+[`exploratory_results.md`](exploratory_results.md#how-certain-is-the-difference).
 
 ---
 
@@ -182,7 +202,8 @@ Four things worth knowing beyond the table:
   manual validation of its lyric predictions was never done.
 - **8 parameters against 46–61 positive training labels** (EPV ≈ 5.8–9.2 against a
   conventional minimum of 10).
-- **Our bootstrap interval is too narrow** — months are serially dependent.
+- **Inference is weak.** Roughly 50 effective independent months in the primary
+  run and at most three recession episodes (finding 5 above).
 
 **This study does not show music is economically useless.** It shows that *this*
 design, on *this* corpus, with *this* emotion model, did not beat the yield curve.
@@ -207,7 +228,10 @@ Ranked by value. Full reasoning in Section 17 of the research report.
 5. **Validate GoEmotions on lyrics**, or fine-tune. Right now we cannot distinguish
    "lyric emotion does not predict" from "GoEmotions does not measure lyric
    emotion".
-6. **Block bootstrap / Diebold–Mariano with HAC errors** for honest uncertainty.
+6. ~~Block bootstrap / Diebold–Mariano with HAC errors~~ **Done.** Score any new
+   variant from items 2 to 4 the same way with
+   `scripts/run_paired_inference.py --run-dir docs/results/exploratory_primary_cov70
+   --run-dir <new run dir> --out <file>.json`.
 7. **Extend back to 1959–1972** to add three more recession episodes.
 
 ---
@@ -241,7 +265,7 @@ No raw lyrics, no model weights, no network needed.
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -e .          # numpy, scipy, statsmodels, matplotlib
-.venv/bin/python -m pytest -q                 # expect 191 passed
+.venv/bin/python -m pytest -q                 # expect 208 passed
 .venv/bin/python scripts/make_research_figures.py
 ```
 
@@ -282,7 +306,7 @@ for r in ('exploratory_primary_cov70','exploratory_sensitivity_cov75','explorato
 │   └── results/                      committed metrics, predictions, coverage
 ├── src/music_recession/          all model + pipeline code
 ├── scripts/                      runnable entry points
-├── tests/                        191 tests
+├── tests/                        208 tests
 ├── config/                       policies and model pins
 ├── data/processed/               economic_monthly.csv (tracked)
 ├── data/raw/                     GITIGNORED: lyrics, model weights
@@ -329,7 +353,11 @@ Work through this to satisfy yourself the result is sound.
 
 - [ ] Figures 4 and 5 are not read left-to-right across thresholds
 - [ ] Figure 6's lines break where no eligible month exists
-- [ ] The bootstrap interval is reported with its serial-dependence caveat
+- [ ] Intervals quoted anywhere are the calendar-block ones from
+      `docs/results/paired_inference.json`, not the i.i.d. [+0.0147, +0.0458]
+- [ ] The 75% and 80% months are subsets of the 70% months
+      (`forecast_months_also_in_primary` in the same file), so sign agreement
+      across thresholds is not presented as three independent checks
 - [ ] `CODE_VERSION_PROVENANCE.md` is read: 7,490 of 16,290 songs verified
       identical across the two `emotions.py` hashes, 8,800 not recomputed
 - [ ] No raw lyric text anywhere in the repository

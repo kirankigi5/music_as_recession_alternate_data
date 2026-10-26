@@ -11,7 +11,7 @@
 > predeclared coverage thresholds. **Result: lyric emotions made six-month-ahead
 > recession forecasts worse, not better** (primary 70% coverage, 183 paired
 > forecasts: Model A Brier **0.0904** vs Model B **0.1202**, difference
-> **+0.0299**). 191 tests pass.
+> **+0.0299**). 208 tests pass.
 >
 > These are **exploratory coursework results**. The records used passed only
 > *automated* risk and English-language screens: no recording is independently
@@ -479,6 +479,12 @@ it admits and what it refuses to assert.
 Brier is a loss, so positive `B − A` means **Model B is worse**. Zero fit failures
 in any run. Full interpretation in
 [`docs/COMPLETE_RESEARCH_REPORT.md`](docs/COMPLETE_RESEARCH_REPORT.md).
+
+The block-bootstrap intervals and PR-AUC promised in the evaluation protocol are
+in [report §10.6](docs/COMPLETE_RESEARCH_REPORT.md#106-uncertainty-that-respects-time-order).
+With 12-month calendar blocks the primary 95% interval on `B − A` is
+[−0.0010, +0.0614], and Diebold–Mariano p is 0.04 to 0.06. Recompute in seconds
+with `.venv/bin/python scripts/run_paired_inference.py`.
 
 To rebuild every figure from the saved outputs without re-running the ~50-minute
 inference:

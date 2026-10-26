@@ -108,8 +108,12 @@ failures occurred in any run.
 **Adding lyric emotions made six-month-ahead recession forecasts worse, not
 better, at every threshold we predeclared.** Model B's primary ROC-AUC of 0.4306
 is below 0.5, meaning worse-than-chance ranking on this sample. The direction of
-the result is consistent across all three thresholds and the paired bootstrap
-interval on the primary Brier difference, [+0.0147, +0.0458], excludes zero.
+the result is the same at all three thresholds, which are nested samples. Once the
+serial dependence between overlapping monthly forecasts is allowed for, the
+primary 95% interval on the Brier difference runs from −0.0010 to +0.0614
+(12-month calendar blocks) and the Diebold–Mariano p-value is 0.04 to 0.06
+depending on the HAC lag (Section 10.6). The negative result is likely but not
+established at conventional levels.
 
 The failure is concentrated where it matters most: on the 15 recession-positive
 target months, Model B's mean per-month Brier penalty is **+0.1713**, versus
@@ -1243,11 +1247,27 @@ compounding reasons:
    specific periods (1999, 2001, 2023), exactly the structure an i.i.d. bootstrap
    mishandles.
 
-A block bootstrap or a Diebold–Mariano test with HAC standard errors would be
-appropriate; neither is implemented here. We therefore report the interval with
-this caveat attached and lean on **consistency of sign across three thresholds**
-as the more credible robustness evidence. Our naive paired *t* of +3.74 should be
-read the same way.
+Our naive paired *t* of +3.74 has the same problem. Section 10.6 replaces both
+with two calendar-aware methods, implemented in `src/music_recession/inference.py`
+and run from the committed predictions by `scripts/run_paired_inference.py`.
+
+The **circular block bootstrap** builds each replicate from randomly drawn blocks
+of 6, 12 or 24 consecutive calendar months until it covers the evaluation span
+once. Eligible forecast months are far from contiguous (the primary run has 22
+separate stretches with gaps of up to 34 months), so blocks are laid on the
+calendar rather than on row order. A block that falls in an ineligible stretch
+carries fewer forecasts or none, and forecasts two years apart are never joined
+as if they were adjacent. 10,000 replicates, fixed seed, percentile intervals.
+
+The **Diebold–Mariano test** divides the mean differential by a Newey–West
+(Bartlett) HAC standard error and refers it to *t*(n − 1). We report lags 5 (the
+h − 1 minimum for six-month forecasts), 12 and 24. Lag-k cross-products use only
+pairs of forecasts exactly k calendar months apart. With no gaps this is the
+textbook Newey–West estimate, and a unit test checks it against statsmodels.
+
+Neither method fixes the deeper problem in point 2. With three episodes, no block
+length or HAC lag gives an interval you can fully trust. Section 10.5 also shows
+that agreement in sign across thresholds is weaker evidence than it first looked.
 
 ---
 
@@ -1339,9 +1359,62 @@ both models.
 
 The only legitimate cross-threshold reading is of the **paired difference**, which
 holds sample effects constant within each row. That difference is positive in all
-three rows, which is the robustness evidence. Its *growth* across rows
-(+0.0299 → +0.0407 → +0.0566) should be read cautiously, since the samples
-differ.
+three rows. Its *growth* across rows (+0.0299 → +0.0407 → +0.0566) should be read
+cautiously, since the samples differ.
+
+The three rows are not independent confirmations either. The samples are nested:
+all 102 forecast months in the 75% run are also 70% months, and all 45 months in
+the 80% run appear in both. The 75% sample reaches two recession episodes (2001
+and 2020) and the 80% sample reaches one (2001). Agreement in sign across rows
+therefore mostly re-measures the 2001 recession.
+
+### 10.6 Uncertainty that respects time order
+
+Produced by `scripts/run_paired_inference.py` from the committed
+`predictions.csv` files in a few seconds. The full output is in
+[`results/paired_inference.json`](results/paired_inference.json) and the method
+is in Section 9.7.
+
+| | 70% primary | 75% | 80% |
+|---|---|---|---|
+| Forecasts / recession months / episodes | 183 / 15 / 3 | 102 / 9 / 2 | 45 / 4 / 1 |
+| Mean B − A | +0.0299 | +0.0407 | +0.0566 |
+| 95% CI, months resampled independently | [+0.0149, +0.0456] | [+0.0190, +0.0658] | [+0.0186, +0.0999] |
+| 95% CI, 6-month calendar blocks | [+0.0031, +0.0594] | [+0.0050, +0.0846] | [−0.0020, +0.1337] |
+| 95% CI, 12-month calendar blocks | [−0.0010, +0.0614] | [+0.0038, +0.0869] | [−0.0027, +0.1455] |
+| 95% CI, 24-month calendar blocks | [−0.0039, +0.0583] | [+0.0044, +0.0779] | [−0.0022, +0.1428] |
+| Diebold–Mariano p, HAC lag 5 / 12 / 24 | 0.040 / 0.060 / 0.048 | 0.045 / 0.051 / 0.025 | 0.091 / 0.100 / 0.097 |
+| Effective independent months (HAC) | 47 to 56 | 34 to 45 | 17 to 18 |
+
+The independent-resampling row reproduces the interval first reported,
+[+0.0147, +0.0458], to within bootstrap noise. The loss differential has an
+autocorrelation of 0.74 at one month, and the HAC variance says the 183 primary
+forecasts carry about as much information as 50 independent months.
+
+At the primary threshold the 6-month block interval excludes zero, the 12- and
+24-month intervals just include it, and the Diebold–Mariano p-values sit between
+0.04 and 0.06. At 75% every interval excludes zero, but that sample holds two
+episodes. At 80% every calendar-aware interval includes zero. Model B was worse in
+every sample we built. The evidence that it would be worse in general is
+suggestive and short of conclusive.
+
+**PR-AUC and skill against the base rate.** The project plan named PR-AUC as a
+supporting metric. It is computed here for the first time, together with each
+model's Brier skill against a forecast that repeats the recession share of its own
+training rows (the reference the Model A backtest uses in Section 7.5).
+
+| | 70% primary | 75% | 80% |
+|---|---|---|---|
+| Model A PR-AUC | 0.169 | 0.630 | 0.917 |
+| Model B PR-AUC | 0.072 | 0.100 | 0.160 |
+| PR-AUC of a no-skill forecast (recession share) | 0.082 | 0.088 | 0.089 |
+| Model A Brier skill vs training prevalence | −0.089 | +0.169 | +0.289 |
+| Model B Brier skill vs training prevalence | −0.449 | −0.287 | −0.339 |
+
+Model B's primary PR-AUC is below the no-skill level, consistent with its
+below-chance ROC-AUC. In the primary window Model A does not beat the training
+base rate either: both models lose to it there, Model B by much more. Like the
+other scores in this section, these must not be compared across columns.
 
 ---
 
@@ -1427,8 +1500,10 @@ B − A difference annotated.
 **Interpretation.** The core result. Model B (red) is worse than Model A (green)
 at every threshold, and the gap widens as coverage tightens: +0.0299, +0.0407,
 +0.0566. Because each pair comes from identical months with identical training
-rows, the within-pair comparison is clean. The consistency of sign across three
-independently predeclared thresholds is the strongest robustness evidence we have.
+rows, the within-pair comparison is clean. The sign agrees at all three
+predeclared thresholds, but the samples are nested (Section 10.5), so this is
+weaker evidence than three separate tests would be. Section 10.6 gives intervals
+that allow for serial dependence.
 
 **What cannot be concluded.** The bars **cannot** be compared left-to-right. Model
 A's apparent improvement from 0.0904 to 0.0640 reflects an easier, smaller sample,
@@ -1789,8 +1864,10 @@ Consecutive forecasts share nearly all training data and describe overlapping
 six-month-ahead windows, so per-month errors are strongly serially dependent. The
 effective number of independent observations is far below 183. Our independent-month
 bootstrap interval is correspondingly **too narrow**, and the naive paired *t* of
-+3.74 overstates precision. A block bootstrap or Diebold–Mariano test with HAC
-errors is the appropriate tool and is not implemented.
++3.74 overstates precision. The HAC estimates in Section 10.6 put the effective
+sample at roughly 47 to 56 independent months for the primary run. With
+calendar-block resampling, the primary interval reaches zero once blocks are a
+year or longer.
 
 ### 13.12 Exploratory, not confirmatory
 
@@ -1885,14 +1962,16 @@ resolved versions: torch 2.8.0, transformers 4.46.3, safetensors 0.7.0.
 │   ├── music_preparation.py             # mapping, monthly aggregation, policies
 │   ├── emotions.py                      # GoEmotions adapter + cache + gates
 │   ├── music_model.py                   # Model B, paired evaluate(), plots
+│   ├── inference.py                     # block bootstrap, Diebold–Mariano, PR-AUC
 │   └── recording_metadata.py            # MusicBrainz corroboration logic
 ├── scripts/
 │   ├── audit_osf_evidence.py
 │   ├── measure_model_b_readiness.py
 │   ├── match_recording_metadata.py
 │   ├── run_exploratory_comparison.py    # THE EXPERIMENT DRIVER
+│   ├── run_paired_inference.py          # Section 10.6 from committed predictions
 │   └── make_research_figures.py         # figures from derived outputs
-├── tests/                               # 191 tests
+├── tests/                               # 208 tests
 ├── docs/
 │   ├── COMPLETE_RESEARCH_REPORT.md      # this document
 │   ├── TEAM_HANDOFF.md
@@ -1950,7 +2029,7 @@ All of these refuse to overwrite an existing output directory.
 .venv/bin/python -m pytest -q
 ```
 
-Expected: **191 passed**. The suite requires no raw lyrics, no model weights and
+Expected: **208 passed**. The suite requires no raw lyrics, no model weights and
 no network access.
 
 ### 14.8 The primary experiment
@@ -2029,6 +2108,18 @@ This reads only the derived CSV and JSON files under
 `results_summary.json` into `docs/figures/music_recession/`. It performs no
 inference, no model fitting and no network access, and runs in seconds. Use
 `--out` to write elsewhere.
+
+### 14.14 Recomputing the Section 10.6 intervals and tests
+
+```bash
+.venv/bin/python scripts/run_paired_inference.py
+```
+
+Reads the committed `docs/results/*/predictions.csv` files and
+`data/processed/economic_monthly.csv`, prints a summary table and rewrites
+`docs/results/paired_inference.json`. The seed is fixed, so a rerun reproduces
+the file. `tests/test_inference.py` checks that the saved JSON still follows from
+the committed predictions.
 
 ### 14.14 What requires private local data
 
@@ -2266,10 +2357,13 @@ decisive than the evidence warrants.
 target windows, so the 183 months are nothing like 183 independent observations.
 The 15 recession months come from only three episodes.
 
-**Response.** Reported the interval **with** the caveat, declined to present it as
-a significance test, and leaned on consistency of sign across three predeclared
-thresholds as the more credible robustness evidence. A block bootstrap or
-Diebold–Mariano test with HAC errors is listed as future work.
+**Response.** At first we reported the interval with the caveat, declined to
+present it as a significance test, and leaned on consistency of sign across the
+three thresholds instead. Both have since been revisited. The calendar-block
+bootstrap and Diebold–Mariano tests in Section 10.6 put the primary interval at
+[−0.0010, +0.0614] for 12-month blocks, with p between 0.04 and 0.06. The
+thresholds also turned out to be nested samples (Section 10.5), so sign agreement
+across them is weak corroboration.
 
 ### 16.11 The negative modelling result itself
 
@@ -2351,11 +2445,16 @@ recessions" from "GoEmotions does not measure lyric emotion".
 
 ### Priority 6 — Stronger temporal uncertainty analysis
 
-Implement a block bootstrap over contiguous month blocks and a Diebold–Mariano
-test with HAC standard errors on the paired Brier differences.
+**Done** for the committed runs (Section 10.6): a calendar-block bootstrap and a
+Diebold–Mariano test with HAC errors on the paired Brier differences, plus PR-AUC
+and Brier skill against training prevalence. Any new Model B variant can be scored
+the same way by pointing `scripts/run_paired_inference.py` at its
+`predictions.csv`.
 
-**Why it matters.** Our current interval is known to be too narrow, which
-currently limits how strongly even the negative result can be stated.
+**Still open.** Fixed-b critical values, which behave better than the standard
+ones when the HAC bandwidth is large relative to the sample, and resampling by
+recession episode, which would make the three-episode limit explicit in the
+interval.
 
 ### Priority 7 — Alternative aggregation
 
@@ -2408,7 +2507,9 @@ predeclared coverage threshold:
 Model B's primary ROC-AUC of 0.4306 was below chance, its calibration was broken
 above 0.3 predicted probability, and its penalty on recession target months
 (+0.1713 mean) was ten times its penalty on quiet months (+0.0172). The direction
-of the result is consistent across three predeclared thresholds.
+of the result is the same at all three predeclared thresholds, though these are
+nested samples. Allowing for serial dependence, the primary 95% interval on the
+Brier penalty runs from about zero to +0.06 (Section 10.6).
 
 **What this does not mean.** This is one exploratory design, on one corpus, with
 one out-of-domain emotion model, three recession episodes, 15 positive evaluation
@@ -2424,7 +2525,8 @@ that.
 benchmark, this design produced a clear negative answer, and we are reporting it as
 such rather than searching for a specification that would produce a more appealing
 number. The yield spread remains the better forecaster on every sample we
-constructed.
+constructed, although in the primary window neither model beats a forecast that
+simply repeats the training recession rate.
 
 ---
 

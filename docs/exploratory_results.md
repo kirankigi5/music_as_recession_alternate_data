@@ -32,16 +32,58 @@ Primary window: predictor months 1993-11 to 2023-12, targets 1994-05 to 2024-06.
 Model B's primary ROC-AUC of **0.4306 is below 0.5**, i.e. worse than chance
 ordering on this sample.
 
-## Is the difference robust?
+## How certain is the difference?
 
-Yes in direction, weak in precision.
+Model B is worse in every sample. Whether that gap would survive a conventional
+significance test depends on how much serial dependence you allow for, and at the
+primary threshold it sits right at the edge.
 
-- The sign is consistent across all three predeclared thresholds, and the gap
-  widens as coverage tightens (+0.0299 → +0.0407 → +0.0566).
-- Paired per-month Brier differences, primary run: mean +0.0298667,
-  95% bootstrap CI **[+0.0147, +0.0458]**, which excludes zero.
-- Naive paired t = +3.74. This **ignores serial correlation** between overlapping
-  monthly forecasts, so the true interval is wider than quoted.
+The interval we first quoted, **[+0.0147, +0.0458]**, resampled months
+independently. Neighbouring forecasts share almost all their training rows and
+overlap in target windows, and the per-month loss differential has an
+autocorrelation of 0.74 at a one-month lag, so that interval was too narrow.
+`scripts/run_paired_inference.py` now computes intervals that keep time order.
+Bootstrap blocks and HAC lags are measured in calendar months, so two forecasts
+separated by an ineligible stretch are not treated as neighbours. Full output is
+in [`results/paired_inference.json`](results/paired_inference.json).
+
+| | 70% primary | 75% | 80% |
+|---|---|---|---|
+| Forecasts / recession months / episodes | 183 / 15 / 3 | 102 / 9 / 2 | 45 / 4 / 1 |
+| Mean B − A | +0.0299 | +0.0407 | +0.0566 |
+| 95% CI, months resampled independently | [+0.0149, +0.0456] | [+0.0190, +0.0658] | [+0.0186, +0.0999] |
+| 95% CI, 6-month calendar blocks | [+0.0031, +0.0594] | [+0.0050, +0.0846] | [−0.0020, +0.1337] |
+| 95% CI, 12-month calendar blocks | [−0.0010, +0.0614] | [+0.0038, +0.0869] | [−0.0027, +0.1455] |
+| 95% CI, 24-month calendar blocks | [−0.0039, +0.0583] | [+0.0044, +0.0779] | [−0.0022, +0.1428] |
+| Diebold–Mariano p, HAC lag 5 / 12 / 24 | 0.040 / 0.060 / 0.048 | 0.045 / 0.051 / 0.025 | 0.091 / 0.100 / 0.097 |
+| Effective independent months (HAC) | 47 to 56 | 34 to 45 | 17 to 18 |
+
+The independent-resampling row reproduces the original interval to within
+bootstrap noise. In the primary run the 183 forecasts carry roughly as much
+information as 50 independent months. With blocks of a year or more the interval
+just includes zero, and the Diebold–Mariano p-values straddle 0.05.
+
+The three thresholds are also not three independent confirmations. All 102
+forecast months in the 75% run are 70% months too, and all 45 months in the 80%
+run appear in both. The 75% run reaches two recession episodes (2001 and 2020),
+and the 80% run reaches only 2001. Agreement in sign across thresholds mostly
+re-measures the 2001 recession.
+
+Two metrics the project plan promised are now computed as well:
+
+| | 70% primary | 75% | 80% |
+|---|---|---|---|
+| Model A PR-AUC | 0.169 | 0.630 | 0.917 |
+| Model B PR-AUC | 0.072 | 0.100 | 0.160 |
+| PR-AUC of a no-skill forecast (recession share) | 0.082 | 0.088 | 0.089 |
+| Model A Brier skill vs training prevalence | −0.089 | +0.169 | +0.289 |
+| Model B Brier skill vs training prevalence | −0.449 | −0.287 | −0.339 |
+
+Model B's primary PR-AUC falls below the no-skill level, which matches its
+below-chance ROC-AUC. The skill rows compare each model with a forecast that
+repeats the recession share of its own training rows, the same reference the
+Model A backtest uses. In the primary window Model A does not beat that reference
+either. Both models lose to the base rate there, Model B by much more.
 
 One nuance matters for interpretation: Model B is worse in only **86 of 183
 months (47.0%)** yet loses clearly on average. Its deficit comes from a minority
@@ -131,10 +173,11 @@ model applied out of domain.
 
 On this exploratory sample, lyric emotions do not improve six-month-ahead
 recession forecasts over the yield spread; they degrade them, consistently across
-all three predeclared coverage thresholds. The direction of that result is robust.
-Its magnitude is not precisely estimated, and with three recession episodes it
-cannot be, so the honest claim is a null-to-negative result rather than a measured
-effect size.
+all three predeclared coverage thresholds, which are nested samples. Once serial
+dependence is allowed for, the primary 95% interval on the Brier penalty runs from
+about zero to +0.06. With three recession episodes the size of the effect cannot
+be pinned down, so the honest claim is a null-to-negative result rather than a
+measured effect size.
 
 ## Result locations
 
