@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "check_groups": 73,
+  "pages": {
+    "presentation.pdf": 16,
+    "report.pdf": 7
+  },
+  "report_pdf_links": 52,
+  "native_editable_text_boxes": 294,
+  "pdf_text_spans_within_page": 749,
+  "main_slides": 11,
+  "appendix_slides": 5,
+  "planned_seconds": 660,
+  "narration_words": 1258,
+  "links": {
+    "local_links": 201,
+    "markdown_anchors": 27,
+    "failures": [],
+    "external_urls": "Not exhaustively probed"
+  },
+  "numerical_suite": "Not repeated: unchanged numerical/model/statistical files",
+  "visual_review": "Separate human/model review of rendered pages; not inferred by this script"
+}

@@ -1,0 +1,2757 @@
+{
+  "source_sha256": {
+    "slides.json": "8de24af0c2b2b26d92fcf10659a0ec63a58b726b187286a78ea3ab464fa064ce",
+    "report.md": "2de1e18ae95cb3f6e824cf75d16c685d545768fe261ffed26a37951a164c5806",
+    "build_final_deliverables.py": "8072bb57d41afb6f677019681d459d75fff66a827c05f7023a36e36ee502376b"
+  },
+  "evidence_sha256": {
+    "docs/results/paired_inference.json": "7e0412784e29a62ef65fcadb30081f98054ce67b0325b5b4d5fc4c3c87a775b9",
+    "docs/results/closeout_verification.json": "4dbcbb8f72ab8f39a8c91982eacda2721986d049cc2039dd6af7285aebb07f2d",
+    "docs/figures/music_recession/results_summary.json": "ac28d8c0887f23712e74f118fd860bcbfd666e7cf35f4d2a7eed0fe9c1f2d129",
+    "docs/results/exploratory_primary_cov70/monthly_coverage.csv": "0c48ef49cf7b8a596898d624d3282aafa2517083d5ee151da988e86eae3e6671"
+  },
+  "fonts": {
+    "regular": "Arial.ttf",
+    "bold": "Arial Bold.ttf",
+    "regular_sha256": "525979822591a3447cfc49d943d6f7683508e25543407871c0ed8fed05fd2bd9",
+    "bold_sha256": "d72db21f9242aedd6b917d8549ad5921766b24d5f8d0becfda2ff4c620b3c2e0"
+  },
+  "packages": {
+    "python-pptx": "1.0.2",
+    "reportlab": "4.2.5",
+    "pymupdf": "1.26.5",
+    "markdown": "3.9"
+  },
+  "deck_pdf_renderer": "ReportLab shared vector geometry, not a PowerPoint roundtrip",
+  "main_slides": 11,
+  "appendix_slides": 5,
+  "planned_narration_seconds": 660,
+  "layouts": [
+    {
+      "id": "01",
+      "boxes": [
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 01 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  FINAL PROJECT",
+          "x": 40,
+          "y": 31,
+          "w": 880,
+          "h": 20,
+          "font": 12,
+          "lines": 1
+        },
+        {
+          "text": "Can popular music predict\nU.S. recessions?",
+          "x": 40,
+          "y": 82,
+          "w": 880,
+          "h": 125,
+          "font": 42,
+          "lines": 2
+        },
+        {
+          "text": "Do lyric emotions add value beyond the Treasury yield spread?",
+          "x": 40,
+          "y": 217,
+          "w": 880,
+          "h": 52,
+          "font": 24,
+          "lines": 1
+        },
+        {
+          "text": "183",
+          "x": 56,
+          "y": 312,
+          "w": 248,
+          "h": 48,
+          "font": 36,
+          "lines": 1
+        },
+        {
+          "text": "paired forecasts",
+          "x": 56,
+          "y": 365,
+          "w": 248,
+          "h": 28,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "+0.0299",
+          "x": 356,
+          "y": 312,
+          "w": 248,
+          "h": 48,
+          "font": 36,
+          "lines": 1
+        },
+        {
+          "text": "mean Brier B−A",
+          "x": 356,
+          "y": 365,
+          "w": 248,
+          "h": 28,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "3",
+          "x": 656,
+          "y": 312,
+          "w": 248,
+          "h": 48,
+          "font": 36,
+          "lines": 1
+        },
+        {
+          "text": "recession episodes",
+          "x": 656,
+          "y": 365,
+          "w": 248,
+          "h": 28,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Observed music-model loss is higher; robust statistical degradation is not established.",
+          "x": 40,
+          "y": 423,
+          "w": 880,
+          "h": 55,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Keefer Wu · Nathan Starkman · Kiran Reddy Bhumireddy",
+          "x": 40,
+          "y": 273,
+          "w": 880,
+          "h": 20,
+          "font": 16,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Three data sources; one frozen measurement model",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Music study: 1973–2023 · economic history extends earlier",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 02 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "21,542",
+          "x": 56,
+          "y": 202,
+          "w": 248,
+          "h": 44,
+          "font": 34,
+          "lines": 1
+        },
+        {
+          "text": "Billboard identities",
+          "x": 56,
+          "y": 250,
+          "w": 248,
+          "h": 26,
+          "font": 19,
+          "lines": 1
+        },
+        {
+          "text": "19,096",
+          "x": 356,
+          "y": 202,
+          "w": 248,
+          "h": 44,
+          "font": 34,
+          "lines": 1
+        },
+        {
+          "text": "OSF candidates",
+          "x": 356,
+          "y": 250,
+          "w": 248,
+          "h": 26,
+          "font": 19,
+          "lines": 1
+        },
+        {
+          "text": "16,290",
+          "x": 656,
+          "y": 202,
+          "w": 248,
+          "h": 44,
+          "font": 34,
+          "lines": 1
+        },
+        {
+          "text": "screened / scored songs",
+          "x": 656,
+          "y": 250,
+          "w": 248,
+          "h": 26,
+          "font": 19,
+          "lines": 1
+        },
+        {
+          "text": "FRED",
+          "x": 40,
+          "y": 305,
+          "w": 255,
+          "h": 30,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "GS10, TB3MS and USREC: yields and recession labels.",
+          "x": 305,
+          "y": 305,
+          "w": 615,
+          "h": 44,
+          "font": 19,
+          "lines": 1
+        },
+        {
+          "text": "Billboard + OSF",
+          "x": 40,
+          "y": 351,
+          "w": 255,
+          "h": 30,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "Weekly chart identities matched to historical lyrics.",
+          "x": 305,
+          "y": 351,
+          "w": 615,
+          "h": 44,
+          "font": 19,
+          "lines": 1
+        },
+        {
+          "text": "Frozen GoEmotions",
+          "x": 40,
+          "y": 397,
+          "w": 255,
+          "h": 30,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "Six emotion scores; trained on Reddit, unvalidated on these lyrics.",
+          "x": 305,
+          "y": 397,
+          "w": 615,
+          "h": 44,
+          "font": 19,
+          "lines": 1
+        },
+        {
+          "text": "Automated-screen eligibility is not recording verification or rights clearance.",
+          "x": 40,
+          "y": 455,
+          "w": 880,
+          "h": 36,
+          "font": 18,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Coverage changes the population we evaluate",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Median monthly share of chart popularity weight scored",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 03 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "0",
+          "x": 18,
+          "y": 419,
+          "w": 35,
+          "h": 25,
+          "font": 15,
+          "lines": 1
+        },
+        {
+          "text": "0.7",
+          "x": 18,
+          "y": 265.0,
+          "w": 35,
+          "h": 25,
+          "font": 15,
+          "lines": 1
+        },
+        {
+          "text": "1",
+          "x": 18,
+          "y": 199,
+          "w": 35,
+          "h": 25,
+          "font": 15,
+          "lines": 1
+        },
+        {
+          "text": "0.862",
+          "x": 63,
+          "y": 208.36980198019805,
+          "w": 82,
+          "h": 27,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "1970s",
+          "x": 63,
+          "y": 438,
+          "w": 90,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.924",
+          "x": 159,
+          "y": 194.7069306930693,
+          "w": 82,
+          "h": 27,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "1980s",
+          "x": 159,
+          "y": 438,
+          "w": 90,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.843",
+          "x": 255,
+          "y": 212.4811881188119,
+          "w": 82,
+          "h": 27,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "1990s",
+          "x": 255,
+          "y": 438,
+          "w": 90,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.710",
+          "x": 351,
+          "y": 241.73465346534658,
+          "w": 82,
+          "h": 27,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "2000s",
+          "x": 351,
+          "y": 438,
+          "w": 90,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.659",
+          "x": 447,
+          "y": 252.92960396039598,
+          "w": 82,
+          "h": 27,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "2010s",
+          "x": 447,
+          "y": 438,
+          "w": 90,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.608",
+          "x": 543,
+          "y": 264.17574257425747,
+          "w": 82,
+          "h": 27,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "2020–23",
+          "x": 543,
+          "y": 438,
+          "w": 90,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "Coverage ≠ truth",
+          "x": 716,
+          "y": 207,
+          "w": 188,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Unverified identities and shifting songs remain even when the coverage gate passes.",
+          "x": 716,
+          "y": 247,
+          "w": 188,
+          "h": 194,
+          "font": 20,
+          "lines": 5
+        },
+        {
+          "text": "Eligible feature months at 70% / 75% / 80%: 429 / 348 / 291",
+          "x": 40,
+          "y": 466,
+          "w": 880,
+          "h": 31,
+          "font": 20,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "An implemented chart-to-forecast pipeline",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Source audit → frozen measurement → paired chronological evaluation",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 04 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "1  Weekly charts",
+          "x": 56,
+          "y": 202,
+          "w": 248,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Keep valid weekly appearances and ranks.",
+          "x": 56,
+          "y": 242,
+          "w": 248,
+          "h": 74,
+          "font": 19,
+          "lines": 2
+        },
+        {
+          "text": "2  Match + screen",
+          "x": 356,
+          "y": 202,
+          "w": 248,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Reconcile title, artist and source; retain exclusions.",
+          "x": 356,
+          "y": 242,
+          "w": 248,
+          "h": 74,
+          "font": 19,
+          "lines": 2
+        },
+        {
+          "text": "3  Frozen NLP",
+          "x": 656,
+          "y": 202,
+          "w": 248,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "480-token chunks; token-weighted sigmoid scores.",
+          "x": 656,
+          "y": 242,
+          "w": 248,
+          "h": 74,
+          "font": 19,
+          "lines": 3
+        },
+        {
+          "text": "4  Monthly features",
+          "x": 656,
+          "y": 362,
+          "w": 248,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Weight each appearance by 101 − rank.",
+          "x": 656,
+          "y": 402,
+          "w": 248,
+          "h": 74,
+          "font": 19,
+          "lines": 2
+        },
+        {
+          "text": "5  Economic join",
+          "x": 356,
+          "y": 362,
+          "w": 248,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Six emotion means + continuous spread at month t.",
+          "x": 356,
+          "y": 402,
+          "w": 248,
+          "h": 74,
+          "font": 19,
+          "lines": 3
+        },
+        {
+          "text": "6  Paired evaluation",
+          "x": 56,
+          "y": 362,
+          "w": 248,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Expanding Probit fits; save probabilities and dates.",
+          "x": 56,
+          "y": 402,
+          "w": 248,
+          "h": 74,
+          "font": 19,
+          "lines": 2
+        },
+        {
+          "text": "→",
+          "x": 322,
+          "y": 235,
+          "w": 18,
+          "h": 40,
+          "font": 14,
+          "lines": 1
+        },
+        {
+          "text": "→",
+          "x": 622,
+          "y": 235,
+          "w": 18,
+          "h": 40,
+          "font": 14,
+          "lines": 1
+        },
+        {
+          "text": "↓",
+          "x": 770,
+          "y": 324,
+          "w": 35,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "←",
+          "x": 322,
+          "y": 393,
+          "w": 18,
+          "h": 40,
+          "font": 14,
+          "lines": 1
+        },
+        {
+          "text": "←",
+          "x": 622,
+          "y": 393,
+          "w": 18,
+          "h": 40,
+          "font": 14,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Continuous inputs, binary target, probabilities",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "The existing model already uses the magnitude of the yield spread",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 05 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Model A: p_A(t+6) = Φ(β0 + β1 spread_t)",
+          "x": 57,
+          "y": 204,
+          "w": 846,
+          "h": 44,
+          "font": 28,
+          "lines": 1
+        },
+        {
+          "text": "Model B: p_B(t+6) = Φ(β0 + β1 spread_t + γ′E_t)",
+          "x": 57,
+          "y": 260,
+          "w": 846,
+          "h": 45,
+          "font": 28,
+          "lines": 1
+        },
+        {
+          "text": "spread_t = GS10_t − TB3MS_t  (percentage points)",
+          "x": 40,
+          "y": 339,
+          "w": 880,
+          "h": 36,
+          "font": 25,
+          "lines": 1
+        },
+        {
+          "text": "Joy · sadness · fear · anger · nervousness · optimism",
+          "x": 40,
+          "y": 390,
+          "w": 880,
+          "h": 34,
+          "font": 23,
+          "lines": 1
+        },
+        {
+          "text": "Six preselected emotions; training-only scaling; no PCA or score-driven feature search.",
+          "x": 40,
+          "y": 442,
+          "w": 880,
+          "h": 53,
+          "font": 20,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "The six-month index starts at the predictor month",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Schematic timeline · retrospective pseudo-out-of-sample",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 06 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Train on the same eligible rows from January 1973; require at least 240 actual observations.",
+          "x": 40,
+          "y": 188,
+          "w": 880,
+          "h": 52,
+          "font": 22,
+          "lines": 2
+        },
+        {
+          "text": "Training target i+6 ≤ t−1  so  training predictor i ≤ t−7.",
+          "x": 40,
+          "y": 251,
+          "w": 880,
+          "h": 37,
+          "font": 23,
+          "lines": 1
+        },
+        {
+          "text": "t−1",
+          "x": 40,
+          "y": 287,
+          "w": 220,
+          "h": 31,
+          "font": 23,
+          "lines": 1
+        },
+        {
+          "text": "Latest training\ntarget month",
+          "x": 40,
+          "y": 339,
+          "w": 218,
+          "h": 60,
+          "font": 20,
+          "lines": 2
+        },
+        {
+          "text": "t",
+          "x": 265,
+          "y": 287,
+          "w": 220,
+          "h": 31,
+          "font": 23,
+          "lines": 1
+        },
+        {
+          "text": "Predictor\nobservation month",
+          "x": 265,
+          "y": 339,
+          "w": 218,
+          "h": 60,
+          "font": 20,
+          "lines": 2
+        },
+        {
+          "text": "t+1 · day 15",
+          "x": 490,
+          "y": 287,
+          "w": 220,
+          "h": 31,
+          "font": 23,
+          "lines": 1
+        },
+        {
+          "text": "Assumed\nissuance",
+          "x": 490,
+          "y": 339,
+          "w": 218,
+          "h": 60,
+          "font": 20,
+          "lines": 2
+        },
+        {
+          "text": "t+6",
+          "x": 715,
+          "y": 287,
+          "w": 220,
+          "h": 31,
+          "font": 23,
+          "lines": 1
+        },
+        {
+          "text": "Single-month\nstatus target",
+          "x": 715,
+          "y": 339,
+          "w": 218,
+          "h": 60,
+          "font": 20,
+          "lines": 2
+        },
+        {
+          "text": "Example: November 1993 predictor → December 15 issuance → May 1994 target.",
+          "x": 40,
+          "y": 415,
+          "w": 880,
+          "h": 50,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Primary: 183 nonconsecutive predictor dates, November 1993–December 2023.",
+          "x": 40,
+          "y": 470,
+          "w": 880,
+          "h": 27,
+          "font": 18,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Observed loss rises when music is added",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "70% primary · the same 183 dates · 15 recession months · 3 episodes",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 07 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Training rate (paired rows)",
+          "x": 40,
+          "y": 201,
+          "w": 300,
+          "h": 31,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.0830",
+          "x": 835,
+          "y": 199,
+          "w": 85,
+          "h": 31,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Full-history spread A",
+          "x": 40,
+          "y": 254,
+          "w": 300,
+          "h": 31,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.0848",
+          "x": 835,
+          "y": 252,
+          "w": 85,
+          "h": 31,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Paired spread A",
+          "x": 40,
+          "y": 307,
+          "w": 300,
+          "h": 31,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.0904",
+          "x": 835,
+          "y": 305,
+          "w": 85,
+          "h": 31,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Music B (same paired rows)",
+          "x": 40,
+          "y": 360,
+          "w": 300,
+          "h": 31,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.1202",
+          "x": 835,
+          "y": 358,
+          "w": 85,
+          "h": 31,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Brier loss (lower is better)",
+          "x": 40,
+          "y": 410,
+          "w": 300,
+          "h": 28,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.00",
+          "x": 355.0,
+          "y": 410,
+          "w": 80,
+          "h": 28,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.05",
+          "x": 519.2857142857142,
+          "y": 410,
+          "w": 80,
+          "h": 28,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.10",
+          "x": 683.5714285714286,
+          "y": 410,
+          "w": 80,
+          "h": 28,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "B − paired A = +0.029867; neither beats the training-rate reference here.",
+          "x": 40,
+          "y": 450,
+          "w": 880,
+          "h": 50,
+          "font": 22,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Related samples, not independent confirmations",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Average precision is stepwise AP, not trapezoidal precision–recall area",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 08 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Coverage",
+          "x": 50,
+          "y": 200,
+          "w": 157,
+          "h": 37,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "n",
+          "x": 225,
+          "y": 200,
+          "w": 47,
+          "h": 37,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "Pos.",
+          "x": 290,
+          "y": 200,
+          "w": 52,
+          "h": 37,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "Episodes",
+          "x": 360,
+          "y": 200,
+          "w": 77,
+          "h": 37,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "B−A Brier",
+          "x": 455,
+          "y": 200,
+          "w": 127,
+          "h": 37,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "A AP",
+          "x": 600,
+          "y": 200,
+          "w": 147,
+          "h": 37,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "B AP",
+          "x": 765,
+          "y": 200,
+          "w": 147,
+          "h": 37,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "70% primary",
+          "x": 50,
+          "y": 249,
+          "w": 157,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "183",
+          "x": 225,
+          "y": 249,
+          "w": 47,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "15",
+          "x": 290,
+          "y": 249,
+          "w": 52,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "3",
+          "x": 360,
+          "y": 249,
+          "w": 77,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "+0.0299",
+          "x": 455,
+          "y": 249,
+          "w": 127,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "0.1688",
+          "x": 600,
+          "y": 249,
+          "w": 147,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "0.0722",
+          "x": 765,
+          "y": 249,
+          "w": 147,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "75%",
+          "x": 50,
+          "y": 298,
+          "w": 157,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "102",
+          "x": 225,
+          "y": 298,
+          "w": 47,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "9",
+          "x": 290,
+          "y": 298,
+          "w": 52,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "2",
+          "x": 360,
+          "y": 298,
+          "w": 77,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "+0.0407",
+          "x": 455,
+          "y": 298,
+          "w": 127,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "0.6295",
+          "x": 600,
+          "y": 298,
+          "w": 147,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "0.1000",
+          "x": 765,
+          "y": 298,
+          "w": 147,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "80%",
+          "x": 50,
+          "y": 347,
+          "w": 157,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "45",
+          "x": 225,
+          "y": 347,
+          "w": 47,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "4",
+          "x": 290,
+          "y": 347,
+          "w": 52,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "1",
+          "x": 360,
+          "y": 347,
+          "w": 77,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "+0.0566",
+          "x": 455,
+          "y": 347,
+          "w": 127,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "0.9167",
+          "x": 600,
+          "y": 347,
+          "w": 147,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "0.1604",
+          "x": 765,
+          "y": 347,
+          "w": 147,
+          "h": 37,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Higher thresholds remove entire recession episodes and change both training and evaluation dates.",
+          "x": 40,
+          "y": 408,
+          "w": 880,
+          "h": 53,
+          "font": 21,
+          "lines": 2
+        },
+        {
+          "text": "Constant-score AP references: evaluation prevalence 0.0820 / 0.0882 / 0.0889.",
+          "x": 40,
+          "y": 467,
+          "w": 880,
+          "h": 28,
+          "font": 18,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "09",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Uncertainty depends on analysis settings",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Primary sample · conditional on saved predictions and selected calendar",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 09 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "95% circular calendar block-bootstrap intervals for mean Brier B − A",
+          "x": 40,
+          "y": 187,
+          "w": 880,
+          "h": 32,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "Mean B−A: +0.0299",
+          "x": 660,
+          "y": 214,
+          "w": 260,
+          "h": 22,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "6-month blocks",
+          "x": 40,
+          "y": 232,
+          "w": 230,
+          "h": 32,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "12-month blocks",
+          "x": 40,
+          "y": 289,
+          "w": 230,
+          "h": 32,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "24-month blocks",
+          "x": 40,
+          "y": 346,
+          "w": 230,
+          "h": 32,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "0.00",
+          "x": 345.625,
+          "y": 401,
+          "w": 65,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.02",
+          "x": 496.875,
+          "y": 401,
+          "w": 65,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.04",
+          "x": 648.125,
+          "y": 401,
+          "w": 65,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.06",
+          "x": 799.3749999999999,
+          "y": 401,
+          "w": 65,
+          "h": 27,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "Approximate Student-t HAC p-values, lags 5 / 12 / 24: 0.0399 / 0.0599 / 0.0479.",
+          "x": 40,
+          "y": 443,
+          "w": 880,
+          "h": 48,
+          "font": 20,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Four limits define what we can claim",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "A negative result does not identify its cause",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 10 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Few episodes",
+          "x": 56,
+          "y": 202,
+          "w": 398,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "15 positive primary months from only 3 recessions; nested samples.",
+          "x": 56,
+          "y": 242,
+          "w": 398,
+          "h": 79,
+          "font": 19,
+          "lines": 2
+        },
+        {
+          "text": "Measurement + selection",
+          "x": 506,
+          "y": 202,
+          "w": 398,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Unverified matches and language; declining coverage; NLP unvalidated on lyrics.",
+          "x": 506,
+          "y": 242,
+          "w": 398,
+          "h": 79,
+          "font": 19,
+          "lines": 2
+        },
+        {
+          "text": "Historical availability",
+          "x": 56,
+          "y": 352,
+          "w": 398,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Final vintages, retrospective labels and uncertain source publication times.",
+          "x": 56,
+          "y": 392,
+          "w": 398,
+          "h": 79,
+          "font": 19,
+          "lines": 2
+        },
+        {
+          "text": "Incomplete current-code inference",
+          "x": 506,
+          "y": 352,
+          "w": 398,
+          "h": 34,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Earlier audit: 7,490 shared vectors match; 8,800 songs lack a current-hash rerun.",
+          "x": 506,
+          "y": 392,
+          "w": 398,
+          "h": 79,
+          "font": 19,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "No demonstrated incremental benefit here",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "An auditable comparison, with a qualified negative finding",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "MAIN 11 / 11",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Observed music-model performance is worse on the selected samples.",
+          "x": 40,
+          "y": 195,
+          "w": 880,
+          "h": 80,
+          "font": 29,
+          "lines": 2
+        },
+        {
+          "text": "Robust statistical degradation is not established.",
+          "x": 56,
+          "y": 306,
+          "w": 848,
+          "h": 42,
+          "font": 27,
+          "lines": 1
+        },
+        {
+          "text": "Contribution: implemented pipeline, paired evaluation and explicit reproduction limits.",
+          "x": 40,
+          "y": 383,
+          "w": 880,
+          "h": 55,
+          "font": 22,
+          "lines": 1
+        },
+        {
+          "text": "Next research priority: validate measurement and historical availability before redesigning models.",
+          "x": 40,
+          "y": 448,
+          "w": 880,
+          "h": 49,
+          "font": 20,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "A1",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Appendix A · all existing uncertainty settings",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Circular percentile intervals and approximate HAC references are different approximations",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "TECHNICAL APPENDIX  /  A1",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Coverage",
+          "x": 50,
+          "y": 195,
+          "w": 92,
+          "h": 26,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "6-month CI",
+          "x": 160,
+          "y": 195,
+          "w": 239,
+          "h": 26,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "12-month CI",
+          "x": 417,
+          "y": 195,
+          "w": 239,
+          "h": 26,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "24-month CI",
+          "x": 674,
+          "y": 195,
+          "w": 238,
+          "h": 26,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "70%",
+          "x": 50,
+          "y": 233,
+          "w": 92,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "[+0.0031, +0.0594]",
+          "x": 160,
+          "y": 233,
+          "w": 239,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "[-0.0010, +0.0614]",
+          "x": 417,
+          "y": 233,
+          "w": 239,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "[-0.0039, +0.0583]",
+          "x": 674,
+          "y": 233,
+          "w": 238,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "75%",
+          "x": 50,
+          "y": 271,
+          "w": 92,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "[+0.0050, +0.0846]",
+          "x": 160,
+          "y": 271,
+          "w": 239,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "[+0.0038, +0.0869]",
+          "x": 417,
+          "y": 271,
+          "w": 239,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "[+0.0044, +0.0779]",
+          "x": 674,
+          "y": 271,
+          "w": 238,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "80%",
+          "x": 50,
+          "y": 309,
+          "w": 92,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "[-0.0020, +0.1337]",
+          "x": 160,
+          "y": 309,
+          "w": 239,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "[-0.0027, +0.1455]",
+          "x": 417,
+          "y": 309,
+          "w": 239,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "[-0.0022, +0.1428]",
+          "x": 674,
+          "y": 309,
+          "w": 238,
+          "h": 26,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "Coverage",
+          "x": 50,
+          "y": 362,
+          "w": 92,
+          "h": 20,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "HAC p, lag 5",
+          "x": 160,
+          "y": 362,
+          "w": 239,
+          "h": 20,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "HAC p, lag 12",
+          "x": 417,
+          "y": 362,
+          "w": 239,
+          "h": 20,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "HAC p, lag 24",
+          "x": 674,
+          "y": 362,
+          "w": 238,
+          "h": 20,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "70%",
+          "x": 50,
+          "y": 394,
+          "w": 92,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.039930",
+          "x": 160,
+          "y": 394,
+          "w": 239,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.059871",
+          "x": 417,
+          "y": 394,
+          "w": 239,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.047918",
+          "x": 674,
+          "y": 394,
+          "w": 238,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "75%",
+          "x": 50,
+          "y": 426,
+          "w": 92,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.045109",
+          "x": 160,
+          "y": 426,
+          "w": 239,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.051270",
+          "x": 417,
+          "y": 426,
+          "w": 239,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.024629",
+          "x": 674,
+          "y": 426,
+          "w": 238,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "80%",
+          "x": 50,
+          "y": 458,
+          "w": 92,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.091107",
+          "x": 160,
+          "y": 458,
+          "w": 239,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.100313",
+          "x": 417,
+          "y": 458,
+          "w": 239,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "0.096629",
+          "x": 674,
+          "y": 458,
+          "w": 238,
+          "h": 20,
+          "font": 17,
+          "lines": 1
+        },
+        {
+          "text": "80% empty draws dropped at 6 / 12 / 24 months: 1 / 4 / 31.",
+          "x": 40,
+          "y": 485,
+          "w": 880,
+          "h": 20,
+          "font": 14,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "A2",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Appendix B · scores and descriptive diagnostics",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Compare A/B within each sample; higher-threshold dates are nested",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "TECHNICAL APPENDIX  /  A2",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Coverage",
+          "x": 50,
+          "y": 195,
+          "w": 132,
+          "h": 26,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "A Brier",
+          "x": 200,
+          "y": 195,
+          "w": 152,
+          "h": 26,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "B Brier",
+          "x": 370,
+          "y": 195,
+          "w": 152,
+          "h": 26,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "A ROC-AUC",
+          "x": 540,
+          "y": 195,
+          "w": 177,
+          "h": 26,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "B ROC-AUC",
+          "x": 735,
+          "y": 195,
+          "w": 177,
+          "h": 26,
+          "font": 16,
+          "lines": 1
+        },
+        {
+          "text": "70%",
+          "x": 50,
+          "y": 233,
+          "w": 132,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.0904",
+          "x": 200,
+          "y": 233,
+          "w": 152,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.1202",
+          "x": 370,
+          "y": 233,
+          "w": 152,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.6462",
+          "x": 540,
+          "y": 233,
+          "w": 177,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.4306",
+          "x": 735,
+          "y": 233,
+          "w": 177,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "75%",
+          "x": 50,
+          "y": 271,
+          "w": 132,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.0740",
+          "x": 200,
+          "y": 271,
+          "w": 152,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.1146",
+          "x": 370,
+          "y": 271,
+          "w": 152,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.8722",
+          "x": 540,
+          "y": 271,
+          "w": 177,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.5424",
+          "x": 735,
+          "y": 271,
+          "w": 177,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "80%",
+          "x": 50,
+          "y": 309,
+          "w": 132,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.0640",
+          "x": 200,
+          "y": 309,
+          "w": 152,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.1206",
+          "x": 370,
+          "y": 309,
+          "w": 152,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.9878",
+          "x": 540,
+          "y": 309,
+          "w": 177,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "0.7012",
+          "x": 735,
+          "y": 309,
+          "w": 177,
+          "h": 26,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "Calibration: 44 evaluated B probabilities in [0.3,0.8), including 1 recession.",
+          "x": 40,
+          "y": 354,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Training events per parameter: 46–61 positives / 8 parameters = 5.75–7.625.",
+          "x": 40,
+          "y": 401,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Sparse lag-24 cross-product ratio at 80%: 3.3566 from 3 pairs; not a correlation.",
+          "x": 40,
+          "y": 448,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "A3",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Appendix C · three reproduction levels",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Offline derived-result checks do not establish full current-code NLP inference",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "TECHNICAL APPENDIX  /  A3",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Saved predictions",
+          "x": 40,
+          "y": 190,
+          "w": 245,
+          "h": 33,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Verify metrics, calibration, same-date benchmarks and conditional inference offline.",
+          "x": 295,
+          "y": 190,
+          "w": 625,
+          "h": 73,
+          "font": 20,
+          "lines": 2
+        },
+        {
+          "text": "Bundled derived data",
+          "x": 40,
+          "y": 275,
+          "w": 245,
+          "h": 33,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Regenerate the original ten figures without raw lyrics or model downloads.",
+          "x": 295,
+          "y": 275,
+          "w": 625,
+          "h": 73,
+          "font": 20,
+          "lines": 2
+        },
+        {
+          "text": "Full inference",
+          "x": 40,
+          "y": 360,
+          "w": 245,
+          "h": 33,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Requires external raw sources, audit inputs, weights and compatible caches.",
+          "x": 295,
+          "y": 360,
+          "w": 625,
+          "h": 73,
+          "font": 20,
+          "lines": 2
+        },
+        {
+          "text": "Historical validation: 215 tests passed at PR #2 head; numerical code is unchanged in final delivery.",
+          "x": 40,
+          "y": 459,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "id": "A4",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Appendix D · CRISP-DM and justified decisions",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Delivery is a reproducible research bundle; no deployment claim",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "TECHNICAL APPENDIX  /  A4",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Understand",
+          "x": 40,
+          "y": 190,
+          "w": 245,
+          "h": 33,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Question, economic baseline, source and coverage audit.",
+          "x": 295,
+          "y": 190,
+          "w": 625,
+          "h": 59,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "Prepare",
+          "x": 40,
+          "y": 253,
+          "w": 245,
+          "h": 33,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Match, screen, chunk, rank-weight and join by calendar month.",
+          "x": 295,
+          "y": 253,
+          "w": 625,
+          "h": 59,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "Model + evaluate",
+          "x": 40,
+          "y": 316,
+          "w": 245,
+          "h": 33,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Paired Probit; chronological refits; probability loss and conditional inference.",
+          "x": 295,
+          "y": 316,
+          "w": 625,
+          "h": 59,
+          "font": 20,
+          "lines": 2
+        },
+        {
+          "text": "Deliver",
+          "x": 40,
+          "y": 379,
+          "w": 245,
+          "h": 33,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Report, timed deck, saved outputs and reproducibility limits.",
+          "x": 295,
+          "y": 379,
+          "w": 625,
+          "h": 59,
+          "font": 20,
+          "lines": 1
+        },
+        {
+          "text": "No PCA: six interpretable preselected features. No random split: preserve chronology. No score-driven extra models.",
+          "x": 40,
+          "y": 459,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "id": "A5",
+      "boxes": [
+        {
+          "text": "NYU PREDICTIVE ANALYTICS  /  TEAM 5",
+          "x": 40,
+          "y": 19,
+          "w": 880,
+          "h": 18,
+          "font": 11,
+          "lines": 1
+        },
+        {
+          "text": "Appendix E · references and TA clarification",
+          "x": 40,
+          "y": 54,
+          "w": 880,
+          "h": 78,
+          "font": 32,
+          "lines": 1
+        },
+        {
+          "text": "Detailed links and source versions are in the final report",
+          "x": 40,
+          "y": 135,
+          "w": 880,
+          "h": 44,
+          "font": 18,
+          "lines": 1
+        },
+        {
+          "text": "Exploratory retrospective study  ·  December 3, 2026 (planning date)",
+          "x": 40,
+          "y": 517,
+          "w": 660,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "TECHNICAL APPENDIX  /  A5",
+          "x": 735,
+          "y": 517,
+          "w": 185,
+          "h": 15,
+          "font": 10,
+          "lines": 1
+        },
+        {
+          "text": "Sources: FRED GS10 / TB3MS / USREC; weekly Billboard archive; OSF historical lyrics.",
+          "x": 40,
+          "y": 190,
+          "w": 880,
+          "h": 58,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Measurement: pinned SamLowe/roberta-base-go_emotions; estimator: statsmodels Probit.",
+          "x": 40,
+          "y": 253,
+          "w": 880,
+          "h": 58,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "Evidence: original predictions/metrics, closeout verification and paired_inference.json.",
+          "x": 40,
+          "y": 316,
+          "w": 880,
+          "h": 58,
+          "font": 21,
+          "lines": 1
+        },
+        {
+          "text": "TA question: continuous spread magnitude is already implemented. Did you intend a change in spread, or a different target?",
+          "x": 56,
+          "y": 407,
+          "w": 848,
+          "h": 82,
+          "font": 23,
+          "lines": 2
+        }
+      ]
+    }
+  ]
+}
