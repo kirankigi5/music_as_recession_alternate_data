@@ -1,0 +1,217 @@
+{
+  "analysis_policy": "exploratory_course",
+  "banner": "EXPLORATORY COURSE ANALYSIS: automated screens only; recordings not independently verified; language not human reviewed; no verified release dates; source use rests on reported instructor guidance, not a licence.",
+  "policy": {
+    "schema_version": 1,
+    "analysis_mode": "exploratory_course",
+    "start_month": "1973-01-01",
+    "end_month": "2023-12-01",
+    "allowed_sources": [
+      "osf"
+    ],
+    "minimum_ready_weight_coverage": 0.7,
+    "chart_publication_delay_days": 0,
+    "chart_timing_basis": "retrospective_chart_date_convention",
+    "emotions": [
+      "joy",
+      "sadness",
+      "fear",
+      "anger",
+      "nervousness",
+      "optimism"
+    ],
+    "instrumentals": "exclude_no_zero_vector",
+    "combined_singles": "exclude_pending_component_and_weight_evidence",
+    "languages": "automated_screen_english_unreviewed",
+    "unknown_languages": "block_nlp",
+    "year_end_sources": "exclude_from_primary_mapping",
+    "ambiguous_versions": "exclude_no_automatic_resolution",
+    "unresolved_aliases": "exclude_target_identity",
+    "recording_and_permission_evidence": "reported_instructor_guidance_exploratory_not_verified",
+    "release_date_evidence": "chart_observability_only_no_verified_release_date",
+    "source_use_basis": "reported_instructor_guidance_course_project_not_a_license"
+  },
+  "preparation_config_sha256": "6057712305441b15b88c57c61d19d7aed30df40af2496fd397b96a55b9e5a3cf",
+  "model_config_sha256": "122641d8fb374c768631ff5c499407049e4ee78eb509ffdf51cff8d8b2d5710d",
+  "baseline_config_sha256": "ce5b1c12cfaa1e07a1fd0cf39ef1a1c743dd11888fc5e30e5d3a142d50536a96",
+  "screen_table": "reports/osf_source_review/run_004/candidate_evidence.csv",
+  "screen_table_sha256": "03e76a73c96fbdf788bf09420678a325567784ec10cd8b853987f25759cec957",
+  "audit_dir": "reports/lyrics_validation/run_002",
+  "raw_source_hashes": {
+    "data/raw/lyrics/osf_lyrics.csv": {
+      "sha256": "7820fd555b22a56a33dd128790e5c6d5414d4706919c02340a00d74213e1cc88",
+      "bytes": 1256141520
+    },
+    "data/raw/lyrics/kaggle/top100.zip": {
+      "sha256": "14e4c6ba453c876aa9bc3f24d31f193a140a444fc9ccf0805fdea71f2c1dcdf5",
+      "bytes": 24750835
+    },
+    "data/raw/lyrics/lydia/lydia.zip": {
+      "sha256": "79d477a3d0330fde8caebd593d35bba534b9d3482dc458e23b1f7da86de3a6c0",
+      "bytes": 16649636
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2000-lyrics.csv": {
+      "sha256": "30fa5feec63dba4a7faeb72962b4a4559555f462870b680bc5f42e8792e8e60a",
+      "bytes": 233405
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2001-lyrics.csv": {
+      "sha256": "78c02154c71284bd5516d60002f8cd49bb9483977dae3fe9502722b7378e72cb",
+      "bytes": 244737
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2002-lyrics.csv": {
+      "sha256": "f148782f4c42b8ea36da7f411ae227eaeffb4680045bafd681d4d334fc06cb48",
+      "bytes": 254679
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2003-lyrics.csv": {
+      "sha256": "cee47d5d703de9877dfbce63e79a894f1e3bde33a46fd8994c642621a94573e7",
+      "bytes": 269334
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2004-lyrics.csv": {
+      "sha256": "88ee8d6f6faf162cf91dfc2af871750cabb43421b5863ccd72941b88040cad5e",
+      "bytes": 269698
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2005-lyrics.csv": {
+      "sha256": "56225664ef8e81180efb28c7d7db23cf8ec2550524bc7015662e52254572a9a3",
+      "bytes": 260954
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2006-lyrics.csv": {
+      "sha256": "fcf91e45686d5762b66fc60b1596bae8209d447753a4027bd3cdbe7b4032d36b",
+      "bytes": 271878
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2007-lyrics.csv": {
+      "sha256": "bc286b95ce15d95a7a92cd19394a9f2701109a1d4fe59b3970c812860942e05e",
+      "bytes": 264972
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2008-lyrics.csv": {
+      "sha256": "c827b6da2bf054d3cc7712489efe4386a6e906df17b33b74d482b98877b2edb3",
+      "bytes": 246091
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2009-lyrics.csv": {
+      "sha256": "7d0e15ed816928350c39cde6996a28f229ee4693dedde803a85e3cdc1e8a6516",
+      "bytes": 241148
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2010-lyrics.csv": {
+      "sha256": "de0db1ab764de646c56a7514fa44ddb29454382192ea30023e4cac2d8c75ad9a",
+      "bytes": 242460
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2011-lyrics.csv": {
+      "sha256": "9c8277bdeb5a885b43cff41e2c28fec3d1342e30a6e05880e07b2d1acbf04db0",
+      "bytes": 243579
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2012-lyrics.csv": {
+      "sha256": "031bb30dd41ab7d494e362c2a4cb607dadbed1940d166998ff6647bc3059b365",
+      "bytes": 209160
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2013-lyrics.csv": {
+      "sha256": "6ba50b7091073694c34de6402e5a7f750050e802ef46a7769a32e2d4e9fbf1ca",
+      "bytes": 217933
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2014-lyrics.csv": {
+      "sha256": "fdb663975f5f85498269b216b7a0f86990b7cb984e6c4f642ad4ab4809466c5b",
+      "bytes": 220248
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2015-lyrics.csv": {
+      "sha256": "f3daf1ab9970eddf07ddf896b781f684989917b9da796360949ba0c88d212610",
+      "bytes": 218610
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2016-lyrics.csv": {
+      "sha256": "7660410c0cb30a555acb7cd9c3b623c04f7016ff2655925c8daf90c8d414d3f3",
+      "bytes": 225678
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2017-lyrics.csv": {
+      "sha256": "bf6cec52572154c4478b89d921bc64c4f9a7dfd2f381881d631a3d2942a7b4fa",
+      "bytes": 245768
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2018-lyrics.csv": {
+      "sha256": "35c2e96123a6a61bc35a65bf1e748dbe8befa4b5062d2fde917f45ef466c8b6b",
+      "bytes": 247785
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2019-lyrics.csv": {
+      "sha256": "b62ece4c6c7007d86701474428c714c3e2cd737c2050bcf83a99377d3433dcd2",
+      "bytes": 228467
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2020-lyrics.csv": {
+      "sha256": "b7d5734d3653c44a7e3996118ba1f406e26a29c71f41c1ae43db5ccd482dd577",
+      "bytes": 228115
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2021-lyrics.csv": {
+      "sha256": "dddbc6b83288832751de953332db80cc547fb6c547213a5d19ba48e88a1fc670",
+      "bytes": 238178
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2022-lyrics.csv": {
+      "sha256": "e6ed13196627ef9f165b94bab7155d225753b43f7929ab2c734c4648af66e41e",
+      "bytes": 205153
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2023-lyrics.csv": {
+      "sha256": "8a10dd0b1d17eec5dffbcdd45f3a969dbe027a06a94bbb68e322e8b0f68397e1",
+      "bytes": 201991
+    },
+    "data/raw/lyrics/tmelo_uea/billboard-year-end-2024-lyrics.csv": {
+      "sha256": "78a565dd6f22c7e849ec82e201502a4c371b090daa8b0b3a9fbbdbcac1ce363b",
+      "bytes": 210564
+    },
+    "billboard_hot100_all.csv": {
+      "sha256": "78bc1629e0ad28dc274126395064f701c935529466ae68d4846f410c5247c3e5",
+      "bytes": 19559971
+    },
+    "data/metadata/song_lyrics_inventory.csv": {
+      "sha256": "cbf7bcafcaa1a3b11ba3ea3e5772b9bf7381284e34b027d50e87d3cb0a0cccc0",
+      "bytes": 3612938
+    },
+    "config/kaggle_additional_aliases.csv": {
+      "sha256": "ed0d30ce610cd5ee6d037defa89c8548299dc591a5e09e343114d803c59f2ae2",
+      "bytes": 1033
+    },
+    "config/kaggle_artist_aliases.csv": {
+      "sha256": "f67c62804a918095cfdd23a095c9a0e37eea5c8f814c79261c801283aacc44cf",
+      "bytes": 3971
+    },
+    "config/osf_artist_aliases.csv": {
+      "sha256": "6cf6776937b4f9630b05aaae2ec73f3684af20c0f9e88c94d9cb7fa88fdbf502",
+      "bytes": 1873
+    },
+    "config/lydia_combined_singles_sources.csv": {
+      "sha256": "9ca4ec6efdfd614a01d344ab7d515aaf0ad58ddcb9ba979af0a37c5d3dab8899",
+      "bytes": 1071
+    },
+    "config/lydia_matched_song_sources.csv": {
+      "sha256": "59012d4b20aa8936593fb6e4eeda8837b0af9114cc331f0aa50b5a94b182b497",
+      "bytes": 3639
+    },
+    "config/tmelo_matched_song_sources.csv": {
+      "sha256": "f8b99c977ac5450de3a31dc18710be9302d66adb350da5535a89064fcbd1a306",
+      "bytes": 1156
+    },
+    "config/lyrics_sources.json": {
+      "sha256": "f57c38e246766c6da46dd7541c5ddbe8dd4d95fb7f70c4ffc4f6b9667b5a030e",
+      "bytes": 3820
+    }
+  },
+  "software": {
+    "numpy": "2.0.2",
+    "torch": "2.8.0",
+    "transformers": "4.46.3",
+    "safetensors": "0.7.0",
+    "python": "3.9.6"
+  },
+  "code_sha256": {
+    "music_model.py": "708d27361361703f7a8df57af5e01464f7061bd230c01a9674fefc6201bf81a8",
+    "emotions.py": "614f862be7c480bc40864f79c4d2af63eef5b2270f17fac222bee1c743f777d1",
+    "music_preparation.py": "6d26495422102c319e05fa3d0fc71199fe774241b084c8993e3fa100df219b42",
+    "baseline.py": "8dc72e2ad6be4b662598d8447ca1a2faa5da7600125c8299852267fb322c2b94",
+    "backtest.py": "945e896d24aa8a852889e04a66db4e97f14e1f5463f89630a2a7df8cf28970e2"
+  },
+  "driver_sha256": "52d6223f2f5c8bed4ac7c0f36a998c2d5da6bbd2f87e2c0717b04045cef2ff04",
+  "outputs_sha256": {
+    "lyric_coverage.png": "a8950025fe60940b9ef9446bdc7793b51a4fa6fa829708a803c38e233130f7fc",
+    "metrics.json": "b6437a3432e4e0919bf78bf2b083f4f91dce28296537854a8bd9063021f905dd",
+    "calibration.csv": "71ff3418397232dff0f987b323ea8d9b6e2b31c6aeabc8d33ca56b8b371d2e14",
+    "predictions.csv": "0b68f1e382b9c3377ef4d29583171b9f7a85ed90d437061148db6eb5b8388e42",
+    "song_source_mapping.csv": "9c86ccfd5ab0e6eb7ccd86468f9c3b933aa8543ee9b400d727cc870200fecba0",
+    "monthly_coverage.csv": "0c48ef49cf7b8a596898d624d3282aafa2517083d5ee151da988e86eae3e6671",
+    "monthly_contributions.csv": "ff26c288412284b093f74f7a9466570980226d92ffd6acbc618ad5056ff52ed6",
+    "monthly_features_and_coverage.csv": "849932403d15ce912cc285454e3dcc24c3649ca317315063a07a50977c782115",
+    "probability_comparison.png": "ad734321ed4d00ce20edaad193d994ccf43a6b360b1d38d9ed1996e6b115d2ae"
+  },
+  "code_version_note": "Produced by emotions.py sha256 614f862be7c480bc...; committed file is e5600454033eb043... The sole difference is a hasattr guard that cannot affect tensor operands. Verified numerically identical on 7,490 of 16,290 songs scored under both versions (0 differences). See CODE_VERSION_PROVENANCE.md."
+}

@@ -1,0 +1,12 @@
+{
+  "model_id": "SamLowe/roberta-base-go_emotions",
+  "revision": "d75048347613a25d77de8cf6412eaae9fa7b26be",
+  "model_card": "https://huggingface.co/SamLowe/roberta-base-go_emotions",
+  "chunk_tokens": 480,
+  "chunk_pooling": "token_weighted_mean_sigmoid",
+  "device": "cpu",
+  "emotions": ["joy", "sadness", "fear", "anger", "nervousness", "optimism"],
+  "model_b_standardization": "training_only_population_std",
+  "analysis_start": "1973-01-01",
+  "analysis_end": "2023-12-01"
+}

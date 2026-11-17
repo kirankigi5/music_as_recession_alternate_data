@@ -15,6 +15,13 @@ dependencies = [
     "matplotlib>=3.7,<4",
 ]
 
+[project.optional-dependencies]
+music = [
+    "transformers==4.46.3",
+    "torch>=2.2,<3",
+    "safetensors>=0.4.3,<1",
+]
+
 [project.scripts]
 prepare-economic = "music_recession.economic:main"
 baseline-smoke = "music_recession.baseline:main"

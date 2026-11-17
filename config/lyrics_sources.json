@@ -1,0 +1,72 @@
+{
+  "review_date": "2026-10-17",
+  "policy": "Local availability and a repository license do not certify recording identity or underlying lyric rights. Existing local files audited only; no new lyrics downloaded. No lyric redistribution.",
+  "sources": [
+    {
+      "id": "osf",
+      "url": "https://osf.io/2k7ut/",
+      "metadata_url": "https://api.osf.io/v2/nodes/2k7ut/",
+      "license_url": "https://api.osf.io/v2/licenses/563c1cf88c5e4a3877f9e96a/",
+      "declared_license": "CC BY 4.0",
+      "coverage_claim": "1973–2023 weekly Billboard songs; over 20,000 lyrics",
+      "selection": "weekly charts",
+      "permission_status": "Repository license verified; underlying third-party lyric authorization unresolved",
+      "local_path": "data/raw/lyrics/osf_lyrics.csv"
+    },
+    {
+      "id": "kaggle",
+      "url": "https://www.kaggle.com/datasets/brianblakely/top-100-songs-and-lyrics-from-1959-to-2019",
+      "metadata_url": "https://www.kaggle.com/api/v1/datasets/view/brianblakely/top-100-songs-and-lyrics-from-1959-to-2019",
+      "declared_license": "MIT",
+      "coverage_claim": "1959–2023; 6,500 rows, publisher description",
+      "selection": "year-end top 100; Genius-derived lyrics",
+      "permission_status": "Dataset license label verified; underlying lyric authorization unresolved",
+      "local_path": "data/raw/lyrics/kaggle/top100.zip"
+    },
+    {
+      "id": "lydia",
+      "url": "https://github.com/abrahamalbert18/LYDIA",
+      "license_url": "https://github.com/abrahamalbert18/LYDIA/blob/main/LICENSE",
+      "declared_license": "MIT",
+      "coverage_claim": "1959–2020 top 100; JSON preferred by maintainers",
+      "selection": "annual top 100",
+      "permission_status": "Repository license verified; underlying lyric authorization unresolved",
+      "local_path": "data/raw/lyrics/lydia/lydia.zip"
+    },
+    {
+      "id": "tmelo",
+      "url": "https://github.com/tmelo-uea/billboard-hot100-lyrics",
+      "declared_license": "README asserts noncommercial research/education and fair use; no standard license detected by GitHub",
+      "coverage_claim": "2000–2024; 2,642 songs, publisher description",
+      "selection": "year-end top 100; 2024 excluded from this audit",
+      "permission_status": "Research-use statement verified; rightsholder authorization not established",
+      "local_path": "data/raw/lyrics/tmelo_uea/"
+    },
+    {
+      "id": "lyricsfreak",
+      "url": "https://www.kaggle.com/datasets/mousehead/songlyrics",
+      "metadata_url": "https://www.kaggle.com/api/v1/datasets/view/mousehead/songlyrics",
+      "declared_license": "Unverified: historical copies claim CC0",
+      "coverage_claim": "Historical descriptions claim 57,650 English songs; years not established",
+      "selection": "Scraped LyricsFreak catalog; non-English/short/long text reportedly filtered",
+      "permission_status": "Original API returned HTTP 403; no bypass or mirror download; authorization not verified",
+      "local_path": null
+    },
+    {
+      "id": "muljam",
+      "url": "https://arxiv.org/abs/2306.17103",
+      "declared_license": "CC BY-NC-SA, according to paper abstract",
+      "coverage_claim": "Multilingual Jamendo corpus; Billboard overlap unknown",
+      "selection": "Jamendo independent music, transcription corpus",
+      "permission_status": "Research alternative evaluated; no Billboard coverage evidence, not downloaded"
+    },
+    {
+      "id": "lyricfind",
+      "url": "https://www.lyricfind.com/",
+      "declared_license": "Commercial licensing by agreement",
+      "coverage_claim": "Historical Billboard overlap not verified",
+      "selection": "Publisher-licensed catalog; contract scope must include academic NLP",
+      "permission_status": "Recommended authorization route; no contract or access obtained"
+    }
+  ]
+}

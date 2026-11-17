@@ -1,356 +1,167 @@
 # Can Popular Music Predict U.S. Recessions?
 
-**Evaluating music-derived emotion indicators as alternative data for six-month-ahead U.S. recession forecasting**
+**NYU Courant · Predictive Analytics · Fall 2026 · Team 5**
+Keefer Wu · Nathan Starkman · Kiran Reddy Bhumireddy
 
-**NYU Courant | Predictive Analytics | Fall 2026 | Team 5**  
-**Team:** Keefer Wu · Nathan Starkman · Kiran Reddy Bhumireddy
+We tested whether popularity-weighted lyric emotions improve forecasts of **U.S.
+recession status six calendar months after the predictor month**. In the primary
+exploratory sample, adding music increased Brier error from **0.0904 to 0.1202**
+over **183 paired forecasts**. A training-rate reference scored **0.0830** and a
+full-history yield-curve model scored **0.0848** on those same dates.
 
-> **Project status:** Economic preparation, Model A (statsmodels Probit), and its expanding-window backtest are implemented and tested. All **630 forecasts** from October 1973–March 2026 were evaluated. Results are **retrospective pseudo-out-of-sample**, with historical release/vintage availability unverified. Music features, Model B, and music-versus-economic comparisons remain planned; usable lyrics coverage is unverified.
+The finding is **no demonstrated incremental predictive benefit from these
+features on this selected retrospective sample**. We make no significance,
+causal, real-time deployment, or general absence-of-music-signal claim.
+Dependence-aware uncertainty and PR-AUC are follow-up work in
+[PR #2](https://github.com/kirankigi5/music_as_recession_alternate_data/pull/2).
+Neither bootstrap convention from the earlier local investigation is canonical
+in PR #1.
 
-## Overview
+> These are exploratory coursework results. Lyric records passed automated
+> metadata/risk and English-language screens; recording identity, language and
+> release dates are not independently verified. Source use rests on reported
+> instructor guidance for coursework, not a copyright licence or rights clearance.
+> The separate strict evidence policy is unchanged and admits zero records.
 
-Can emotions expressed in popular music help forecast the U.S. economy? This project investigates whether **popularity-weighted lyrical emotion indicators** improve predictions of U.S. recession status **six months ahead**, beyond a standard economic baseline based on the Treasury yield curve.
+## Read the project
 
-We will compare two **Probit** models on the same chronological test periods:
+| Purpose | Document |
+|---|---|
+| Concise professor update with figures | [Professor README](README_PROFESSOR.md) |
+| Main results and benchmarks | [Exploratory results](docs/exploratory_results.md) |
+| Review dispositions and follow-up boundary | [PR #1 closeout](docs/review_response.md) |
+| Tested release commands and limits | [Validation record](docs/closeout_validation.md) |
+| Full research history, methods and figures | [Research report](docs/COMPLETE_RESEARCH_REPORT.md) |
+| Code map and next work | [Team handoff](docs/TEAM_HANDOFF.md) |
+| Timing and evidence contracts | [Forecast protocol](docs/forecast_protocol.md), [model execution](docs/model_comparison.md), [course policy](docs/exploratory_course_policy.md) |
+| Source-use and measurement gaps | [Source review](docs/osf_source_use_review.md), [lyrics validation](docs/lyrics_validation.md) |
 
-- **Baseline (Model A):** 10-year minus 3-month Treasury yield spread.
-- **Extended (Model B):** The same yield spread **plus six monthly lyrical emotion features**.
+## Question, data and implemented architecture
 
-The goal is to measure **incremental predictive value**, not to claim that music causes recessions. A null or negative result is a valid research outcome.
+**Model A:** `P(USREC at t+6 = 1) = Phi(intercept + coefficient × spread_t)`.
+**Model B:** the same Probit plus six monthly emotion predictors: joy, sadness,
+fear, anger, nervousness and optimism.
 
-## Research Question
+`spread_t = GS10_t − TB3MS_t` is a **continuous difference in percentage points**,
+not a binary inversion indicator. The outcome is binary; both models return
+probabilities. A 4% long yield minus a 5% short rate is a −1 percentage-point
+predictor. The existing implementation already meets that interpretation of the
+TA's recalled request. Whether the TA meant a change in spread or a different
+continuous target still needs clarification; no model change was invented.
 
-> Do popularity-weighted emotions in popular-song lyrics improve out-of-sample forecasts of U.S. recession status six months ahead, compared with a yield-curve-only Probit model?
+| Data actually used | Role and scope |
+|---|---|
+| [FRED GS10](https://fred.stlouisfed.org/series/GS10), [TB3MS](https://fred.stlouisfed.org/series/TB3MS), [USREC](https://fred.stlouisfed.org/series/USREC) | Monthly yields and recession labels; bundled processed economic table has 876 rows, April 1953–March 2026 predictor months |
+| [Weekly Billboard Hot 100 archive](https://github.com/mhollingshead/billboard-hot-100) | Actual weekly ranks; study uses 1973–2023 and 21,542 title/artist identities |
+| [OSF historical lyrics](https://osf.io/2k7ut/) | 19,096 selected candidates; 16,290 pass the exploratory automated screens |
+| [Pinned RoBERTa GoEmotions checkpoint](https://huggingface.co/SamLowe/roberta-base-go_emotions) | Frozen model used to score lyrics, not a separately collected outcome dataset |
 
-For a forecast made using information available at month $t$, the binary prediction target is:
+Kaggle, LYDIA, LRCLIB and other sources were investigated for recovery/auditing;
+they are not additional admitted lyric sources in the reported experiment.
 
-$$
-Y_t = \mathrm{USREC}_{t+6},
-$$
+![Implemented chart-to-forecast pipeline](docs/figures/music_recession/fig01_pipeline_architecture.png)
 
-where $Y_t=1$ means the U.S. is classified as being **in a recession six calendar months later**. This is a **recession-status** target, not a prediction of whether a new recession begins at any time within the next six months.
+The implemented flow is weekly charts → audited title/artist/source mapping →
+local emotion scoring → monthly rank-weighted means → economic join → paired
+expanding-window Probit evaluation. Modules live under `src/music_recession/`.
+Each appearance has weight `101 − rank`; repeated weeks contribute repeatedly.
+Emotion means divide by scored weight, while coverage divides by all observed
+chart weight. Missing lyrics are not zero emotion vectors. Invalid/duplicate
+chart slots are rejected; incomplete months and months with missing slots are
+excluded. Long lyrics are scored in 480-content-token chunks with token-weighted
+sigmoid pooling. Instrumentals and unresolved versions are excluded under policy.
 
-**Primary evaluation metric:** Out-of-sample **Brier Score** (lower is better).  
-**Additional metrics:** ROC-AUC and PR-AUC; a three-month horizon may be explored as a sensitivity analysis.
+The six features remain separate. No PCA or outcome-driven feature search was
+used: reducing six preselected emotions would change the question and reduce
+interpretability. Standardization is learned on training rows for numerical
+conditioning; invertible scaling does not change ideal unpenalized Probit
+probabilities. Alternative estimators, regularization and new horizons remain
+separate experiments rather than remedies selected after seeing the result.
 
-## Data Sources
+## Evaluation and findings
 
-| Data | Source | Frequency / role | Status |
-|---|---|---|---|
-| U.S. recession indicator (`USREC`) | [FRED — USREC](https://fred.stlouisfed.org/series/USREC) | Monthly binary recession label; future target | Local snapshot validated, Dec 1854–Sep 2026 |
-| 10-year Treasury yield (`GS10`) | [FRED — GS10](https://fred.stlouisfed.org/series/GS10) | Monthly long-term yield | Local snapshots agree, Apr 1953–Sep 2026 |
-| 3-month Treasury bill rate (`TB3MS`) | [FRED — TB3MS](https://fred.stlouisfed.org/series/TB3MS) | Monthly short-term yield | Local snapshot validated, Jan 1934–Sep 2026 |
-| Billboard Hot 100 | [Historical weekly Billboard archive](https://github.com/mhollingshead/billboard-hot-100) | Chart date, song, artist, rank | Historical source identified; matching pending |
-| Historical lyrics, candidate 1 | [Foramitti et al. (2025) OSF repository](https://osf.io/2k7ut/) | Candidate research files associated with Billboard lyrics, 1973–2023 | File contents and reuse permissions to verify |
-| Historical lyrics, candidate 2 | [Kaggle: Top 100 Songs & Lyrics](https://www.kaggle.com/datasets/brianblakely/top-100-songs-and-lyrics-from-1959-to-2019) | Candidate year-end song and lyrics lookup | Reported dataset size is **not** verified usable coverage |
-| GoEmotions annotations | [Official Google Research repository](https://github.com/google-research/google-research/tree/master/goemotions) | Emotion taxonomy and original Reddit annotations | Methodological resource |
-| GoEmotions BERT checkpoint | [Hugging Face model](https://huggingface.co/monologg/bert-base-cased-goemotions-original) | Pretrained text emotion scoring | Proposed model; lyric validation pending |
-| Audio-features fallback | [TidyTuesday: Billboard and Spotify](https://github.com/rfordatascience/tidytuesday/tree/main/data/2021/2021-09-14) | Candidate precomputed audio features | Backup; coverage and permissions to verify |
+Both models train on **identical eligible rows** from January 1973, require at
+least 240 observations, and refit for each evaluated month. A training target
+must be at or before `t−1`; that enforces an assumed chronological boundary, not
+historical NBER announcement availability. The assumed issuance is the 15th of
+`t+1`; the target stays anchored to `t+6`, rather than six months after issuance.
+Final economic data, retrospective labels and uncertain chart/lyric availability
+make this **retrospective pseudo-out-of-sample** evaluation.
 
-**Target historical period:** **1959–2023**, conditional on a viable matched lyrics sample; **1973–2023** is a potential narrower period aligned with Foramitti et al.'s work. These are *targets*, not confirmed complete study samples.
+| Coverage | Forecasts | Recession months | A Brier | B Brier | A ROC-AUC | B ROC-AUC |
+|---|---:|---:|---:|---:|---:|---:|
+| 70% primary | 183 | 15 | 0.0904 | 0.1202 | 0.6462 | 0.4306 |
+| 75% sensitivity | 102 | 9 | 0.0740 | 0.1146 | 0.8722 | 0.5424 |
+| 80% sensitivity | 45 | 4 | 0.0640 | 0.1206 | 0.9878 | 0.7012 |
 
-### Important lyrics limitation
+Brier is mean squared probability error; lower is better. The evaluated dates are
+nested: 2001/GFC/COVID recession-month counts are **8/5/2**, **7/0/2**, and
+**4/0/0**. Higher-threshold AUCs reflect changed samples and disappearing episodes.
+Matching signs are not independent confirmations. The primary dates span
+November 1993–December 2023, with targets May 1994–June 2024, and contain gaps.
 
-Lyrics are often copyrighted and can be difficult to obtain in bulk. **Year-end hit lists are potential lyrics-lookup sources, not valid replacements for historical weekly charts.** Selecting songs based on their eventual year-end rankings would use future chart behavior when constructing earlier forecasts. We will evaluate matched-song coverage against the actual weekly chart population, including variation across months and historical periods.
+![Paired Brier scores on the three related samples](docs/figures/music_recession/fig04_brier_comparison.png)
 
-## Data Integration Pipeline
+The original broad-period Model A Brier **0.094921** uses 630 forecasts and must
+not be compared directly with B. The **0.084754** full-history benchmark instead
+selects exactly B's 183 dates from the existing baseline forecasts. It has more
+training history than paired A; the original equal-training comparison remains
+the controlled incremental-feature experiment.
 
-The data-preparation workflow follows **CRISP-DM**, particularly **data integration (data fusion), cleaning, feature construction, and aggregation**.
+Coverage declines over time, only three recession episodes are represented,
+GoEmotions is unvalidated on these lyrics, and source matches remain provisional.
+Model B has **44 months in [0.3, 0.8), including one recession**. Primary training
+windows have 46–61 positive labels for eight parameters including the intercept:
+**5.75–7.625 events per parameter**. These descriptive diagnostics do not establish
+why B failed. The original primary analysis retains COVID; a separately labeled
+post-hoc exclusion is recorded in the results summary.
 
-```mermaid
-flowchart TD
-    B[Weekly Billboard Hot 100<br/>chart date · title · artist · rank]
-    L[Historical lyric sources<br/>title · artist · text]
-    B --> J1[Join 1: normalized title + artist<br/>record matching and coverage audit]
-    L --> J1
-    J1 --> NLP[GoEmotions BERT<br/>six selected emotion scores per song]
-    NLP --> AGG[Popularity-weighted<br/>monthly emotion indicators]
-    B --> AGG
-    F[FRED GS10 and TB3MS<br/>monthly yield spread] --> J2[Join 2: calendar month t]
-    AGG --> J2
-    R[FRED USREC<br/>recession labels] --> SHIFT[Shift target by six months<br/>USREC at t + 6]
-    SHIFT --> J2
-    J2 --> M[One row per forecast month<br/>yield spread + six emotions + future label]
-    M --> TEST[Time-ordered Probit comparison<br/>Brier Score · ROC-AUC · PR-AUC]
+## Reproduction levels
+
+The numerical environment uses Python 3.9+ and NumPy/SciPy/statsmodels/matplotlib.
+For a new environment, install `python -m pip install -e .` and pytest; the tested
+baseline constraints are in `requirements-baseline.txt`. Optional NLP packages
+are unnecessary for the saved-result checks and synthetic tests.
+
+From the checkout root, after environment setup:
+
+```sh
+# Offline software tests; no model download or real lyric inference.
+python -m pytest -q
+
+# Recompute descriptive scores, benchmark, calibration and provenance checks.
+# No model fitting, network or NLP inference. Default is read-only stdout.
+python scripts/verify_saved_results.py
+
+# Render the ten original figures from bundled derived data into a fresh path.
+python scripts/make_research_figures.py --out /tmp/music-recession-figures-FRESH
+
+# Optional verification output, separate from original experiment directories.
+python scripts/verify_saved_results.py --output /tmp/music-recession-verification-FRESH.json
 ```
 
-### Join 1: Weekly Billboard charts ↔ song lyrics
-
-- **Proposed join key:** Canonicalized song title and artist name, with manual checks for ambiguous matches, remixes, alternate spellings, and duplicates.
-- A song's lyrics can be scored once, then reused for each dated chart appearance of that song.
-- Unmatched weekly chart entries remain in a **coverage audit**; they are not silently treated as emotionally neutral.
-- Lyrics coverage, permitted use, and possible year-end selection bias determine whether this approach is feasible.
-
-### NLP: Lyrics → emotion scores
-
-GoEmotions provides **27 emotion categories plus neutral**. We propose selecting **six native labels**, chosen before inspecting recession outcomes:
-
-**Joy · Sadness · Fear · Anger · Nervousness · Optimism**
-
-The proposed model is a pretrained **multi-label BERT classifier**, rather than a model trained from scratch. Long lyrics may require chunking, followed by a documented rule for pooling chunk scores into one score per song.
-
-**Domain-shift check:** GoEmotions was trained on **Reddit comments**, not lyrics. We plan a small manual review of predictions on a sample of songs before trusting the emotion indicators. The precise sampling and agreement protocol will be documented during implementation.
-
-### Aggregate: Weekly charts → monthly indicators
-
-We will use chart rankings to give more popular chart entries more influence. One simple **proposed**, not yet finalized, rank weight is:
-
-$$
-w_i = 101 - r_i
-$$
-
-For emotion $k$ and forecast month $t$:
-
-$$
-E_{t,k} =
-\frac{\sum_{i\in \mathcal C_t^{\mathrm{matched}}}w_i e_{i,k}}
-     {\sum_{i\in \mathcal C_t^{\mathrm{matched}}}w_i},
-$$
-
-where $\mathcal C_t^{\mathrm{matched}}$ contains only **eligible chart observations known by the forecast cutoff** for month $t$. We will report match coverage in both song counts and chart-weight terms. The aggregation window and handling of weeks crossing month boundaries will be specified before modeling.
-
-### Join 2: Monthly music features ↔ FRED
-
-Compute the yield spread:
-
-$$
-S_t = \mathrm{GS10}_t-\mathrm{TB3MS}_t.
-$$
-
-Join monthly music indicators $E_{t,k}$ and spread $S_t$ **by calendar month**, then construct $Y_t=\mathrm{USREC}_{t+6}$. The modeling table has **one row per forecast month**.
-
-For a truly real-time forecasting study, both publication timing and historical revisions of macroeconomic data must be considered. NBER recession dates are retrospective labels and should not be treated as instantly known during historical training.
-
-## Modeling Approach
-
-**Model A — Yield-curve Probit:**
-
-$$
-\Pr(Y_t=1\mid S_t) = \Phi(\beta_0+\beta_1 S_t).
-$$
-
-**Model B — Yield-curve + music Probit:**
-
-$$
-\Pr(Y_t=1\mid S_t,\mathbf E_t) =
-\Phi\left(\beta_0+\beta_1S_t+\sum_{k=1}^{6}\gamma_kE_{t,k}\right).
-$$
-
-Here $\Phi$ is the standard normal CDF. The six music terms are the only planned added inputs in the main comparison. We will keep the feature set small and consider regularization if necessary to reduce overfitting.
-
-### Evaluation protocol
-
-1. **Use chronological expanding-window evaluation**, not random train/test shuffling.
-2. Train each forecast using only predictors available at that date and outcomes that would have matured by the training cutoff (including the six-month horizon).
-3. Evaluate **both models on identical test months**.
-4. Compare the **Brier Score** as the primary metric:
-
-   $$BS = \frac{1}{N}\sum_{t=1}^{N}(\hat{p}_t-Y_t)^2$$
-
-5. Report ROC-AUC and PR-AUC as supporting discrimination metrics, with caution where test periods contain few or no recession observations.
-6. Estimate uncertainty using **block-bootstrap confidence intervals**, while acknowledging that the small number of distinct recession episodes can make these estimates unstable.
-
-The historical sample has relatively few independent recession episodes; strong claims about generalizable improvements would therefore be unwarranted. **Model A's retrospective backtest is available below. Model B comparisons and uncertainty intervals remain future work.**
-
-## Project Plan
-
-| Phase | Planned work | Decision / deliverable |
-|---|---|---|
-| **1. Sources + baseline** | Validate datasets, rights, monthly coverage; build FRED target and baseline Probit | **Go/no-go on lyrics at end of Phase 1** |
-| **2. Emotion features** | Match lyrics; run GoEmotions; review predictions; aggregate music scores | Monthly music feature table |
-| **3. Backtesting** | Join monthly tables; walk-forward comparison; assess uncertainty and leakage | Out-of-sample evaluation |
-| **4. Final paper** | Synthesize related work, methods, findings, limitations | Reproducible report and conclusions |
-
-**Fallback:** If usable lyric coverage is inadequate, assess historical **audio features** (such as valence and energy) from an appropriately licensed precomputed dataset. This would be a documented change to the music-feature measurement, **not** a claim that lyric-based results were obtained.
-
-Three workstreams run in parallel: **economic baseline**, **music/NLP pipeline**, and **data integration/evaluation**, with shared validation and writing.
-
-## Related Work
-
-1. **Estrella & Mishkin (1998)** — [Recession forecasting with financial indicators and Probit](https://www.nber.org/papers/w5379). Foundation for the economic baseline.
-2. **Zullow (1991)** — [Popular-song lyric pessimism and economic changes](https://www.sciencedirect.com/science/article/abs/pii/016748709190029S). Early motivation for testing music as an economic signal.
-3. **de Lucio & Palomeque (2023)** — [Music preferences and business cycles](https://doi.org/10.1007/s10824-022-09454-7). Links music behavior and macroeconomic conditions; our focus is future forecasting.
-4. **Musthyala et al. (2024)** — [AI framework for predicting Grammy winners](https://ieeexplore.ieee.org/document/10607237). Example of combining music-related features for a predictive task.
-5. **Foramitti et al. (2025)** — [Billboard lyrics, stress, negativity, simplicity, and societal crises, 1973–2023](https://www.nature.com/articles/s41598-025-28327-5). Most directly related historical Billboard lyric-analysis study.
-
-**NLP method reference:** [Demszky et al. (2020), *GoEmotions: A Dataset of Fine-Grained Emotions*](https://aclanthology.org/2020.acl-main.372/).
-
-## Reproducibility and Repository Status
-
-The economic preparation step is implemented in `src/music_recession/economic.py`
-and uses only Python's standard library. Model A is implemented in
-`src/music_recession/baseline.py` and uses statsmodels Probit, NumPy and SciPy.
-Python 3.9 or newer is required; the verified environment is Python 3.9.6 with
-statsmodels 0.14.6, NumPy 2.0.2, SciPy 1.13.1 and transitive dependency pandas
-2.3.3. Backtest plots use matplotlib 3.9.4. Runtime version constraints are recorded in `requirements-baseline.txt`;
-availability of those exact versions on newer Python versions may differ.
-Tests use `unittest`; setuptools is a packaging build dependency.
-
-From the repository root, create an isolated environment and install the package:
-
-```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install --upgrade 'pip>=21.3'
-.venv/bin/python -m pip install -e . -c requirements-baseline.txt
-```
-
-Generate the economic dataset and manifest, then run all tests:
-
-```bash
-.venv/bin/python -m music_recession.economic
-.venv/bin/python -m unittest discover -s tests -v
-```
-
-The equivalent installed command is `.venv/bin/prepare-economic`. Use `--help`
-to inspect optional input and output paths. Defaults are relative to the current
-working directory, so run the commands above from the repository root.
-
-For an offline, economic-preparation-only setup, skip package installation and
-run only the economic tests. Model A and its tests require the numerical packages:
-
-```bash
-python3 -m venv .venv
-PYTHONPATH=src .venv/bin/python -m music_recession.economic
-PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_economic.py' -v
-```
-
-The pipeline reads the original `fredgraph.csv` and `GS10.csv` without modifying
-them. It validates monthly calendars, source values and cross-file GS10 equality,
-computes `spread_t = GS10_t - TB3MS_t`, and looks up `USREC` exactly six calendar
-months ahead. Rows lacking a predictor or future label are excluded and counted.
-Malformed input, duplicate/missing dates and cross-file mismatches stop the run.
-
-Outputs:
-
-- [`data/processed/economic_monthly.csv`](data/processed/economic_monthly.csv):
-  **876 rows × 7 columns**, predictor months **April 1953–March 2026**, target
-  months **October 1953–September 2026**. Columns: `predictor_month`,
-  `target_month`, `USREC_t`, `GS10_t`, `TB3MS_t`, `spread_t`, `target_t`.
-  `USREC_t` is retained for reference only and must not enter the baseline model.
-- [`docs/data_manifest.json`](docs/data_manifest.json): input/output SHA-256
-  hashes, schemas, coverage, validation findings and exclusions. The current
-  snapshots yield 882 matching GS10 observations; 1,180 source rows lack valid
-  predictors and six final predictor months lack future labels.
-- [`docs/forecast_protocol.md`](docs/forecast_protocol.md): target definition,
-  validation policy, source provenance limitations and forecasting prerequisites.
-
-Outputs are deterministic for the same inputs, paths and implementation. A
-successful rerun replaces the processed CSV and manifest. Validation failures
-leave previous artifacts untouched; inspect the command's exit status before
-using them. Tests use temporary fixtures and independently verify all 876 output
-rows against the original local files. Snapshot-specific regression expectations
-must be deliberately reviewed if the source snapshots change.
-
-**Retrospective limitation:** observation months are not publication timestamps.
-These snapshots provide no historical release or vintage evidence. NBER recession
-announcements can occur after the months being labeled; six elapsed months alone
-do not establish training-label availability. No real-time forecasting claim is
-made. See the protocol for the implemented Probit timing convention and the
-limits of retrospective chronological evaluation.
-
-### Model A: single-forecast verification
-
-```bash
-.venv/bin/python -m music_recession.baseline --predictor-month 1973-10-01
-```
-
-The equivalent installed command is `.venv/bin/baseline-smoke`. It writes
-[`reports/baseline_smoke.json`](reports/baseline_smoke.json), including coefficients,
-training coverage, class counts, convergence diagnostics, configuration, input
-hashes and software versions. See `--help` for input/config/output overrides.
-
-[`config/baseline.json`](config/baseline.json) specifies the protocol: issue the
-forecast on the 15th of t+1, predict USREC in t+6, and train only on rows whose
-target month is at most t-1. Start training history in April 1953 and require at
-least 240 eligible observations. This makes **October 1973** the first eligible
-predictor month: training predictors run April 1953–March 1973, with targets
-October 1953–September 1973. September 1973 has only 239 eligible observations.
-
-The model includes an intercept and only the spread in percentage points, without
-standardization. Invalid data, single-class samples, constant spread, separation
-and optimization failures produce explicit errors; no alternative model is
-silently substituted. The full settings and failure policy are documented in
-[`docs/forecast_protocol.md`](docs/forecast_protocol.md).
-
-The October 1973 smoke fit uses 240 months (37 recession labels, 203 non-recession
-labels). It converges in six iterations without warnings: intercept **-0.526058**,
-spread coefficient **-0.600335**. With October's spread of **-0.43**, the probability
-for April 1974 is **0.394383**. The assumed issuance date is November 15, 1973.
-**This is one execution check, not a measured forecasting result.** Final FRED
-observations and NBER classifications still contain historical hindsight.
-
-### Model A: expanding-window backtest (Step 4)
-
-```bash
-.venv/bin/python -m music_recession.backtest
-.venv/bin/python -m unittest discover -s tests -v
-```
-
-The equivalent installed command is `.venv/bin/baseline-backtest`. It reuses the
-Step 3 fitting and eligibility functions without altering the model or numerical
-settings. For each predictor month t, training begins in April 1953 and includes
-only rows with target months at most t-1. The assumed cutoff remains the 15th
-calendar day of t+1. A new fit is made for each month; there are no random splits,
-warm starts, hyperparameter searches or fallback estimators.
-
-**630 of 630 forecasts succeeded**, with no model warnings. Predictor months run
-October 1973–March 2026; target months run April 1974–September 2026. Training grows
-from 240 to 869 observations. The calendar count and every training window were
-checked independently against the raw economic snapshot.
-
-| Metric | Retrospective result |
-|---|---:|
-| **Model A Brier Score** | **0.094921** |
-| Expanding-training-prevalence Brier Score | 0.101871 |
-| Brier Skill Score | 0.068221 |
-| ROC-AUC | 0.720204 |
-| Log loss | 0.338149 |
-| Mean predicted recession probability | 14.55% |
-| Observed recession frequency | 11.11% (70 / 630) |
-
-The reference predicts the recession frequency in each forecast's eligible
-training sample. On identical evaluation months, Model A reduces Brier error
-by **6.82%** relative to this benchmark. Brier Score remains the primary measure;
-this point estimate does not establish statistical significance or causation.
-
-Outputs in [`reports/baseline_backtest/`](reports/baseline_backtest/):
-
-- [`forecasts.csv`](reports/baseline_backtest/forecasts.csv): all scheduled months,
-  probabilities, actual labels, reference probabilities, training coverage,
-  coefficients, convergence and diagnostics in a stable versioned schema.
-- [`metrics.json`](reports/baseline_backtest/metrics.json) and
-  [`calibration.csv`](reports/baseline_backtest/calibration.csv): paired metrics,
-  ten fixed calibration bins with counts, coverage, input/code hashes and versions.
-- [`failures.json`](reports/baseline_backtest/failures.json): all non-evaluated
-  records and reasons; empty for this run. Failed months are never silently removed.
-- [Probability timeline](reports/baseline_backtest/probability_timeline.png),
-  [calibration plot](reports/baseline_backtest/calibration.png), and
-  [Brier comparison](reports/baseline_backtest/brier_comparison.png), each also
-  saved as SVG for export.
-
-The timeline is indexed by **target month**, with actual recession target months
-shaded. It shows high risk around 1980–81, timing errors around the 2008–09 recession,
-and elevated 2023–25 probabilities despite non-recession labels in the supplied
-snapshot. Calibration is uneven: the 20–30% bin averages 24.06% predicted risk
-but only 7.32% observed recessions (82 months); high-probability bins have few
-observations. Read the protocol for fuller interpretation and limitations.
-
-No probability clipping is used for Brier Score, ROC-AUC or saved forecasts.
-Log loss floors only an exactly zero observed-outcome likelihood to float64
-epsilon; none needed this treatment in the actual run. Incomplete coverage is
-reported explicitly and returns CLI exit code 2; malformed input aborts with code
-1. Successful full coverage returns 0. Defaults are fixed to the requested sample;
-`--help` describes overrides for diagnostics and later compatible-sample work.
-
-These results remain **retrospective pseudo-out-of-sample**, not evidence of
-historically executable real-time forecasts. Final FRED data and retrospective
-NBER labels contain hindsight, monthly errors are dependent, and no uncertainty
-intervals have yet been calculated. Lyrics feasibility and coverage auditing is
-the recommended next step. The later music comparison must rerun both models on
-compatible training windows and identical evaluation months.
-
-**Data rights:** Do not commit copyrighted full lyrics or redistribution-restricted datasets to the repository. Only share data, derived features, or metadata when the relevant terms permit it. Source datasets should be obtained from their original publishers or repositories.
-
----
-
-*Prepared for the NYU Courant Predictive Analytics course, Fall 2026. Economic preparation, the Probit baseline and retrospective backtesting are implemented; music-source availability and historical real-time availability remain subject to verification.*
+Replace `FRESH` with a new unused name. The validation record documents a test of
+an index-only release tree without ignored raw files or caches. This demonstrates
+saved-result and figure reproduction in the recorded environment, not a fresh
+installation on every supported platform.
+
+Full lyric inference additionally requires externally obtained raw sources,
+untracked inventory/audit intermediates, optional `[music]` dependencies and
+model weights. Public model loading may use the network. Existing directories
+are refused by the experiment driver; use a fresh output directory and an
+explicit cache path. See the [separate full-reproduction instructions](docs/closeout_validation.md#full-inference-is-a-separate-reproduction-level).
+
+Historical manifests and predictions are preserved. Scores came from NLP hash
+`614f862b…`; current `emotions.py` is `e5600454…`. The local cache comparison
+found **7,490 shared score vectors identical**, with **8,800 songs lacking a
+current-hash rerun**. Clean checkouts do not include those caches. We claim
+reproduction of bundled derived results, not full current-code lyric inference.
+
+## CRISP-DM and final deliverables
+
+Business understanding is the incremental forecasting question; data understanding
+is the source/coverage audit; preparation is matching, exclusions, chunking,
+weighting and joins; modeling is paired Probit; evaluation uses probability loss
+and discrimination on chronological dates. Delivery is the reproducible research
+bundle and report, with no real-time deployment claim. The [closeout checklist](docs/review_response.md#final-deliverable-checklist)
+maps the syllabus expectations to evidence and remaining presentation work.
