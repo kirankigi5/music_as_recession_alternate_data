@@ -113,9 +113,9 @@ sensitivity checks, not independent confirmations: the financial crisis disappea
 at 75%, and only four 2001 recession months remain at 80%. Post-review benchmarks
 on the primary dates score 0.0830 for the expanding training recession rate and
 0.0848 for full-history Model A, both better than paired A. We make no firm
-significance claim. Dependence-aware uncertainty and PR-AUC
-remain follow-up work in
-[PR #2](https://github.com/kirankigi5/music_as_recession_alternate_data/pull/2).
+significance claim. This PR #2 branch adds [conditional uncertainty and average
+precision](paired_inference.md); intervals and approximate p-values depend on
+block length and HAC lag.
 See [review dispositions](review_response.md) and Section 10.6.
 
 The failure is concentrated where it matters most: on the 15 recession-positive
@@ -1245,14 +1245,16 @@ Only three recession episodes contribute positive evaluation months, and selecte
 forecast dates have substantial gaps. Point estimates alone do not establish
 statistically significant degradation.
 
-Calendar-aware uncertainty and PR-AUC are implemented separately in Keefer's
-[PR #2](https://github.com/kirankigi5/music_as_recession_alternate_data/pull/2),
-which remains follow-up work to this release. An earlier local investigation used
-a different block-bootstrap convention; those files are preserved outside this
-closeout. Neither convention is canonical in PR #1, and no confidence interval
-or p-value is adopted here. The follow-up should reconcile endpoint handling,
-calendar gaps, seeds/draw counts and reference distributions on their assumptions,
-not on whether a result crosses a significance threshold.
+This PR #2 branch integrates Keefer's calendar-aware implementation on the
+unchanged saved predictions. Primary A/B average precision is 0.1688/0.0722
+(stepwise, not trapezoidal PR area). The 6/12/24-month circular block intervals
+for mean Brier B−A are [0.0031, 0.0594], [−0.0010, 0.0614], [−0.0039, 0.0583].
+Approximate Student-t HAC p-values at lags 5/12/24 are 0.0399/0.0599/0.0479.
+These settings do not give a robust significance conclusion. See the full
+[methods and sensitivity tables](paired_inference.md), including sparse-calendar
+handling, circular endpoints, approximate reference distribution and conditional
+uncertainty limits. Earlier local uncertainty work is preserved without importing
+a second engine. No convention was selected for crossing a significance threshold.
 
 
 ---
@@ -1378,7 +1380,7 @@ post-hoc description of both false alarms and misses, not a significance test.
 `scripts/verify_saved_results.py` recomputes these descriptive quantities from
 bundled predictions and records input hashes in
 [`results/closeout_verification.json`](results/closeout_verification.json).
-Uncertainty and PR-AUC remain in PR #2.
+Conditional uncertainty and average precision are documented in [the PR #2 analysis](paired_inference.md).
 
 
 ---
@@ -1837,8 +1839,9 @@ identify overfitting as the cause of the negative finding.
 Consecutive forecasts share nearly all training data and recession labels persist.
 Monthly losses can therefore be dependent despite the single-month status target.
 An independent-month resampling interval is not sufficient significance evidence.
-Calendar-aware analysis is a separate follow-up in PR #2; no bootstrap convention,
-confidence interval or p-value is canonical in this PR #1 release.
+This PR #2 branch reports circular-calendar bootstrap and approximate HAC
+sensitivities [with explicit assumptions](paired_inference.md). It does not convert
+forecast-month count into a claimed number of independent months.
 
 ### 13.12 Exploratory, not confirmatory
 
@@ -2344,9 +2347,9 @@ version from file hash so cosmetic edits do not invalidate it.
 The original analysis used independent-month resampling, which does not account
 for temporal dependence. Peer review also established that the threshold samples
 are nested and cannot provide independent confirmation. PR #1 now reports
-qualified descriptive findings. Calendar-aware uncertainty and PR-AUC remain
-separate work in PR #2; the earlier local uncertainty investigation is preserved
-without being imported into this release.
+qualified descriptive findings. This PR #2 branch adds conditional uncertainty
+and average precision with results that depend on settings; the earlier local
+uncertainty investigation is preserved without being imported into this release.
 
 ### 16.11 The negative modelling result itself
 
@@ -2371,8 +2374,8 @@ comparing against the broad-period 0.094921 figure.
 These are follow-up proposals. Reviewer-reported single-emotion, index, ridge and
 detrended reruns have not been independently reproduced here. Simple/full-history
 benchmark checks are completed from saved predictions.
-Calendar-aware uncertainty and PR-AUC remain in PR #2; the original model
-experiment remains unchanged.
+Conditional uncertainty and average precision are implemented in this PR #2
+branch; the original model experiment remains unchanged.
 
 ### Priority 1 — Fix the featured-credit coverage gap
 
@@ -2434,11 +2437,11 @@ recessions" from "GoEmotions does not measure lyric emotion".
 
 ### Priority 6 — Stronger temporal uncertainty analysis
 
-Review and integrate Keefer's PR #2 as the follow-up implementation. Reconcile it
-with preserved local uncertainty work before selecting conventions. Inspect
-circular endpoints, calendar missingness, reference distributions and sparse
-correlation diagnostics. A few-episode sample limits interpretation under either
-method; method selection must not be driven by desired significance.
+The current PR #2 implementation documents circular endpoints, calendar
+missingness, approximate reference distributions and unbounded sparse cross-product
+diagnostics. Future work could assess nonstationarity and episode-level robustness
+under a separately declared design. A few-episode sample limits interpretation;
+method selection must not be driven by desired significance.
 
 ### Priority 7 — Alternative aggregation
 
@@ -2498,7 +2501,7 @@ was larger on recession target months (+0.1713) than on other months (+0.0172).
 The related samples show the same sign, but progressively remove entire recession
 episodes. They are not independent confirmation. On the primary dates, the
 training-rate forecast (0.0830) and full-history A (0.0848) both outperform paired
-A and B. Dependence-aware inference remains follow-up work in PR #2.
+A and B. Conditional dependence-aware inference is documented in [the PR #2 analysis](paired_inference.md).
 
 **What this does not mean.** This is one exploratory design, on one corpus, with
 one out-of-domain emotion model, three recession episodes, 15 positive evaluation

@@ -1,3 +1,6 @@
+> Historical PR #1 closeout record. Its follow-up uncertainty work is now implemented
+> on this PR #2 branch; see [current methods and validation](paired_inference.md).
+
 # PR #1 closeout: review dispositions
 
 This release closes correctness, documentation and derived-asset issues on the

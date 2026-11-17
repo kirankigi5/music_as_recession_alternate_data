@@ -9,8 +9,9 @@ We completed an exploratory experiment scoring **16,290 songs** and testing
 whether their emotions improve recession forecasts. On **183 paired forecasts**,
 adding six emotion indicators increased Brier error from **0.0904 to 0.1202**.
 This is no demonstrated incremental benefit on the evaluated sample; statistical
-uncertainty and PR-AUC remain a separate follow-up in
-[PR #2](https://github.com/kirankigi5/music_as_recession_alternate_data/pull/2).
+uncertainty depends on block length and HAC lag. This PR #2 branch adds
+[conditional uncertainty and average precision](docs/paired_inference.md) from
+saved forecasts; it does not establish robust statistical degradation.
 
 ## Question, data and architecture
 

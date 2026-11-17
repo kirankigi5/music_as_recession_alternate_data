@@ -12,10 +12,9 @@ full-history yield-curve model scored **0.0848** on those same dates.
 The finding is **no demonstrated incremental predictive benefit from these
 features on this selected retrospective sample**. We make no significance,
 causal, real-time deployment, or general absence-of-music-signal claim.
-Dependence-aware uncertainty and PR-AUC are follow-up work in
-[PR #2](https://github.com/kirankigi5/music_as_recession_alternate_data/pull/2).
-Neither bootstrap convention from the earlier local investigation is canonical
-in PR #1.
+This PR #2 branch adds [calendar-aware uncertainty and average precision](docs/paired_inference.md)
+from saved predictions. Primary intervals and approximate HAC p-values depend on
+settings; they do not establish robust statistical degradation.
 
 > These are exploratory coursework results. Lyric records passed automated
 > metadata/risk and English-language screens; recording identity, language and
@@ -30,7 +29,7 @@ in PR #1.
 | Concise professor update with figures | [Professor README](README_PROFESSOR.md) |
 | Main results and benchmarks | [Exploratory results](docs/exploratory_results.md) |
 | Review dispositions and follow-up boundary | [PR #1 closeout](docs/review_response.md) |
-| Tested release commands and limits | [Validation record](docs/closeout_validation.md) |
+| Tested release commands and limits | [PR #1 validation](docs/closeout_validation.md), [PR #2 methods and validation](docs/paired_inference.md) |
 | Full research history, methods and figures | [Research report](docs/COMPLETE_RESEARCH_REPORT.md) |
 | Code map and next work | [Team handoff](docs/TEAM_HANDOFF.md) |
 | Timing and evidence contracts | [Forecast protocol](docs/forecast_protocol.md), [model execution](docs/model_comparison.md), [course policy](docs/exploratory_course_policy.md) |
@@ -135,6 +134,9 @@ python scripts/verify_saved_results.py
 
 # Render the ten original figures from bundled derived data into a fresh path.
 python scripts/make_research_figures.py --out /tmp/music-recession-figures-FRESH
+
+# Conditional uncertainty and average precision; no fitting or inference.
+python scripts/run_paired_inference.py --out /tmp/music-paired-inference-FRESH.json
 
 # Optional verification output, separate from original experiment directories.
 python scripts/verify_saved_results.py --output /tmp/music-recession-verification-FRESH.json

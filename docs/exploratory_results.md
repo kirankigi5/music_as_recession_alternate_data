@@ -68,15 +68,24 @@ As a **post-hoc descriptive sensitivity only**, excluding March–April 2020 tar
 leaves 181 forecasts and 13 positives: A Brier 0.0864971, B 0.1155202. COVID remains
 in the original primary analysis. No models are refitted for this check.
 
-## Uncertainty and PR-AUC belong to PR #2
+## Conditional uncertainty and average precision (PR #2)
 
-[PR #2](https://github.com/kirankigi5/music_as_recession_alternate_data/pull/2)
-contains Keefer's calendar-aware block-bootstrap/HAC implementation and average
-precision. It remains a separate follow-up. An earlier local investigation used
-another bootstrap convention; neither is designated canonical by PR #1.
-Independent-month intervals do not establish significance in this dependent,
-few-episode sample. PR #1 reports point estimates and descriptive checks only.
-No PR #2 confidence intervals, p-values or PR-AUC scores are adopted here.
+Keefer's implementation is reconciled with the merged PR #1 here. It reads the
+original saved predictions without refitting. The [methods and validation](paired_inference.md)
+record all block-length and HAC-lag sensitivities and the [JSON](results/paired_inference.json)
+records exact values and input hashes.
+
+Primary A/B average precision is **0.1688 / 0.0722**, versus evaluation prevalence
+0.0820. This is stepwise average precision, not trapezoidal PR area. Primary
+95% circular-calendar bootstrap intervals for mean Brier B−A are **[0.0031,
+0.0594]**, **[−0.0010, 0.0614]**, and **[−0.0039, 0.0583]** for 6/12/24-month
+blocks. Approximate Student-t HAC p-values are **0.0399 / 0.0599 / 0.0479** for
+lags 5/12/24. Statistical significance depends on the analysis setting;
+we retain the qualified descriptive conclusion. Only three recession episodes
+are represented, and stricter samples are nested, not independent replications.
+These intervals condition on saved predictions and the selected calendar; they
+do not capture refitting, source, NLP, vintage or pipeline-selection uncertainty.
+The separate local uncertainty engine remains unimported.
 
 ## Coverage and measurement limits
 
@@ -91,6 +100,7 @@ model prevent a historically executable real-time forecasting claim.
 
 ```sh
 python scripts/verify_saved_results.py
+python scripts/run_paired_inference.py --out /tmp/music-paired-inference-FRESH.json
 python scripts/make_research_figures.py --out /tmp/music-recession-figures-FRESH
 ```
 
