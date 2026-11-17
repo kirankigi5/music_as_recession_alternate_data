@@ -1,158 +1,108 @@
-# Can popular music predict U.S. recessions? Exploratory course results
+# Exploratory results: six-month recession-status prediction
 
-**Status: exploratory coursework analysis. Not a verified-evidence research finding.**
+The original experiment is complete under the exploratory coursework policy.
+Automated screens are not verified recording/language/release evidence. Source
+use rests on reported instructor guidance, not a licence. See the
+[policy](exploratory_course_policy.md) and [source review](osf_source_use_review.md).
 
-Source use rests on reported instructor guidance for a course project, recorded as
-such and not as a licence, fair-use determination, or institutional approval. The
-records analysed pass only automated risk and English-language screens: no
-recording is independently verified, no language is human reviewed, and no release
-date is verified. See `docs/exploratory_course_policy.md`. The strict primary
-policy and its results are unchanged.
+## Original paired results
 
-## Headline result
+| Coverage | Forecasts | Recession months | A Brier | B Brier | B − A | A ROC-AUC | B ROC-AUC |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 70% primary | 183 | 15 | 0.0903818731 | 0.1202485779 | +0.0298667048 | 0.6462 | 0.4306 |
+| 75% sensitivity | 102 | 9 | 0.0739858409 | 0.1146495991 | +0.0406637582 | 0.8722 | 0.5424 |
+| 80% sensitivity | 45 | 4 | 0.0640448014 | 0.1206001394 | +0.0565553380 | 0.9878 | 0.7012 |
 
-**Adding six lyric-emotion features did not improve six-month-ahead recession
-prediction. Model B was worse than Model A at every predeclared threshold.**
+Both models use identical training rows, forecast dates and outcomes within each
+run. Brier is a loss, so positive B − A means higher observed error for B. All
+three runs record zero fit failures. This supports no demonstrated incremental
+benefit from these features in this exploratory sample; it does not establish
+statistical degradation or identify a cause.
 
-| Coverage threshold | Paired forecasts | Recession months | Model A Brier | Model B Brier | B − A | Model A ROC-AUC | Model B ROC-AUC |
-|---|---|---|---|---|---|---|---|
-| **0.70 (primary)** | **183** | **15** | **0.0903818731** | **0.1202485779** | **+0.0298667048** | **0.6462** | **0.4306** |
-| 0.75 (sensitivity) | 102 | 9 | 0.0739858409 | 0.1146495991 | +0.0406637582 | 0.8722 | 0.5424 |
-| 0.80 (sensitivity) | 45 | 4 | 0.0640448014 | 0.1206001394 | +0.0565553380 | 0.9878 | 0.7012 |
+The primary run has 16,290 reported scored songs and 612 feature-table months.
+Predictor dates span November 1993–December 2023; targets span May 1994–June 2024.
+The 183 evaluation dates are nonconsecutive, with 15 positives (8.20%). The target
+is status at t+6. Issuance is assumed on the 15th of t+1, so the horizon is indexed
+from the predictor month, not the day of issuance.
 
-A positive difference means Model B is worse (Brier is a loss). Both models were
-refit on identical eligible training rows and scored on identical forecast dates;
-Model A was re-evaluated on exactly these dates and is **not** compared with the
-earlier broad-period figure of 0.094921.
+## Sample selection and benchmark checks
 
-Primary window: predictor months 1993-11 to 2023-12, targets 1994-05 to 2024-06.
-429 of 612 months were feature-eligible at 70% coverage; 183 reached the
-240-observation training requirement. Zero fit failures across all three runs.
+| Coverage | Coverage-only months | Feature-eligible months | 2001 / GFC / COVID positive months |
+|---|---:|---:|---|
+| 70% | 433 | 429 | 8 / 5 / 2 |
+| 75% | 352 | 348 | 7 / 0 / 2 |
+| 80% | 295 | 291 | 4 / 0 / 0 |
 
-Model B's primary ROC-AUC of **0.4306 is below 0.5**, i.e. worse than chance
-ordering on this sample.
+Four otherwise covered months (December 1976–March 1977) have missing chart rank
+slots. The final feature gate excludes them. Threshold evaluation dates are
+nested; entire episodes disappear, so these are related sensitivity checks.
 
-## Is the difference robust?
+| Forecast, evaluated on the same 183 primary dates | Brier |
+|---|---:|
+| Expanding paired-training recession rate | **0.0829708** |
+| Full-history Model A, trained from April 1953 | **0.0847541** |
+| Paired Model A, eligible history from January 1973 | 0.0903819 |
+| Model B, same paired rows plus emotions | 0.1202486 |
 
-Yes in direction, weak in precision.
+The full-history score is selected from existing baseline forecasts on B's exact
+dates. It changes training history and supplies a practical benchmark, while the
+paired experiment isolates the added features. The separate 630-forecast score
+0.094921 is not directly comparable to Model B.
 
-- The sign is consistent across all three predeclared thresholds, and the gap
-  widens as coverage tightens (+0.0299 → +0.0407 → +0.0566).
-- Paired per-month Brier differences, primary run: mean +0.0298667,
-  95% bootstrap CI **[+0.0147, +0.0458]**, which excludes zero.
-- Naive paired t = +3.74. This **ignores serial correlation** between overlapping
-  monthly forecasts, so the true interval is wider than quoted.
+## Calibration, error concentration and complexity
 
-One nuance matters for interpretation: Model B is worse in only **86 of 183
-months (47.0%)** yet loses clearly on average. Its deficit comes from a minority
-of months with large errors rather than uniform degradation.
+B assigns probabilities in **[0.3, 0.8)** to **44 evaluated months, with one
+recession**. Its 0.4–0.5 bin contains 12 months and one recession (1/12); the other
+populated bins in that range contain no recessions. The original claim of 42
+months with zero recession frequency throughout was incorrect.
 
-Calibration confirms it. Model B assigned probabilities of 0.3–0.8 to 42 months
-in which the observed recession frequency was **0.0** in every one of those bins:
+B improves on A in 97 of 183 months but loses overall. Target years 1999 and
+2001 account for 79.21% of its net extra loss, covering false alarms and misses.
+Primary training windows have 46–61 positive labels and eight fitted parameters
+including the intercept: **5.75–7.625 events per parameter**. This ratio and the
+error pattern do not prove overfitting. A local improvement in 2023–24 does not
+establish a stable music signal. Reviewer-reported alternative-model results
+remain unverified unless their code and outputs are supplied.
 
-| Bin | Model A n / predicted / observed | Model B n / predicted / observed |
-|---|---|---|
-| 0.3–0.4 | 20 / 0.342 / 0.150 | 24 / 0.338 / **0.000** |
-| 0.4–0.5 | 6 / 0.437 / 0.500 | 12 / 0.449 / 0.083 |
-| 0.5–0.6 | 3 / 0.528 / 0.000 | 4 / 0.550 / **0.000** |
-| 0.6–0.7 | 1 / 0.620 / 0.000 | 2 / 0.657 / **0.000** |
-| 0.7–0.8 | — | 2 / 0.737 / **0.000** |
+As a **post-hoc descriptive sensitivity only**, excluding March–April 2020 targets
+leaves 181 forecasts and 13 positives: A Brier 0.0864971, B 0.1155202. COVID remains
+in the original primary analysis. No models are refitted for this check.
 
-Model B issues confident recession calls that do not materialise.
+## Uncertainty and PR-AUC belong to PR #2
 
-## Monthly coverage and missing-data pattern
+[PR #2](https://github.com/kirankigi5/music_as_recession_alternate_data/pull/2)
+contains Keefer's calendar-aware block-bootstrap/HAC implementation and average
+precision. It remains a separate follow-up. An earlier local investigation used
+another bootstrap convention; neither is designated canonical by PR #1.
+Independent-month intervals do not establish significance in this dependent,
+few-episode sample. PR #1 reports point estimates and descriptive checks only.
+No PR #2 confidence intervals, p-values or PR-AUC scores are adopted here.
 
-Popularity-weighted coverage, denominator = all observed chart weight including
-songs without usable lyrics. Overall median 0.7889, mean 0.7800. 612 monthly rows,
-0 incomplete chart months, 4 months with missing rank slots.
+## Coverage and measurement limits
 
-| Decade | Months | Median coverage | Mean | Min | Feature-eligible at 70% |
-|---|---|---|---|---|---|
-| 1970s | 84 | 0.862 | 0.857 | 0.762 | 80 |
-| 1980s | 120 | 0.924 | 0.918 | 0.847 | 120 |
-| 1990s | 120 | 0.843 | 0.841 | 0.697 | 118 |
-| 2000s | 120 | 0.710 | 0.719 | 0.634 | 68 |
-| 2010s | 120 | 0.659 | 0.658 | 0.511 | **33** |
-| 2020s | 48 | 0.608 | 0.607 | 0.424 | **10** |
+Monthly median popularity-weight coverage falls from 0.924 in the 1980s to 0.608
+in 2020–2023; featured-credit and version-matching gaps are important contributors.
+The evaluated songs/months change over time. GoEmotions was trained on Reddit
+comments and has not been validated on these lyrics. Final economic values,
+retrospective NBER labels, uncertain lyric availability and a modern pretrained
+model prevent a historically executable real-time forecasting claim.
 
-Missingness is strongly non-random and time-trending: coverage falls from 0.924 in
-the 1980s to 0.608 in the 2020s, because featured-artist billing became common and
-the upstream lyrics.ovh lookup stripped those credits. 179 of 612 months fall below
-the 70% threshold, concentrated after 2000. **Coverage drift is therefore
-confounded with any apparent emotion effect**, and the evaluation sample is
-weighted towards earlier decades.
+## Reproduce the descriptive evidence
 
-## Monthly emotion features
-
-All 612 months scored. Weighted means across scored months:
-
-| Emotion | Mean | SD | Min | Max |
-|---|---|---|---|---|
-| joy | 0.0312 | 0.0134 | 0.0085 | 0.1310 |
-| sadness | 0.0835 | 0.0229 | 0.0292 | 0.1490 |
-| fear | 0.0190 | 0.0113 | 0.0036 | 0.0647 |
-| anger | 0.0238 | 0.0140 | 0.0062 | 0.0813 |
-| nervousness | 0.0114 | 0.0043 | 0.0037 | 0.0301 |
-| optimism | 0.0339 | 0.0093 | 0.0143 | 0.0656 |
-
-Six separate predictors were used; they were never collapsed into one score.
-Sadness dominates; nervousness is both the smallest and the weakest pretrained
-label. Absolute magnitudes are low because GoEmotions is a multi-label sigmoid
-model applied out of domain.
-
-## Method actually executed
-
-- 16,290 songs scored with real GoEmotions inference
-  (`SamLowe/roberta-base-go_emotions`, revision `d750483476…`, CPU, deterministic),
-  cached by lyric content hash so each song was processed once.
-- Monthly aggregation weighted by `101 − weekly rank`, with each weekly chart
-  appearance contributing separately; denominator is total chart weight.
-- Probit, six-calendar-month horizon, minimum 240 eligible training observations,
-  expanding window, forecast cutoff the 15th of t+1, training targets restricted
-  to t−1 or earlier. Model B standardises features on training rows only.
-- Model A: yield spread `GS10 − TB3MS` alone. Model B: spread plus the six emotions.
-
-## Limitations
-
-1. **Three recession episodes only** (2001, 2008–09, 2020) are reachable, because
-   the corpus starts in 1973 and 240 training observations are required. This caps
-   achievable precision regardless of threshold.
-2. **Non-random, time-trending missingness** confounds coverage with signal.
-3. **No verified recordings, language, release dates or rights.** Automated screens
-   are not verification.
-4. **Out-of-domain emotion model.** GoEmotions is Reddit-trained and unvalidated on
-   lyrics; long-text chunk pooling is unvalidated for this use.
-5. **Hindsight in the targets.** Final FRED and NBER values are revised series, and
-   chart issue dates are a retrospective convention, not publication timestamps.
-6. A modern pretrained transformer was not available at historical forecast
-   origins, so this is retrospective by construction and not a real-time strategy.
-
-## Conclusion
-
-On this exploratory sample, lyric emotions do not improve six-month-ahead
-recession forecasts over the yield spread; they degrade them, consistently across
-all three predeclared coverage thresholds. The direction of that result is robust.
-Its magnitude is not precisely estimated, and with three recession episodes it
-cannot be, so the honest claim is a null-to-negative result rather than a measured
-effect size.
-
-## Result locations
-
-```
-reports/model_comparison/exploratory_primary_cov70/        # 70% primary
-reports/model_comparison/exploratory_sensitivity_cov75/    # 75% sensitivity
-reports/model_comparison/exploratory_sensitivity_cov80/    # 80% sensitivity
+```sh
+python scripts/verify_saved_results.py
+python scripts/make_research_figures.py --out /tmp/music-recession-figures-FRESH
 ```
 
-Each contains `metrics.json`, `predictions.csv`, `monthly_features_and_coverage.csv`,
-`monthly_coverage.csv`, `calibration.csv`, `monthly_contributions.csv`,
-`song_source_mapping.csv`, `lyric_coverage.png`, `probability_comparison.png`,
-`manifest.json` and `CODE_VERSION_PROVENANCE.md`. No lyric text appears in any
-output. These directories are generated artefacts and are not committed.
+Replace `FRESH` with an unused name. The [verification JSON](results/closeout_verification.json)
+records recomputed metrics and input hashes. Original outputs live in
+`docs/results/exploratory_primary_cov70/`, `exploratory_sensitivity_cov75/`, and
+`exploratory_sensitivity_cov80/`. Each includes predictions, metrics, coverage,
+calibration, features, original manifest and provenance note. Only the previously
+missing sensitivity feature tables/manifests were restored, without editing them.
+Large mapping/contribution files and raw inputs are not bundled.
 
-Code-version caveat: results were produced by `emotions.py` sha256 `614f862b…`
-while the committed file is `e5600454…`. The sole difference is a `hasattr` guard
-that cannot affect a tensor operand, and scores were verified **numerically
-identical on 7,490 of 16,290 songs** scored under both versions (0 differences,
-max absolute difference 0.0). The remaining 8,800 songs were not re-scored, so a
-full byte-for-byte reproduction under the committed hash has not been performed.
+The historical NLP hash differs from current code. A local comparison found 7,490
+shared vectors identical; 8,800 songs have not been rerun under the current hash.
+The old provenance files are archival records, including references to local-only
+scripts; supported reproduction levels are in the [validation record](closeout_validation.md).

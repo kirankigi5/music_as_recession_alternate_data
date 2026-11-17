@@ -1,12 +1,12 @@
 """Regenerate every research figure from ALREADY-COMPUTED experiment outputs.
 
-Reads only derived CSV/JSON under reports/model_comparison/. Performs no emotion
+Reads only derived CSV/JSON under docs/results/. Performs no emotion
 inference, no model fitting and no network access, so figures can be rebuilt in
 seconds without repeating the 16,290-song run.
 
 Usage:
-    python scripts/make_research_figures.py
-    python scripts/make_research_figures.py --out docs/figures/music_recession
+    python scripts/make_research_figures.py --out /tmp/music-figures-FRESH
+    # Replace FRESH with a new unused name to preserve existing figures.
 """
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ RUNS = [('70% (primary)', 'exploratory_primary_cov70', '#1f77b4'),
         ('75% sensitivity', 'exploratory_sensitivity_cov75', '#ff7f0e'),
         ('80% sensitivity', 'exploratory_sensitivity_cov80', '#2ca02c')]
 EMOTIONS = ['joy', 'sadness', 'fear', 'anger', 'nervousness', 'optimism']
-BASE = Path('reports/model_comparison')
+BASE = Path('docs/results')
 CAPTION = ('Exploratory course analysis: automated screens only; recordings, language '
            'and release dates unverified.')
 
