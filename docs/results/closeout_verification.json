@@ -1,0 +1,171 @@
+{
+  "scope": "Descriptive checks of saved results; no fitting, inference, uncertainty or PR-AUC.",
+  "runs": {
+    "exploratory_primary_cov70": {
+      "forecasts": 183,
+      "recession_months": 15,
+      "models": {
+        "a": {
+          "brier_score": 0.09038187314132133,
+          "roc_auc": 0.6462301587301588,
+          "max_probability_reconstruction_error": 1.1102230246251565e-16
+        },
+        "b": {
+          "brier_score": 0.12024857793242896,
+          "roc_auc": 0.4305555555555556,
+          "max_probability_reconstruction_error": 2.7755575615628914e-16
+        }
+      },
+      "training_rate_brier": 0.08297080327236554,
+      "episodes": {
+        "recession_2001": 8,
+        "financial_crisis": 5,
+        "covid": 2
+      },
+      "coverage_only_months": 433,
+      "feature_eligible_months": 429,
+      "missing_rank_excluded_months": [
+        "1976-12-01",
+        "1977-01-01",
+        "1977-02-01",
+        "1977-03-01"
+      ],
+      "historical_output_hashes_checked": [
+        "metrics.json",
+        "predictions.csv",
+        "monthly_coverage.csv",
+        "monthly_features_and_coverage.csv",
+        "calibration.csv"
+      ],
+      "nlp_provenance": "Historical NLP hash differs; no full current-hash inference rerun claimed."
+    },
+    "exploratory_sensitivity_cov75": {
+      "forecasts": 102,
+      "recession_months": 9,
+      "models": {
+        "a": {
+          "brier_score": 0.07398584090287659,
+          "roc_auc": 0.8721624850657109,
+          "max_probability_reconstruction_error": 1.6653345369377348e-16
+        },
+        "b": {
+          "brier_score": 0.11464959912864661,
+          "roc_auc": 0.5424133811230586,
+          "max_probability_reconstruction_error": 4.440892098500626e-16
+        }
+      },
+      "training_rate_brier": 0.08906266559316882,
+      "episodes": {
+        "recession_2001": 7,
+        "financial_crisis": 0,
+        "covid": 2
+      },
+      "coverage_only_months": 352,
+      "feature_eligible_months": 348,
+      "missing_rank_excluded_months": [
+        "1976-12-01",
+        "1977-01-01",
+        "1977-02-01",
+        "1977-03-01"
+      ],
+      "historical_output_hashes_checked": [
+        "metrics.json",
+        "predictions.csv",
+        "monthly_coverage.csv",
+        "monthly_features_and_coverage.csv",
+        "calibration.csv"
+      ],
+      "nlp_provenance": "Historical NLP hash differs; no full current-hash inference rerun claimed."
+    },
+    "exploratory_sensitivity_cov80": {
+      "forecasts": 45,
+      "recession_months": 4,
+      "models": {
+        "a": {
+          "brier_score": 0.0640448013828281,
+          "roc_auc": 0.9878048780487805,
+          "max_probability_reconstruction_error": 1.1102230246251565e-16
+        },
+        "b": {
+          "brier_score": 0.1206001393850548,
+          "roc_auc": 0.7012195121951219,
+          "max_probability_reconstruction_error": 1.6653345369377348e-16
+        }
+      },
+      "training_rate_brier": 0.09007147935253879,
+      "episodes": {
+        "recession_2001": 4,
+        "financial_crisis": 0,
+        "covid": 0
+      },
+      "coverage_only_months": 295,
+      "feature_eligible_months": 291,
+      "missing_rank_excluded_months": [
+        "1976-12-01",
+        "1977-01-01",
+        "1977-02-01",
+        "1977-03-01"
+      ],
+      "historical_output_hashes_checked": [
+        "metrics.json",
+        "predictions.csv",
+        "monthly_coverage.csv",
+        "monthly_features_and_coverage.csv",
+        "calibration.csv"
+      ],
+      "nlp_provenance": "Historical NLP hash differs; no full current-hash inference rerun claimed."
+    }
+  },
+  "input_sha256": {
+    "data/processed/economic_monthly.csv": "fcda68b547e62cd8c1fd314401c9788d8613ee84ad466318bd0c1d70c173e62b",
+    "docs/results/exploratory_primary_cov70/metrics.json": "b6437a3432e4e0919bf78bf2b083f4f91dce28296537854a8bd9063021f905dd",
+    "docs/results/exploratory_primary_cov70/predictions.csv": "0b68f1e382b9c3377ef4d29583171b9f7a85ed90d437061148db6eb5b8388e42",
+    "docs/results/exploratory_primary_cov70/monthly_coverage.csv": "0c48ef49cf7b8a596898d624d3282aafa2517083d5ee151da988e86eae3e6671",
+    "docs/results/exploratory_primary_cov70/monthly_features_and_coverage.csv": "849932403d15ce912cc285454e3dcc24c3649ca317315063a07a50977c782115",
+    "docs/results/exploratory_primary_cov70/calibration.csv": "71ff3418397232dff0f987b323ea8d9b6e2b31c6aeabc8d33ca56b8b371d2e14",
+    "docs/results/exploratory_primary_cov70/manifest.json": "995f39cdae600871a92b5a3b8a8aaf54cef2245e2685571e3881055c65d43954",
+    "config/music_preparation_exploratory.json": "6057712305441b15b88c57c61d19d7aed30df40af2496fd397b96a55b9e5a3cf",
+    "config/music_model.json": "122641d8fb374c768631ff5c499407049e4ee78eb509ffdf51cff8d8b2d5710d",
+    "config/baseline.json": "ce5b1c12cfaa1e07a1fd0cf39ef1a1c743dd11888fc5e30e5d3a142d50536a96",
+    "docs/results/exploratory_sensitivity_cov75/metrics.json": "e504ffd553c59fc0d0fd89bde803a8bd05fd20bc1093a2e0ba06f125ba3c7f87",
+    "docs/results/exploratory_sensitivity_cov75/predictions.csv": "eeaa96efd934b00efceef1afb5a42bd8591e12f7d7286d798479968a90756336",
+    "docs/results/exploratory_sensitivity_cov75/monthly_coverage.csv": "ab59ad6ea70b813679d9bee5f5ae2b98112bfb29b75e5aad2a428a2c391fd0be",
+    "docs/results/exploratory_sensitivity_cov75/monthly_features_and_coverage.csv": "a80c805a7302c00c20b694a5383f0b5a0a01d3f3679503f1844a808764097e03",
+    "docs/results/exploratory_sensitivity_cov75/calibration.csv": "41f20ebd57e85aa56ea812a1a557c0fe21450fd89252673976d40156eb0d8916",
+    "docs/results/exploratory_sensitivity_cov75/manifest.json": "b664854eb61f28d0d55949b94c2a3a008b0e5bc58c0241528d03dfb9470ec945",
+    "docs/results/exploratory_sensitivity_cov80/metrics.json": "9f0c79fcab8ad45e6bf054b2b417b8751665723b9e8ea5cb56ce9122e62fe704",
+    "docs/results/exploratory_sensitivity_cov80/predictions.csv": "ed8035f821435977eb918a3c26388e02eff515b2ca00ae0db9bc352bc6a8a080",
+    "docs/results/exploratory_sensitivity_cov80/monthly_coverage.csv": "91554cf8943766a8edabe5c82326ca4cb93bee348d9db284daed4cbdf9c487c6",
+    "docs/results/exploratory_sensitivity_cov80/monthly_features_and_coverage.csv": "70f139d8acb398740a5d24d0d96a16563f2e5291b50cc89c56eee88760e65844",
+    "docs/results/exploratory_sensitivity_cov80/calibration.csv": "49d28c66aaf82d8106b017c9d8a20b08cb0e4ff91136cd98d412e7e0983dbb18",
+    "docs/results/exploratory_sensitivity_cov80/manifest.json": "f824ffcca46fa91976e15d10ce71d5bbd62047fc1f2d706cf6028ca3230694a9",
+    "reports/baseline_backtest/forecasts.csv": "7fa97b3b708b040bf58618c2e65f568f893fad2097684d168fe93e10e2043fa4"
+  },
+  "primary_checks": {
+    "full_history_a_same_dates": {
+      "forecasts": 183,
+      "brier_score": 0.08475405989728267,
+      "source": "Existing baseline forecasts; different training history, identical evaluation dates."
+    },
+    "model_b_probability_03_to_08_months": 44,
+    "model_b_probability_03_to_08_recession_months": 1,
+    "positive_training_labels_range": [
+      46,
+      61
+    ],
+    "parameters_including_intercept": 8,
+    "events_per_parameter_range": [
+      5.75,
+      7.625
+    ],
+    "target_years_1999_2001_share_of_net_extra_loss": 0.7921278551782386,
+    "covid_exclusion": {
+      "status": "Post-hoc descriptive sensitivity; primary retains COVID.",
+      "forecasts": 181,
+      "recession_months": 13,
+      "model_a_brier": 0.0864971327782942,
+      "model_b_brier": 0.11552024487483466
+    }
+  },
+  "verification_script_sha256": "1af6498827b31b0898a69d737bb89edd8cb597ed0b4b7b41fd19438a1b285b38"
+}

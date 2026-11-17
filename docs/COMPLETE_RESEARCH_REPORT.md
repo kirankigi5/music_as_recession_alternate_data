@@ -108,18 +108,21 @@ failures occurred in any run.
 **Adding lyric emotions made six-month-ahead recession forecasts worse, not
 better, at every threshold we predeclared.** Model B's primary ROC-AUC of 0.4306
 is below 0.5, meaning worse-than-chance ranking on this sample. The direction of
-the result is the same at all three thresholds, which are nested samples. Once the
-serial dependence between overlapping monthly forecasts is allowed for, the
-primary 95% interval on the Brier difference runs from −0.0010 to +0.0614
-(12-month calendar blocks) and the Diebold–Mariano p-value is 0.04 to 0.06
-depending on the HAC lag (Section 10.6). The negative result is likely but not
-established at conventional levels.
+the result is consistent across the related threshold samples. These are nested
+sensitivity checks, not independent confirmations: the financial crisis disappears
+at 75%, and only four 2001 recession months remain at 80%. Post-review benchmarks
+on the primary dates score 0.0830 for the expanding training recession rate and
+0.0848 for full-history Model A, both better than paired A. We make no firm
+significance claim. This PR #2 branch adds [conditional uncertainty and average
+precision](paired_inference.md); intervals and approximate p-values depend on
+block length and HAC lag.
+See [review dispositions](review_response.md) and Section 10.6.
 
 The failure is concentrated where it matters most: on the 15 recession-positive
 target months, Model B's mean per-month Brier penalty is **+0.1713**, versus
 +0.0172 on the 168 non-recession months. Model B misses recessions and raises
 false alarms, while being slightly better than Model A in a bare majority of
-quiet months (97 of 183).
+evaluated months (97 of 183).
 
 ### Main limitations and conclusion
 
@@ -188,12 +191,13 @@ regression coefficients fitted to the whole sample.
 
 ### Why the yield spread
 
-The term spread is the canonical recession predictor: theoretically motivated,
-reported in real time, revision-free in its published form, and a strong empirical
-performer at our exact horizon. Our Model A reference backtest over 630 forecasts
-(October 1973 – March 2026) achieved a Brier score of 0.094921 and ROC-AUC of
-0.720204, confirming it is a genuinely competitive benchmark rather than a
-strawman.
+The term spread is a standard, theoretically motivated recession predictor.
+Our separate 630-forecast reference backtest (October 1973–March 2026) achieved
+Brier 0.094921 and ROC-AUC 0.720204. That broader-period result does not establish
+competitive performance on the paired study sample. On the primary 183 dates,
+paired A loses to its own expanding training-rate forecast (0.0904 versus 0.0830).
+Full-history A scores 0.0848 on these same dates. These benchmarks limit what
+beating or failing to beat paired A would establish.
 
 ### Our hypotheses, stated as hypotheses
 
@@ -384,13 +388,19 @@ predictions, so a policy could not be chosen by peeking at Brier scores.
 
 **Findings (unflagged subset).**
 
-| Threshold | Qualifying months | Attainable forecasts |
+| Threshold | Coverage-only months | Attainable forecasts |
 |---|---|---|
 | 70% | 433 | 183 |
 | 75% | 352 | 102 |
 | 80% | 295 | 45 |
 | 85% | 222 | 0 |
 | 90% | 130 | 0 |
+
+The coverage-only counts above are not the final feature-eligibility counts.
+Four months have missing chart rank slots and fail the complete preparation gate:
+the final 70%/75%/80% feature counts are **429/348/291**. The attainable forecast
+counts shown already match the final runs. Exact excluded dates are in
+[`results/closeout_verification.json`](results/closeout_verification.json).
 
 Decade medians exposed the coverage drift: 1980s 0.924, 2000s 0.710, 2010s 0.659,
 2020s 0.608. Including the reviewable flagged records would lift the 2000s to
@@ -530,13 +540,6 @@ question: a readiness test expected 54 attainable forecasts where the code produ
 arises from treating the six-month horizon as six *eligible observations* rather
 than six *calendar months*, which differ when eligible months alternate. The same
 rule reproduces the protocol's documented October 1973 anchor, confirming it.
-
-**Two unexplained tooling anomalies** are recorded for transparency: a shell
-command returned with an `rm -rf reports/...` fragment spliced into it that was
-never authored and never executed, and later approximately 180 files were found
-staged in git without any `git add` having been issued for them. Both were caught
-and neither affected results; the staged files were unstaged and curated
-deliberately.
 
 ---
 
@@ -935,11 +938,11 @@ variation. Fear and anger are both negative but behave differently; nervousness 
 anticipatory where sadness is reactive. Keeping six predictors preserves that
 structure.
 
-The cost is parameter count. Model B estimates 8 parameters against 46–61 positive
-training labels, giving events-per-variable of roughly 5.8–9.2 against a
-conventional minimum near 10. Section 13 treats this as a leading candidate
-explanation for the observed result, and Section 17 proposes a predeclared
-single-index alternative.
+The primary run estimates eight parameters including the intercept against
+46–61 positive training labels: **5.75–7.625 events per parameter**. This is a
+descriptive complexity diagnostic, not a universal adequacy threshold or proof
+of overfitting. Reviewer-reported simplified-model reruns require supplied code
+and outputs before becoming verified findings.
 
 ### 6.9 Domain-transfer limitations, summarised
 
@@ -986,10 +989,11 @@ A row *i* may train the forecast for month *t* when both hold:
    the paired comparison), and
 2. `target(i) = i + 6 months ≤ t − 1`.
 
-The second condition is the no-lookahead guarantee: a training row's outcome must
-have been observable before the forecast is issued. Eligibility is computed
-**from dates**, never by dropping a fixed number of rows, and missing months are
-never fabricated to reach 240.
+The second condition enforces the assumed chronological label boundary.
+It does **not** establish when NBER actually announced each label. Final data,
+retrospective labels and unmodeled announcement lags prevent a real-time
+no-lookahead guarantee. Eligibility is computed **from dates**, never by dropping
+a fixed number of rows, and missing months are never fabricated to reach 240.
 
 This rule makes **October 1973** the first eligible predictor month for the
 reference backtest: training predictors April 1953 – March 1973, targets October
@@ -1038,7 +1042,8 @@ forecasts with 4 recession months.
 We therefore **re-estimated and re-scored Model A on exactly Model B's dates** in
 every comparison. Every Model A number in Section 10 is a fresh paired
 computation. The 0.094921 figure appears in this report only as evidence that the
-baseline is competitive in general, never as a comparison term.
+reference backtest executed successfully, never as a direct comparison term.
+Section 10.6 adds a valid full-history comparison by evaluating on B's exact dates.
 
 ---
 
@@ -1075,11 +1080,12 @@ Within each expanding window, `_fit_extended` computes the mean and standard
 deviation of all seven predictors **from the training rows of that window only**,
 standardises, fits, then maps coefficients back to original units for reporting.
 
-This matters for leakage. Standardising on the full sample would let the forecast
-month's own feature values influence its scaling — a subtle but real leak. Our
-integration test verifies the property directly by recomputing each window's means
-from the training rows and matching the reported `training_mean` to nine decimal
-places, and by confirming the first and last windows' means differ.
+With an intercept and nonzero scales, this invertible affine transformation
+reparameterizes an unpenalized Probit and does not change its ideal fitted
+probabilities. It can improve numerical conditioning; it is not a predictive
+leakage safeguard for this estimator by itself. Training-only preprocessing
+remains the appropriate convention, especially for future penalized models.
+Our integration test verifies the reported window-specific means and scales.
 
 Model A remains deliberately **unstandardised**, matching its original
 specification.
@@ -1130,16 +1136,14 @@ surviving months are **not** a random subsample of the period. They skew early.
 
 ### 8.7 Why more predictors can hurt
 
-Model B adds six predictors but **no new recession events**. With 8 parameters and
-46–61 positive training labels, events-per-variable is roughly 5.8–9.2. Below
-roughly 10, coefficient estimates become unstable and in-sample fit improvements
-routinely fail to generalise.
+Model B adds six predictors without adding recession events. In the primary run,
+46–61 positive training labels support eight parameters including the intercept:
+5.75–7.625 events per parameter. More parameters can increase estimation variance,
+but this arithmetic does not establish why the model failed. Coverage drift,
+measurement uncertainty and unstable relationships are also plausible. The
+reported pattern includes both false alarms and misses. Reduced-feature and
+regularized reruns remain reviewer-reported until their artifacts are supplied.
 
-The mechanism is variance, not bias: six additional weakly informative predictors
-give the likelihood many directions in which to fit noise, and each fitted
-direction adds forecast variance. Section 12 shows exactly this signature —
-Model B is slightly better in a majority of quiet months but catastrophically
-worse in a minority, especially during recessions.
 
 ---
 
@@ -1229,52 +1233,37 @@ Random train/test splitting is **invalid** here. It would place future months in
 the training set for past forecasts, leak information through the serially
 correlated spread, and allow a model to interpolate within a recession it has
 partly seen. Expanding-window evaluation reproduces the real constraint: at each
-date, use only what was knowable then.
+date, respect the assumed chronological boundary. This does not reconstruct
+historical publication or NBER announcement availability.
 
 ### 9.7 Why naive bootstrap intervals mislead
 
-Our primary paired bootstrap interval, resampling months independently, gives
-[+0.0147, +0.0458], excluding zero. **That interval is too narrow**, for three
-compounding reasons:
+An independent-month bootstrap ignores serial dependence from shared training
+histories, persistent recession labels and clustered errors. The target is status
+at one future month; it is not an overlapping six-month cumulative outcome.
+Only three recession episodes contribute positive evaluation months, and selected
+forecast dates have substantial gaps. Point estimates alone do not establish
+statistically significant degradation.
 
-1. **Overlapping forecasts.** Consecutive months share almost all of their
-   training data and target six-month windows that overlap, so `d_t` values are
-   strongly serially dependent. Independent resampling assumes 183 independent
-   observations where the effective number is far smaller.
-2. **Few episodes.** The 15 recession months come from only three episodes. The
-   effective sample for recession-related error is closer to 3 than 15.
-3. **Clustered errors.** Section 12 shows the large differences cluster in
-   specific periods (1999, 2001, 2023), exactly the structure an i.i.d. bootstrap
-   mishandles.
+This PR #2 branch integrates Keefer's calendar-aware implementation on the
+unchanged saved predictions. Primary A/B average precision is 0.1688/0.0722
+(stepwise, not trapezoidal PR area). The 6/12/24-month circular block intervals
+for mean Brier B−A are [0.0031, 0.0594], [−0.0010, 0.0614], [−0.0039, 0.0583].
+Approximate Student-t HAC p-values at lags 5/12/24 are 0.0399/0.0599/0.0479.
+These settings do not give a robust significance conclusion. See the full
+[methods and sensitivity tables](paired_inference.md), including sparse-calendar
+handling, circular endpoints, approximate reference distribution and conditional
+uncertainty limits. Earlier local uncertainty work is preserved without importing
+a second engine. No convention was selected for crossing a significance threshold.
 
-Our naive paired *t* of +3.74 has the same problem. Section 10.6 replaces both
-with two calendar-aware methods, implemented in `src/music_recession/inference.py`
-and run from the committed predictions by `scripts/run_paired_inference.py`.
-
-The **circular block bootstrap** builds each replicate from randomly drawn blocks
-of 6, 12 or 24 consecutive calendar months until it covers the evaluation span
-once. Eligible forecast months are far from contiguous (the primary run has 22
-separate stretches with gaps of up to 34 months), so blocks are laid on the
-calendar rather than on row order. A block that falls in an ineligible stretch
-carries fewer forecasts or none, and forecasts two years apart are never joined
-as if they were adjacent. 10,000 replicates, fixed seed, percentile intervals.
-
-The **Diebold–Mariano test** divides the mean differential by a Newey–West
-(Bartlett) HAC standard error and refers it to *t*(n − 1). We report lags 5 (the
-h − 1 minimum for six-month forecasts), 12 and 24. Lag-k cross-products use only
-pairs of forecasts exactly k calendar months apart. With no gaps this is the
-textbook Newey–West estimate, and a unit test checks it against statsmodels.
-
-Neither method fixes the deeper problem in point 2. With three episodes, no block
-length or HAC lag gives an interval you can fully trust. Section 10.5 also shows
-that agreement in sign across thresholds is weaker evidence than it first looked.
 
 ---
 
 ## 10. Actual results
 
-Every number below is read directly from the saved `metrics.json` files under
-`reports/model_comparison/`. A machine-readable copy is at
+The original run results below are read directly from saved `metrics.json` files
+under [`results/`](results/). Section 10.6 contains explicitly post-hoc checks.
+A machine-readable summary of the original runs is at
 [`figures/music_recession/results_summary.json`](figures/music_recession/results_summary.json).
 
 ### 10.1 Primary analysis, 70% coverage
@@ -1328,14 +1317,11 @@ Every number below is read directly from the saved `metrics.json` files under
 | **Model A ROC-AUC** | **0.9878048780** |
 | **Model B ROC-AUC** | **0.7012195122** |
 
-The two sensitivity AUCs you asked us to verify are **0.8721624851 / 0.5424133811**
-at 75% and **0.9878048780 / 0.7012195122** at 80%.
-
 ### 10.4 What each number means
 
 - **Brier score** — mean squared forecast error. Model B's 0.1202 against Model
-  A's 0.0904 at the primary threshold means Model B's probabilities sit about 33%
-  further from the truth on average, over identical months.
+  A's 0.0904 at the primary threshold means about 33% higher **mean squared
+  probability error**, over identical months.
 - **Difference B − A** — the paired penalty. Positive at all three thresholds, and
   monotonically increasing as coverage tightens.
 - **ROC-AUC** — ranking quality. Model B's 0.4306 is **below chance**: on this
@@ -1357,64 +1343,45 @@ but because the sample shrank from 183 forecasts with 15 recession months to 45
 forecasts with 4. Fewer, earlier, easier months produce better-looking scores for
 both models.
 
-The only legitimate cross-threshold reading is of the **paired difference**, which
-holds sample effects constant within each row. That difference is positive in all
-three rows. Its *growth* across rows (+0.0299 → +0.0407 → +0.0566) should be read
-cautiously, since the samples differ.
+The **paired difference** holds evaluation dates fixed within each row. It is
+positive on all three related samples, but its growth is not evidence of a
+coverage effect. The dates are nested, and entire recession episodes disappear:
 
-The three rows are not independent confirmations either. The samples are nested:
-all 102 forecast months in the 75% run are also 70% months, and all 45 months in
-the 80% run appear in both. The 75% sample reaches two recession episodes (2001
-and 2020) and the 80% sample reaches one (2001). Agreement in sign across rows
-therefore mostly re-measures the 2001 recession.
+| Coverage | 2001 positives | Financial crisis positives | COVID positives |
+|---|---:|---:|---:|
+| 70% | 8 | 5 | 2 |
+| 75% | 7 | 0 | 2 |
+| 80% | 4 | 0 | 0 |
 
-### 10.6 Uncertainty that respects time order
+Thus the 80% analysis represents only one recession episode. These are sensitivity
+checks rather than independent confirmations of a general forecasting result.
 
-Produced by `scripts/run_paired_inference.py` from the committed
-`predictions.csv` files in a few seconds. The full output is in
-[`results/paired_inference.json`](results/paired_inference.json) and the method
-is in Section 9.7.
+### 10.6 Post-review benchmarks and descriptive checks
 
-| | 70% primary | 75% | 80% |
-|---|---|---|---|
-| Forecasts / recession months / episodes | 183 / 15 / 3 | 102 / 9 / 2 | 45 / 4 / 1 |
-| Mean B − A | +0.0299 | +0.0407 | +0.0566 |
-| 95% CI, months resampled independently | [+0.0149, +0.0456] | [+0.0190, +0.0658] | [+0.0186, +0.0999] |
-| 95% CI, 6-month calendar blocks | [+0.0031, +0.0594] | [+0.0050, +0.0846] | [−0.0020, +0.1337] |
-| 95% CI, 12-month calendar blocks | [−0.0010, +0.0614] | [+0.0038, +0.0869] | [−0.0027, +0.1455] |
-| 95% CI, 24-month calendar blocks | [−0.0039, +0.0583] | [+0.0044, +0.0779] | [−0.0022, +0.1428] |
-| Diebold–Mariano p, HAC lag 5 / 12 / 24 | 0.040 / 0.060 / 0.048 | 0.045 / 0.051 / 0.025 | 0.091 / 0.100 / 0.097 |
-| Effective independent months (HAC) | 47 to 56 | 34 to 45 | 17 to 18 |
+All benchmark scores below use the primary **183 evaluation dates**:
 
-The independent-resampling row reproduces the interval first reported,
-[+0.0147, +0.0458], to within bootstrap noise. The loss differential has an
-autocorrelation of 0.74 at one month, and the HAC variance says the 183 primary
-forecasts carry about as much information as 50 independent months.
+| Forecast | Brier | Training history |
+|---|---:|---|
+| Expanding training recession rate | **0.0829708** | Each paired eligible training window |
+| Full-history Model A | **0.0847541** | Economic data from April 1953 |
+| Paired Model A | 0.0903819 | Eligible music months from January 1973 |
+| Model B | 0.1202486 | Same rows as paired A |
 
-At the primary threshold the 6-month block interval excludes zero, the 12- and
-24-month intervals just include it, and the Diebold–Mariano p-values sit between
-0.04 and 0.06. At 75% every interval excludes zero, but that sample holds two
-episodes. At 80% every calendar-aware interval includes zero. Model B was worse in
-every sample we built. The evidence that it would be worse in general is
-suggestive and short of conclusive.
+The full-history score is selected from existing baseline forecasts on exactly
+B's evaluation dates, with identical outcomes. Its more extensive training
+history provides a practical comparator. It does not replace the original
+controlled equal-training comparison. No model is refitted by the closeout verifier.
 
-**PR-AUC and skill against the base rate.** The project plan named PR-AUC as a
-supporting metric. It is computed here for the first time, together with each
-model's Brier skill against a forecast that repeats the recession share of its own
-training rows (the reference the Model A backtest uses in Section 7.5).
+Post-hoc exclusion of March–April 2020 targets leaves 181 forecasts and 13
+positives: A 0.0864971, B 0.1155202. The original primary analysis retains COVID.
+Target years 1999 and 2001 account for 79.21% of B's net extra loss; this is a
+post-hoc description of both false alarms and misses, not a significance test.
 
-| | 70% primary | 75% | 80% |
-|---|---|---|---|
-| Model A PR-AUC | 0.169 | 0.630 | 0.917 |
-| Model B PR-AUC | 0.072 | 0.100 | 0.160 |
-| PR-AUC of a no-skill forecast (recession share) | 0.082 | 0.088 | 0.089 |
-| Model A Brier skill vs training prevalence | −0.089 | +0.169 | +0.289 |
-| Model B Brier skill vs training prevalence | −0.449 | −0.287 | −0.339 |
+`scripts/verify_saved_results.py` recomputes these descriptive quantities from
+bundled predictions and records input hashes in
+[`results/closeout_verification.json`](results/closeout_verification.json).
+Conditional uncertainty and average precision are documented in [the PR #2 analysis](paired_inference.md).
 
-Model B's primary PR-AUC is below the no-skill level, consistent with its
-below-chance ROC-AUC. In the primary window Model A does not beat the training
-base rate either: both models lose to it there, Model B by much more. Like the
-other scores in this section, these must not be compared across columns.
 
 ---
 
@@ -1500,10 +1467,10 @@ B − A difference annotated.
 **Interpretation.** The core result. Model B (red) is worse than Model A (green)
 at every threshold, and the gap widens as coverage tightens: +0.0299, +0.0407,
 +0.0566. Because each pair comes from identical months with identical training
-rows, the within-pair comparison is clean. The sign agrees at all three
-predeclared thresholds, but the samples are nested (Section 10.5), so this is
-weaker evidence than three separate tests would be. Section 10.6 gives intervals
-that allow for serial dependence.
+rows, the within-pair comparison isolates the added features on that sample.
+The thresholds were predeclared but their dates are nested: matching signs are
+not independent confirmations. Section 10.5 shows episode attrition, and Section
+10.6 adds benchmarks omitted from the original figure.
 
 **What cannot be concluded.** The bars **cannot** be compared left-to-right. Model
 A's apparent improvement from 0.0904 to 0.0640 reflects an easier, smaller sample,
@@ -1567,8 +1534,9 @@ marker area proportional to the number of forecasts in each decile bin, against 
 perfect-calibration diagonal.
 
 **Interpretation.** Model B's calibration failure is severe and systematic at the
-primary threshold. It assigned probabilities in the 0.3–0.8 range to 42 months,
-and in **every** bin above 0.3 the observed recession frequency was 0.000:
+primary threshold. It assigned probabilities in **[0.3, 0.8)** to **44 months**,
+including **one recession**. The 0.4–0.5 bin has observed frequency 1/12; the
+other populated bins in that range have zero recessions:
 
 | Bin | Model A: n / predicted / observed | Model B: n / predicted / observed |
 |---|---|---|
@@ -1581,13 +1549,14 @@ and in **every** bin above 0.3 the observed recession frequency was 0.000:
 | 0.6–0.7 | 1 / 0.620 / 0.000 | 2 / 0.657 / **0.000** |
 | 0.7–0.8 | — | 2 / 0.737 / **0.000** |
 
-Model B issues confident recession calls that do not materialise. Model A is also
-imperfectly calibrated — its 0.1–0.3 bins over-predict — but it never makes a
-confident call this badly, and it places far fewer forecasts in the high bins.
+Model B overpredicts recession frequency in these bins. Model A is also
+imperfectly calibrated and has false alarms; it places fewer forecasts in the
+high bins. These descriptive comparisons do not identify a failure mechanism.
 
 **What cannot be concluded.** The high bins contain 2–4 observations each, so an
 observed frequency of 0.000 there is weak evidence in isolation. The signal comes
-from the *pattern* across all bins above 0.3, not from any single bin.
+from the pattern across populated bins, not from any single bin. The original
+claim of zero recession frequency throughout the range was incorrect.
 
 ### Figure 8 — Emotion feature trends
 
@@ -1707,9 +1676,11 @@ The five best months for Model B:
 All five are 2023–24, and all are cases where Model B **correctly damped a Model A
 false alarm**. The yield curve inverted sharply in 2022–23 and Model A raised
 probabilities above 0.50 for target months that were not labelled recession;
-Model B's emotion features pulled those forecasts down toward 0.20. This is the
-one period where the music features plausibly added value, and it is suggestive
-rather than conclusive — a single episode of 16 months.
+Model B's emotion features pulled those forecasts down toward 0.20. This is a
+descriptive local improvement, not evidence of a stable incremental signal.
+The review audit confirms anger is strongly correlated with calendar year
+(r = +0.7585 across all 612 months). A time-trending feature can contribute to
+both useful and harmful adjustments; this correlation does not identify their cause.
 
 ### 12.3 Are errors concentrated in particular periods?
 
@@ -1733,15 +1704,16 @@ Split by outcome, the pattern is sharper still:
 | **Recession target months** | **15** | **+0.171309** |
 | Non-recession target months | 168 | +0.017238 |
 
-**Model B's penalty on recession months is ten times its penalty on quiet
-months.** It fails precisely where a recession forecaster must succeed. A model
-that is mildly worse in quiet times and dramatically worse during downturns is
-less useful than its average Brier score alone suggests.
+**Model B's mean penalty is about ten times larger on recession months** in
+this selected sample. Target years 1999 and 2001 account for **79.21% of the
+net Brier loss increase**, combining false alarms and recession misses. These
+are post-hoc descriptions with few episodes, not separate significance tests.
 
 ### 12.4 Possible causes of the poor calibration
 
 These are **candidate explanations**, clearly distinguished from the numerical
-evidence above. We have not tested them.
+evidence above. Reviewer-reported simplified-model and regularization reruns are
+not independently reproduced here; see [review verification](review_response.md).
 
 1. **Overfitting from eight parameters.** With 46–61 positive training labels,
    coefficients on six weakly informative features can take large values that fit
@@ -1761,15 +1733,17 @@ evidence above. We have not tested them.
 
 ### 12.5 Do the extra predictors plausibly increase variance?
 
-The evidence is consistent with it. Model B places 44 forecasts above 0.3 versus
-Model A's 30, and reaches 0.7559 where Model A's maximum is 0.6198 — it is
-systematically more extreme. Combined with being *better* in a 53% majority of
-months while losing on average, this is the classic bias–variance signature: a
-model with more freedom tracks the data more closely most of the time and fails
-badly in the tails.
+More predictors can increase estimation variance, but these results do not
+establish that overfitting caused the loss. Model B places 44 forecasts above
+0.3 versus A's 30 and reaches 0.7559 versus A's maximum 0.6198. Larger losses
+coexist with improvements in 97 of 183 months. These observations are compatible
+with unstable relationships, missingness and measurement problems as well as
+overfitting; they do not diagnose the bias–variance tradeoff.
 
-We note this as plausible and consistent, not proven. A regularised refit, listed
-in Section 17, would test it directly.
+Keefer reports that single-emotion, sentiment-index, ridge and detrended variants
+also fail to beat A. Their code/settings are needed before treating those as
+reproduced findings. Even verified failures of these variants would not prove
+absence of all music-related economic signal.
 
 ---
 
@@ -1852,22 +1826,22 @@ study is the one our coverage handles worst.
 
 ### 13.10 Potential overfitting from seven predictors
 
-Model B estimates 8 parameters against 46–61 positive training labels, i.e.
-events-per-variable of roughly 5.8–9.2 against a conventional minimum near 10.
-Note that our earlier framing of this quantity was wrong and has been corrected:
-EPV governs the **fitting** sample, so it must be computed from positive *training*
-labels, not by dividing evaluation recession months by the parameter count.
+Model B has seven slopes and an intercept: **eight fitted parameters**. Primary
+training windows have **46–61 positive labels**, so events per parameter including
+the intercept is **46/8 to 61/8 = 5.75–7.625**. If using a slopes-only convention,
+the denominator would be seven and must be labeled differently. This report uses
+the eight-parameter convention and no universal minimum cutoff. The diagnostic
+concerns training labels, not the 15 positive evaluation months, and does not
+identify overfitting as the cause of the negative finding.
 
 ### 13.11 Temporal dependence between monthly observations
 
-Consecutive forecasts share nearly all training data and describe overlapping
-six-month-ahead windows, so per-month errors are strongly serially dependent. The
-effective number of independent observations is far below 183. Our independent-month
-bootstrap interval is correspondingly **too narrow**, and the naive paired *t* of
-+3.74 overstates precision. The HAC estimates in Section 10.6 put the effective
-sample at roughly 47 to 56 independent months for the primary run. With
-calendar-block resampling, the primary interval reaches zero once blocks are a
-year or longer.
+Consecutive forecasts share nearly all training data and recession labels persist.
+Monthly losses can therefore be dependent despite the single-month status target.
+An independent-month resampling interval is not sufficient significance evidence.
+This PR #2 branch reports circular-calendar bootstrap and approximate HAC
+sensitivities [with explicit assumptions](paired_inference.md). It does not convert
+forecast-month count into a claimed number of independent months.
 
 ### 13.12 Exploratory, not confirmatory
 
@@ -1923,7 +1897,7 @@ python3 -m venv .venv
 Baseline only — economic preparation, Model A, figures:
 
 ```bash
-.venv/bin/python -m pip install -e .
+.venv/bin/python -m pip install -e . pytest
 ```
 
 This installs numpy, scipy, statsmodels and matplotlib.
@@ -1962,16 +1936,14 @@ resolved versions: torch 2.8.0, transformers 4.46.3, safetensors 0.7.0.
 │   ├── music_preparation.py             # mapping, monthly aggregation, policies
 │   ├── emotions.py                      # GoEmotions adapter + cache + gates
 │   ├── music_model.py                   # Model B, paired evaluate(), plots
-│   ├── inference.py                     # block bootstrap, Diebold–Mariano, PR-AUC
 │   └── recording_metadata.py            # MusicBrainz corroboration logic
 ├── scripts/
 │   ├── audit_osf_evidence.py
 │   ├── measure_model_b_readiness.py
 │   ├── match_recording_metadata.py
 │   ├── run_exploratory_comparison.py    # THE EXPERIMENT DRIVER
-│   ├── run_paired_inference.py          # Section 10.6 from committed predictions
 │   └── make_research_figures.py         # figures from derived outputs
-├── tests/                               # 208 tests
+├── tests/                               # 191 tests
 ├── docs/
 │   ├── COMPLETE_RESEARCH_REPORT.md      # this document
 │   ├── TEAM_HANDOFF.md
@@ -1992,10 +1964,11 @@ resolved versions: torch 2.8.0, transformers 4.46.3, safetensors 0.7.0.
 
 | Input | Tracked? | Needed for |
 |---|---|---|
-| `billboard_hot100_all.csv` | yes | everything |
+| `billboard_hot100_all.csv` | yes | chart audit and raw-to-feature reproduction |
 | `fredgraph.csv`, `GS10.csv` | yes | economic preparation |
 | `data/processed/economic_monthly.csv` | yes | both models |
-| `data/raw/lyrics/osf_lyrics.csv` | **no, gitignored** | emotion inference only |
+| `data/metadata/song_lyrics_inventory.csv` | **no, local** | original lyrics audit/preparation |
+| `data/raw/lyrics/osf_lyrics.csv` | **no, gitignored** | source replay and emotion inference |
 | `reports/lyrics_validation/run_002/` | no, local | preparation inputs |
 | `reports/osf_source_review/run_004/candidate_evidence.csv` | no, local | exploratory screen |
 | GoEmotions weights under `data/raw/models/` | **no, gitignored** | emotion inference only |
@@ -2007,12 +1980,16 @@ directly and placed at `data/raw/lyrics/osf_lyrics.csv`. Expected SHA-256:
 ### 14.6 Data processing
 
 ```bash
-# Economic table from FRED snapshots
-.venv/bin/python -m music_recession.economic
+# Economic table from bundled FRED snapshots; preserve original artifacts
+economic_outputs=$(mktemp -d)
+.venv/bin/python -m music_recession.economic \
+    --output "$economic_outputs/economic.csv" \
+    --manifest "$economic_outputs/manifest.json"
 
-# Offline lyrics corpus audit (requires the local raw corpus)
+# Offline lyrics audit requires the raw sources and inventory
+audit_outputs=$(mktemp -d)
 .venv/bin/python -m music_recession.lyrics_audit \
-    --output reports/lyrics_validation/new_run
+    --output "$audit_outputs/audit"
 
 # OSF evidence screening
 .venv/bin/python scripts/audit_osf_evidence.py --help
@@ -2021,7 +1998,10 @@ directly and placed at `data/raw/lyrics/osf_lyrics.csv`. Expected SHA-256:
 .venv/bin/python scripts/measure_model_b_readiness.py --help
 ```
 
-All of these refuse to overwrite an existing output directory.
+The lyrics audit refuses an existing output directory; choose a new output name.
+Economic preparation instead writes its designated CSV/manifest, so redirect both
+outputs to fresh paths when preserving existing artifacts. The two `--help`
+commands only display supported flags.
 
 ### 14.7 Tests
 
@@ -2029,14 +2009,19 @@ All of these refuse to overwrite an existing output directory.
 .venv/bin/python -m pytest -q
 ```
 
-Expected: **208 passed**. The suite requires no raw lyrics, no model weights and
+Expected: **191 passed**. The suite requires no raw lyrics, no model weights and
 no network access.
 
 ### 14.8 The primary experiment
 
+These commands require the external raw sources, inventory and matching audit/screen
+intermediates recorded in the historical manifests; they are not clean-checkout
+commands. Use a fresh output parent and an explicit cache:
+
 ```bash
+experiment_outputs=$(mktemp -d)
 .venv/bin/python scripts/run_exploratory_comparison.py \
-    --output-dir reports/model_comparison/exploratory_primary_cov70 \
+    --output-dir "$experiment_outputs/primary" \
     --cache-dir .agents/emotion_cache_explore
 ```
 
@@ -2050,26 +2035,34 @@ for determinism.
 
 ### 14.9 Sensitivity analyses
 
+Use the fresh `experiment_outputs` parent from Section 14.8. Cached historical
+scores are reusable only under matching content, code, configuration and software
+hashes; current code has only 7,490 compatible entries, not a fully warm cache.
+
 ```bash
 .venv/bin/python scripts/run_exploratory_comparison.py \
-    --output-dir reports/model_comparison/exploratory_sensitivity_cov75 \
+    --output-dir "$experiment_outputs/cov75" \
     --cache-dir .agents/emotion_cache_explore \
     --coverage-threshold 0.75
 
 .venv/bin/python scripts/run_exploratory_comparison.py \
-    --output-dir reports/model_comparison/exploratory_sensitivity_cov80 \
+    --output-dir "$experiment_outputs/cov80" \
     --cache-dir .agents/emotion_cache_explore \
     --coverage-threshold 0.80
 ```
 
-With a warm cache each completes in **under a minute** (measured 57.8 s and
-57.6 s, both at 100% cache hits).
+The historical runs measured 57.8 s and 57.6 s with a fully matching cache.
+That is not a runtime promise for current code: the remaining 8,800 songs would
+require new inference under its hash.
 
 ### 14.10 Strict-policy run, for comparison
 
+This also needs the raw/audit preparation inputs from Section 14.8.
+
 ```bash
+strict_outputs=$(mktemp -d)
 .venv/bin/python -m music_recession.music_model \
-    --output-dir reports/model_comparison/strict_run \
+    --output-dir "$strict_outputs/strict" \
     --cache-dir data/processed/emotion_cache
 ```
 
@@ -2093,46 +2086,46 @@ Just re-run the same command with the same `--cache-dir` against a **fresh**
 scored. Interruption is safe — cache writes are atomic via a temporary file and
 rename.
 
-The one thing that invalidates the cache is **editing `emotions.py`**, because its
-hash is part of the cache key. Avoid touching that file unless you intend to
-re-score the corpus.
+Cache reuse requires identical source text, model/configuration, software and
+implementation metadata. Editing `emotions.py` changes its hash and invalidates
+matching entries; avoid touching it for a documentation-only closeout.
 
 ### 14.13 Regenerating figures without recomputing 16,290 songs
 
 ```bash
-.venv/bin/python scripts/make_research_figures.py
+.venv/bin/python scripts/make_research_figures.py --out /tmp/music-figures-FRESH
 ```
 
 This reads only the derived CSV and JSON files under
-`reports/model_comparison/exploratory_*/` and writes all ten figures plus
-`results_summary.json` into `docs/figures/music_recession/`. It performs no
+`docs/results/exploratory_*/` and writes the ten original figures plus
+`results_summary.json` into the selected `--out` directory (the example uses a
+fresh temporary path). It performs no
 inference, no model fitting and no network access, and runs in seconds. Use
 `--out` to write elsewhere.
 
-### 14.14 Recomputing the Section 10.6 intervals and tests
+Descriptive verification is separate from figure rendering:
 
-```bash
-.venv/bin/python scripts/run_paired_inference.py
+```sh
+.venv/bin/python scripts/verify_saved_results.py
+.venv/bin/python scripts/verify_saved_results.py --output /tmp/music-verification-FRESH.json
 ```
 
-Reads the committed `docs/results/*/predictions.csv` files and
-`data/processed/economic_monthly.csv`, prints a summary table and rewrites
-`docs/results/paired_inference.json`. The seed is fixed, so a rerun reproduces
-the file. `tests/test_inference.py` checks that the saved JSON still follows from
-the committed predictions.
+Replace `FRESH` with a new unused name. The verifier reads only bundled derived
+results and configurations: it performs no model fitting, lyric inference,
+network requests or uncertainty analysis. See the [validation record](closeout_validation.md).
 
 ### 14.14 What requires private local data
 
 | Step | Needs gitignored raw data? |
 |---|---|
 | Run the test suite | **No** |
-| Regenerate all figures | **No** — needs local `reports/` only |
+| Regenerate all figures | **No** — uses bundled `docs/results/` files |
 | Read metrics, predictions, calibration | **No** — committed under `docs/results/` |
 | Economic preparation and Model A backtest | No |
 | Lyrics audit, OSF screening | **Yes** — needs `data/raw/lyrics/` |
 | GoEmotions inference, full experiment | **Yes** — needs raw corpus and weights |
 
-Teammates can therefore verify every reported number and reproduce every figure
+Teammates can therefore verify the published saved-result metrics and reproduce the ten original figures
 from committed artefacts, without obtaining the lyric corpus.
 
 ---
@@ -2181,8 +2174,10 @@ directly:
 | Model configuration identical | yes |
 | Software versions identical | yes |
 
-Reproduce with `.agents/step9_verify_equivalence.py` (local-only script; it reads
-the cache directory).
+This is a historical local-cache verification. The comparison script and private
+cache entries were not distributed, so this check cannot be repeated from a clean
+checkout. The summary does not replace complete reproduction under the committed
+implementation hash; see Section 15.4.
 
 ### 15.4 What remains unverified
 
@@ -2349,21 +2344,12 @@ version from file hash so cosmetic edits do not invalidate it.
 
 ### 16.10 Limits of naive significance calculations
 
-**Problem.** Our paired bootstrap, resampling months independently, gave
-[+0.0147, +0.0458] and a paired *t* of +3.74 — both of which look far more
-decisive than the evidence warrants.
-
-**Reason.** Consecutive forecasts share nearly all training data and overlapping
-target windows, so the 183 months are nothing like 183 independent observations.
-The 15 recession months come from only three episodes.
-
-**Response.** At first we reported the interval with the caveat, declined to
-present it as a significance test, and leaned on consistency of sign across the
-three thresholds instead. Both have since been revisited. The calendar-block
-bootstrap and Diebold–Mariano tests in Section 10.6 put the primary interval at
-[−0.0010, +0.0614] for 12-month blocks, with p between 0.04 and 0.06. The
-thresholds also turned out to be nested samples (Section 10.5), so sign agreement
-across them is weak corroboration.
+The original analysis used independent-month resampling, which does not account
+for temporal dependence. Peer review also established that the threshold samples
+are nested and cannot provide independent confirmation. PR #1 now reports
+qualified descriptive findings. This PR #2 branch adds conditional uncertainty
+and average precision with results that depend on settings; the earlier local
+uncertainty investigation is preserved without being imported into this release.
 
 ### 16.11 The negative modelling result itself
 
@@ -2385,7 +2371,11 @@ comparing against the broad-period 0.094921 figure.
 
 ## 17. Improvements and future experiments
 
-**None of the following has been performed.** They are prioritised proposals.
+These are follow-up proposals. Reviewer-reported single-emotion, index, ridge and
+detrended reruns have not been independently reproduced here. Simple/full-history
+benchmark checks are completed from saved predictions.
+Conditional uncertainty and average precision are implemented in this PR #2
+branch; the original model experiment remains unchanged.
 
 ### Priority 1 — Fix the featured-credit coverage gap
 
@@ -2403,8 +2393,9 @@ this is fixed.
 
 ### Priority 2 — Reduce the predictor count
 
-Model B's 8 parameters against 46–61 positive training labels is the most likely
-mechanical cause of its failure. Two variants worth testing, both predeclared:
+Model complexity is one hypothesis, not an established cause. First obtain and
+reproduce the reviewer's simplified-model reruns before repeating them. Additional
+variants must be labeled post-hoc or preregistered for a new study:
 
 - **A single predeclared sentiment index**, for example
   `(sadness + fear + anger + nervousness) − (joy + optimism)`, fixed before
@@ -2412,16 +2403,17 @@ mechanical cause of its failure. Two variants worth testing, both predeclared:
 - **One emotion at a time**, six separate 3-parameter models, with the
   multiple-comparison problem acknowledged explicitly.
 
-**Why it matters.** It directly tests the overfitting explanation in Section 12.5
-and would distinguish "music has no signal" from "we fitted too many parameters".
+**Why it matters.** These variants test specific complexity explanations. Their
+failure would not prove that all music features lack economic information.
 
 ### Priority 3 — Regularised estimation
 
 Ridge or elastic-net Probit, or Firth's penalised likelihood for rare events, with
 the penalty selected inside each expanding window on training data only.
 
-**Why it matters.** If regularised Model B closes the gap to Model A, variance
-rather than absence of signal was the problem.
+**Why it matters.** Shrinkage tests a particular specification. Shrinking emotion
+coefficients toward zero can simply recover the baseline; that alone does not
+establish music signal. Reproduce the reported ridge reruns first.
 
 ### Priority 4 — Lagged and differenced music features
 
@@ -2445,16 +2437,11 @@ recessions" from "GoEmotions does not measure lyric emotion".
 
 ### Priority 6 — Stronger temporal uncertainty analysis
 
-**Done** for the committed runs (Section 10.6): a calendar-block bootstrap and a
-Diebold–Mariano test with HAC errors on the paired Brier differences, plus PR-AUC
-and Brier skill against training prevalence. Any new Model B variant can be scored
-the same way by pointing `scripts/run_paired_inference.py` at its
-`predictions.csv`.
-
-**Still open.** Fixed-b critical values, which behave better than the standard
-ones when the HAC bandwidth is large relative to the sample, and resampling by
-recession episode, which would make the three-episode limit explicit in the
-interval.
+The current PR #2 implementation documents circular endpoints, calendar
+missingness, approximate reference distributions and unbounded sparse cross-product
+diagnostics. Future work could assess nonstationarity and episode-level robustness
+under a separately declared design. A few-episode sample limits interpretation;
+method selection must not be driven by desired significance.
 
 ### Priority 7 — Alternative aggregation
 
@@ -2466,10 +2453,15 @@ standard deviation of emotion within a month.
 against alternatives, and *disagreement* among songs may carry information that a
 weighted mean destroys.
 
-### Priority 8 — Additional economic benchmarks
+### Priority 8 — Additional economic benchmarks and targets
 
-Add other established predictors — credit spreads, unemployment-claims momentum,
-the Leading Economic Index — both as competing baselines and as controls.
+The expanding training-rate and full-history yield-spread benchmarks are now
+reported in Section 10.6. For a preregistered follow-up, consider a 12-month
+status horizon or a separately defined "recession within 12 months" target,
+continuous unemployment/IP/sentiment outcomes, new-chart-entry features and genre
+controls. A changed horizon needs new calendar target construction and training
+eligibility; it cannot be implemented by relabeling the six-month results.
+Other economic predictors may provide further baselines and controls.
 
 **Why it matters.** Showing music does not beat the yield curve is a narrower claim
 than showing it adds nothing to a well-specified macro model.
@@ -2504,12 +2496,12 @@ predeclared coverage threshold:
 - **75% sensitivity:** 0.0740 → 0.1146, difference **+0.0407**, over 102 forecasts
 - **80% sensitivity:** 0.0640 → 0.1206, difference **+0.0566**, over 45 forecasts
 
-Model B's primary ROC-AUC of 0.4306 was below chance, its calibration was broken
-above 0.3 predicted probability, and its penalty on recession target months
-(+0.1713 mean) was ten times its penalty on quiet months (+0.0172). The direction
-of the result is the same at all three predeclared thresholds, though these are
-nested samples. Allowing for serial dependence, the primary 95% interval on the
-Brier penalty runs from about zero to +0.06 (Section 10.6).
+Model B's primary ROC-AUC of 0.4306 was below 0.5, and its mean Brier penalty
+was larger on recession target months (+0.1713) than on other months (+0.0172).
+The related samples show the same sign, but progressively remove entire recession
+episodes. They are not independent confirmation. On the primary dates, the
+training-rate forecast (0.0830) and full-history A (0.0848) both outperform paired
+A and B. Conditional dependence-aware inference is documented in [the PR #2 analysis](paired_inference.md).
 
 **What this does not mean.** This is one exploratory design, on one corpus, with
 one out-of-domain emotion model, three recession episodes, 15 positive evaluation
@@ -2521,12 +2513,12 @@ limitations — the featured-credit coverage gap above all — are plausibly lar
 enough to account for the result on their own, and Section 17 sets out how to test
 that.
 
-**What it does mean.** As an honest out-of-sample test against a serious
-benchmark, this design produced a clear negative answer, and we are reporting it as
-such rather than searching for a specification that would produce a more appealing
-number. The yield spread remains the better forecaster on every sample we
-constructed, although in the primary window neither model beats a forecast that
-simply repeats the training recession rate.
+**What it does mean.** We find no evidence of incremental predictive value from
+these lyric-emotion features in this exploratory sample. The yield spread beats
+the music extension within each original paired comparison, while the primary
+paired baseline itself loses to simpler and longer-history benchmarks. We do not
+claim statistically established degradation or identify its cause. Subsequent
+experiments require their own declared design and reproducible artifacts.
 
 ---
 

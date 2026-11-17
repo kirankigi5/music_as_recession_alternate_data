@@ -1,5 +1,10 @@
 # Model A/B execution and current eligibility blocker
 
+This page records the **strict-policy** execution path and its evidence blocker.
+The separate exploratory coursework experiment is complete; see
+[results](exploratory_results.md) and [post-review verification](review_response.md).
+The strict policy remains unchanged and admits zero records.
+
 The comparison runner is implemented in `src/music_recession/music_model.py`. It
 reuses economic loading, Model A fitting, calendar eligibility, Brier Score,
 ROC-AUC and calibration functions. The validated Model A files and original

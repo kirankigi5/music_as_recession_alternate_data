@@ -1,4 +1,4 @@
-"""Block-bootstrap intervals, Diebold-Mariano tests and PR-AUC for the committed runs.
+"""Block-bootstrap intervals, Diebold-Mariano tests and average precision for the committed runs.
 
 Reads docs/results/<run>/predictions.csv and data/processed/economic_monthly.csv.
 No model fitting, no emotion inference, no network; finishes in a few seconds.
@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -39,6 +40,8 @@ def read_rows(path):
 def build(root, runs=RUNS):
     episodes = recession_episodes(read_rows(root / 'data/processed/economic_monthly.csv'))
     results, months = [], []
+    sources = [Path('data/processed/economic_monthly.csv')]
+    sources.extend(directory / 'predictions.csv' for _, directory in runs)
     for label, directory in runs:
         rows = read_rows(root / directory / 'predictions.csv')
         months.append({r['predictor_month'] for r in rows if r['status'] == 'ok'})
@@ -47,7 +50,10 @@ def build(root, runs=RUNS):
         # Stricter coverage keeps a subset of the same forecast months, so the
         # thresholds are not independent replications of each other.
         result['forecast_months_also_in_primary'] = len(run_months & months[0])
-    return dict(source='<run>/predictions.csv', runs=results)
+        result['forecast_months_subset_of_primary'] = run_months <= months[0]
+    return dict(schema_version=2, source='<run>/predictions.csv',
+                source_sha256={p.as_posix(): hashlib.sha256((root / p).read_bytes()).hexdigest()
+                               for p in sources}, runs=results)
 
 
 def number(value, spec):
@@ -64,10 +70,10 @@ def table(result):
             len(run['recession_episodes_reached']), diff['mean']))
         for name in ('model_a', 'model_b'):
             m = run[name]
-            lines.append('  %s  Brier %.4f  skill vs prevalence %s  ROC-AUC %s  PR-AUC %s' % (
+            lines.append('  %s  Brier %.4f  skill vs prevalence %s  ROC-AUC %s  average precision %s' % (
                 name, m['brier_score'], number(m['brier_skill_vs_training_prevalence'], '+.3f'),
-                number(m['roc_auc'], '.3f'), number(m['pr_auc'], '.3f')))
-        lines.append('  PR-AUC no-skill level %.3f' % run['pr_auc_no_skill_level'])
+                number(m['roc_auc'], '.3f'), number(m['average_precision'], '.3f')))
+        lines.append('  average precision prevalence reference %.3f' % run['average_precision_prevalence_reference'])
         iid = diff['iid_bootstrap']
         lines.append('  iid rows        95%% CI [%+.4f, %+.4f]' % (iid['ci_lower'], iid['ci_upper']))
         for block in diff['block_bootstrap']:
@@ -75,9 +81,9 @@ def table(result):
                 block['block_length_months'], block['ci_lower'], block['ci_upper'],
                 block['share_at_or_below_zero']))
         for dm in diff['diebold_mariano']:
-            lines.append('  DM lag %2d       t=%s  p=%s  effective n=%s' % (
+            lines.append('  DM lag %2d       statistic=%s  approximate t-reference p=%s' % (
                 dm['max_lag'], number(dm['statistic'], '.2f'),
-                number(dm['p_value_two_sided'], '.3f'), number(dm['effective_observations'], '.0f')))
+                number(dm['p_value_two_sided'], '.3f')))
     return '\n'.join(lines)
 
 

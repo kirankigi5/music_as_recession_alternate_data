@@ -1,7 +1,7 @@
 """Uncertainty and extra metrics for paired Model A/B forecasts on a gappy calendar.
 
-Forecasts are six months ahead and issued monthly, so neighbouring loss
-differentials share most of their training rows and overlap in target windows.
+The target is status in one month, t+6, not an overlapping six-month window.
+Neighbouring loss differentials share training rows and can have persistent labels.
 Feature eligibility also leaves gaps of up to several years between forecast
 months. The HAC variance and the block bootstrap below therefore measure
 distance in calendar months, never in row order: two forecasts a decade apart
@@ -27,7 +27,7 @@ SEED = 20261026
 REPLICATIONS = 10_000
 BLOCK_LENGTHS = (6, 12, 24)
 HAC_LAGS = (5, 12, 24)
-ACF_LAGS = (1, 3, 6, 12, 24)
+DIAGNOSTIC_LAGS = (1, 3, 6, 12, 24)
 
 
 def month_positions(months) -> np.ndarray:
@@ -82,11 +82,11 @@ def loss_differential(actual, model_a, model_b) -> np.ndarray:
     return (b - y) ** 2 - (a - y) ** 2
 
 
-def autocorrelation(values, months, lags=ACF_LAGS) -> dict:
-    """Autocorrelation at calendar lags, averaging only over pairs where both months exist.
+def calendar_cross_product_ratio(values, months, lags=DIAGNOSTIC_LAGS) -> dict:
+    """Global-variance-normalized lagged cross-products, with observed pair counts.
 
-    The pair count is returned with each value. With few pairs the estimate is
-    noisy and can fall outside [-1, 1].
+    This diagnostic is unbounded, especially with sparse pairs. It is not a
+    Pearson correlation coefficient and is not an input to the HAC estimator.
     """
     d, positions = _series(values, months)
     z = _centred_calendar(d, positions)
@@ -95,6 +95,7 @@ def autocorrelation(values, months, lags=ACF_LAGS) -> dict:
     variance = z @ z / len(d)
     result = {}
     for lag in lags:
+        _integer(lag, "diagnostic lag", minimum=1)
         pairs = int(present[:-lag] @ present[lag:]) if 0 < lag < len(z) else 0
         value = None if not pairs or variance == 0 else float(z[:-lag] @ z[lag:] / pairs / variance)
         result[str(lag)] = dict(value=value, pairs=pairs)
@@ -108,8 +109,7 @@ def hac_variance_of_mean(values, months, max_lag: int) -> float:
     apart. With no gaps this is the usual Newey-West estimate without the
     small-sample correction.
     """
-    if max_lag < 0:
-        raise ValueError("max_lag must be nonnegative")
+    _integer(max_lag, "max_lag", minimum=0)
     d, positions = _series(values, months)
     z = _centred_calendar(d, positions)
     total = z @ z
@@ -119,23 +119,39 @@ def hac_variance_of_mean(values, months, max_lag: int) -> float:
 
 
 def diebold_mariano(values, months, max_lag: int) -> dict:
-    """Mean loss differential over its HAC standard error, referred to t(n-1)."""
+    """DM-style mean/HAC-SE statistic with an approximate t(n-1) reference.
+
+    This is not an exact small-sample test or an episode-level degrees-of-freedom
+    correction. No overlapping-horizon adjustment is applied to this status target.
+    """
     d, _ = _series(values, months)
     variance = hac_variance_of_mean(d, months, max_lag)
     result = dict(max_lag=max_lag, kernel="bartlett", mean=float(d.mean()),
                   standard_error=None, statistic=None, p_value_two_sided=None,
-                  effective_observations=None)
+                  reference_distribution="student_t_approximation",
+                  reference_degrees_of_freedom=len(d) - 1, small_sample_correction=False)
     # Identical differentials leave only rounding noise in the variance.
     if variance > 0 and np.ptp(d) > 0:
         statistic = float(d.mean() / np.sqrt(variance))
         result.update(standard_error=float(np.sqrt(variance)), statistic=statistic,
-                      p_value_two_sided=float(2 * student_t.sf(abs(statistic), len(d) - 1)),
-                      # How many independent months would give the same precision.
-                      effective_observations=float(d.var() / variance))
+                      p_value_two_sided=float(2 * student_t.sf(abs(statistic), len(d) - 1)))
     return result
 
 
+def _integer(value, name, minimum):
+    if isinstance(value, (bool, np.bool_)) or not isinstance(value, (int, np.integer)) or value < minimum:
+        raise ValueError("%s must be an integer >= %d" % (name, minimum))
+
+
+def _bootstrap_settings(replications, level):
+    _integer(replications, "replications", minimum=1)
+    if not np.isfinite(level) or not 0 < level < 1:
+        raise ValueError("confidence level must be finite and between 0 and 1")
+
+
 def _interval(means, level):
+    if not len(means):
+        raise ValueError("All bootstrap replicates were empty; no interval is defined")
     lower, upper = np.quantile(means, [(1 - level) / 2, (1 + level) / 2])
     return dict(replications=int(len(means)), ci_lower=float(lower), ci_upper=float(upper),
                 share_at_or_below_zero=float(np.mean(means <= 0)))
@@ -146,6 +162,7 @@ def iid_bootstrap(values, replications=REPLICATIONS, seed=SEED, level=.95) -> di
     d = np.asarray(values, dtype=float)
     if d.ndim != 1 or len(d) == 0 or not np.isfinite(d).all():
         raise ValueError("Expected a nonempty finite one-dimensional array")
+    _bootstrap_settings(replications, level)
     rng = np.random.default_rng(seed)
     means = d[rng.integers(0, len(d), size=(replications, len(d)))].mean(axis=1)
     return dict(method="iid_rows", **_interval(means, level))
@@ -163,6 +180,8 @@ def block_bootstrap(values, months, block_length: int, replications=REPLICATIONS
     """
     d, positions = _series(values, months)
     span = int(positions[-1] - positions[0] + 1)
+    _integer(block_length, "block_length", minimum=1)
+    _bootstrap_settings(replications, level)
     if not 1 <= block_length <= span:
         raise ValueError("block_length must be between 1 and the calendar span")
     filled, present = np.zeros(span), np.zeros(span)
@@ -210,38 +229,49 @@ def paired_summary(rows, episodes, block_lengths=BLOCK_LENGTHS, hac_lags=HAC_LAG
     if not paired:
         raise ValueError("No paired forecasts to summarise")
     months = [r["predictor_month"] for r in paired]
-    y = [int(r["actual_label"]) for r in paired]
+    y = [float(r["actual_label"]) for r in paired]
     a = [float(r["model_a_probability"]) for r in paired]
     b = [float(r["model_b_probability"]) for r in paired]
     # Same reference as the Model A backtest: recession share of the training rows.
-    reference = [int(r["training_recession_count"]) / int(r["training_count"]) for r in paired]
+    reference = []
+    for row in paired:
+        total, positives = float(row["training_count"]), float(row["training_recession_count"])
+        if not (np.isfinite(total) and np.isfinite(positives) and total.is_integer()
+                and positives.is_integer() and total > 0 and 0 <= positives <= total):
+            raise ValueError("Training counts must be integers with 0 <= positives <= total and total > 0")
+        reference.append(positives / total)
+    positions = month_positions(months)
+    targets = month_positions([r["target_month"] for r in paired])
+    if not np.all(targets - positions == HORIZON):
+        raise ValueError("Each target must be the single month t+6")
     reference_bs = brier_score(y, reference)
     models = {}
     for name, p in (("model_a", a), ("model_b", b)):
         bs = brier_score(y, p)
         models[name] = dict(brier_score=bs,
                             brier_skill_vs_training_prevalence=brier_skill_score(bs, reference_bs),
-                            roc_auc=roc_auc(y, p), pr_auc=average_precision(y, p))
+                            roc_auc=roc_auc(y, p), average_precision=average_precision(y, p))
     d = loss_differential(y, a, b)
     positive_targets = [date.fromisoformat(r["target_month"]) for r, label in zip(paired, y) if label]
     reached = [(s, e) for s, e in episodes if any(s <= t <= e for t in positive_targets)]
-    positions = month_positions(months)
     return dict(
         forecasts=len(paired), first_predictor_month=months[0], last_predictor_month=months[-1],
         calendar_span_months=int(positions[-1] - positions[0] + 1),
-        recession_target_months=sum(y),
+        recession_target_months=int(sum(y)),
         recession_episodes_reached=["%s to %s" % (s.isoformat()[:7], e.isoformat()[:7])
                                     for s, e in reached],
-        pr_auc_no_skill_level=sum(y) / len(y),
+        average_precision_prevalence_reference=sum(y) / len(y),
         training_prevalence_brier_score=reference_bs,
         **models,
         loss_differential=dict(
             definition="Brier loss of Model B minus Model A per forecast month; positive = B worse",
             mean=float(d.mean()), months_b_worse=int((d > 0).sum()), months_b_better=int((d < 0).sum()),
-            autocorrelation_by_calendar_lag=autocorrelation(d, months),
+            cross_product_ratio_by_calendar_lag=calendar_cross_product_ratio(d, months),
             iid_bootstrap=iid_bootstrap(d, replications, seed, level),
             block_bootstrap=[block_bootstrap(d, months, n, replications, seed, level)
                              for n in block_lengths],
             diebold_mariano=[diebold_mariano(d, months, lag) for lag in hac_lags]),
         settings=dict(horizon_months=HORIZON, confidence_level=level,
-                      replications=replications, seed=seed))
+                      replications=replications, seed=seed,
+                      uncertainty_scope="conditional_on_saved_predictions_and_selected_calendar",
+                      bootstrap_interval="percentile", hac_lag_unit="calendar_months"))

@@ -1,0 +1,4 @@
+# Preserve the original CRLF bytes of restored, manifest-hashed artifacts.
+# Recognize CR as part of the newline while retaining ordinary whitespace checks.
+docs/results/exploratory_sensitivity_cov75/monthly_features_and_coverage.csv -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/results/exploratory_sensitivity_cov80/monthly_features_and_coverage.csv -text whitespace=trailing-space,space-before-tab,cr-at-eol

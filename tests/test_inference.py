@@ -1,10 +1,11 @@
-"""PR-AUC, gap-aware HAC and calendar block bootstrap for paired forecasts."""
+"""Average precision, gap-aware HAC and calendar block bootstrap for paired forecasts."""
 
 import csv
 import json
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 import statsmodels.api as sm
@@ -13,7 +14,7 @@ from scipy.stats import t as student_t
 from music_recession.backtest import brier_score, brier_skill_score
 from music_recession.economic import add_months
 from music_recession.inference import (
-    autocorrelation, average_precision, block_bootstrap, diebold_mariano,
+    calendar_cross_product_ratio, average_precision, block_bootstrap, diebold_mariano,
     hac_variance_of_mean, iid_bootstrap, loss_differential, month_positions,
     paired_summary, recession_episodes,
 )
@@ -104,16 +105,17 @@ class HacTests(unittest.TestCase):
         self.assertAlmostEqual(result['statistic'], expected)
         self.assertAlmostEqual(result['p_value_two_sided'],
                                2 * student_t.sf(abs(expected), len(self.d) - 1))
-        self.assertAlmostEqual(result['effective_observations'], len(self.d))
+        self.assertEqual(result['reference_degrees_of_freedom'], len(self.d) - 1)
+        self.assertEqual(result['reference_distribution'], 'student_t_approximation')
         flat = diebold_mariano(np.full(10, .3), consecutive(10), 5)
         self.assertIsNone(flat['statistic'])
         self.assertAlmostEqual(flat['mean'], .3)
         with self.assertRaises(ValueError):
             hac_variance_of_mean(self.d, months, -1)
 
-    def test_autocorrelation_reports_pairs_and_skips_gaps(self):
+    def test_calendar_cross_product_ratio_reports_pairs_and_skips_gaps(self):
         months = [date(1990, 1, 1), date(1990, 2, 1), date(1995, 1, 1)]
-        result = autocorrelation([1., 2, 3], months, (1, 2))
+        result = calendar_cross_product_ratio([1., 2, 3], months, (1, 2))
         self.assertEqual(result['1']['pairs'], 1)
         self.assertEqual(result['2'], dict(value=None, pairs=0))
 
@@ -183,6 +185,89 @@ class SummaryTests(unittest.TestCase):
         self.assertGreater(result['loss_differential']['mean'], 0)
         with self.assertRaises(ValueError):
             paired_summary([dict(rows[0], status='warmup')], episodes)
+
+
+class SparseAndDegenerateTests(unittest.TestCase):
+    def test_gappy_hac_matches_independent_calendar_sandwich(self):
+        # Intercept OLS on zero score contributions has denominator span**2;
+        # the observed-forecast mean instead has denominator n**2.
+        offsets = [0, 1, 7, 18, 19, 40]
+        d = np.array([.2, -.3, .5, .1, -.1, .4])
+        calendar = np.zeros(41)
+        calendar[offsets] = d - d.mean()
+        months = [add_months(date(1990, 1, 1), k) for k in offsets]
+        for lag in (1, 5, 12, 60):
+            fit = sm.OLS(calendar, np.ones(41)).fit(
+                cov_type='HAC', cov_kwds={'maxlags': lag, 'use_correction': False})
+            expected = float(fit.cov_params()[0, 0]) * (41 / len(d)) ** 2
+            self.assertAlmostEqual(hac_variance_of_mean(d, months, lag), expected, places=12)
+
+    def test_sparse_diagnostic_is_unbounded_not_a_correlation(self):
+        months = [add_months(date(1990, 1, 1), k) for k in (0, 24, 100, 200, 300, 400)]
+        result = calendar_cross_product_ratio([3, 3, 0, 0, 0, 0], months, (24,))
+        self.assertEqual(result['24'], dict(value=2., pairs=1))
+
+    def test_circular_endpoint_and_missing_denominator_by_hand(self):
+        # Calendar [1, missing, 4], length-2 plus length-1 blocks.
+        # Starts (2, 0): [4,1]+[1] -> 2; (1,0): [missing,4]+[1] -> 2.5.
+        months = [date(2000, 1, 1), date(2000, 3, 1)]
+        with patch('music_recession.inference.np.random.default_rng') as rng:
+            rng.return_value.integers.return_value = np.array([[2, 0], [1, 0]])
+            result = block_bootstrap([1, 4], months, 2, 2, level=.5)
+        self.assertEqual(result['ci_lower'], 2.125)
+        self.assertEqual(result['ci_upper'], 2.375)
+        self.assertEqual(result['empty_replicates_dropped'], 0)
+
+    def test_all_empty_replicates_raise_clear_error(self):
+        months = [date(2000, 1, 1), date(2000, 3, 1)]
+        with patch('music_recession.inference.np.random.default_rng') as rng:
+            rng.return_value.integers.return_value = np.ones((2, 3), dtype=int)
+            with self.assertRaisesRegex(ValueError, 'All bootstrap replicates were empty'):
+                block_bootstrap([1, 4], months, 1, 2)
+
+    def test_bootstrap_and_lag_settings_reject_invalid_values(self):
+        months = consecutive(3)
+        for bad in (0, -1, 1.5, True):
+            with self.assertRaises(ValueError):
+                iid_bootstrap([1, 2, 3], replications=bad)
+            with self.assertRaises(ValueError):
+                block_bootstrap([1, 2, 3], months, 1, replications=bad)
+        for bad in (0, 1, np.nan, np.inf, -.1):
+            with self.assertRaises(ValueError):
+                iid_bootstrap([1, 2, 3], level=bad)
+            with self.assertRaises(ValueError):
+                block_bootstrap([1, 2, 3], months, 1, level=bad)
+        for bad in (-1, .5, True):
+            with self.assertRaises(ValueError):
+                hac_variance_of_mean([1, 2, 3], months, bad)
+        for bad in (0, .5, True):
+            with self.assertRaises(ValueError):
+                calendar_cross_product_ratio([1, 2, 3], months, (bad,))
+        with self.assertRaises(ValueError):
+            block_bootstrap([1, 2, 3], months, 1.5)
+
+    def test_single_observation_and_single_class(self):
+        dm = diebold_mariano([.2], consecutive(1), 5)
+        self.assertIsNone(dm['statistic'])
+        self.assertIsNone(dm['p_value_two_sided'])
+        self.assertEqual(iid_bootstrap([.2], 10)['ci_lower'], .2)
+        self.assertIsNone(average_precision([0, 0], [.1, .2]))
+        self.assertEqual(average_precision([1, 1], [.1, .2]), 1.)
+
+    def test_origin_specific_training_prevalence_and_bad_rows(self):
+        rows = [dict(predictor_month=m.isoformat(), target_month=add_months(m, 6).isoformat(),
+                     status='ok', actual_label=y, model_a_probability=.2, model_b_probability=.3,
+                     training_recession_count=k, training_count=n)
+                for m, y, k, n in zip(consecutive(3), (0, 1, 0), (1, 2, 4), (10, 10, 20))]
+        result = paired_summary(rows, [], block_lengths=(1,), hac_lags=(0,), replications=10)
+        self.assertAlmostEqual(result['training_prevalence_brier_score'],
+                               brier_score([0, 1, 0], [.1, .2, .2]))
+        for change in (dict(training_count=0), dict(training_count=1.5),
+                       dict(training_recession_count=11), dict(actual_label=.5),
+                       dict(target_month='1990-08-01')):
+            with self.assertRaises(ValueError):
+                paired_summary([dict(rows[0], **change)] + rows[1:], [],
+                               block_lengths=(1,), hac_lags=(0,), replications=10)
 
 
 class CommittedResultTests(unittest.TestCase):
