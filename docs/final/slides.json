@@ -1,0 +1,298 @@
+{
+  "title": "Can Popular Music Predict U.S. Recessions?",
+  "main_slides": 11,
+  "planned_seconds": 660,
+  "slot_seconds": 750,
+  "qa_included": null,
+  "planning_date": "2026-12-03",
+  "slides": [
+    {
+      "id": "01",
+      "layout": "opening",
+      "title": "Can popular music predict\nU.S. recessions?",
+      "subtitle": "Team 5 · Keefer Wu · Nathan Starkman · Kiran Reddy Bhumireddy",
+      "seconds": 40,
+      "body": [
+        "Do lyric emotions add value beyond the Treasury yield spread?",
+        "Observed music-model loss is higher; robust statistical degradation is not established."
+      ],
+      "notes": "Our question is whether emotions in popular-song lyrics add predictive value beyond the Treasury yield curve. We implemented a complete source-to-forecast pipeline and compared two Probit models on the same dates. The music model has higher observed probability error, but that is different from establishing robust statistical degradation. Today we will show the data, the exact forecast calendar, the paired results and the limits of the uncertainty analysis. Our contribution is the auditable comparison, including what this retrospective design cannot establish. This is a qualified negative finding, not a claim that music contains no economic information.",
+      "evidence": [
+        "docs/exploratory_results.md",
+        "docs/results/paired_inference.json"
+      ]
+    },
+    {
+      "id": "02",
+      "layout": "data",
+      "title": "Three data sources; one frozen measurement model",
+      "subtitle": "Music study: 1973–2023 · economic history extends earlier",
+      "seconds": 55,
+      "body": [
+        "FRED|GS10, TB3MS and USREC: yields and recession labels.",
+        "Billboard + OSF|Weekly chart identities matched to historical lyrics.",
+        "Frozen GoEmotions|Six emotion scores; trained on Reddit, unvalidated on these lyrics.",
+        "Automated-screen eligibility is not recording verification or rights clearance."
+      ],
+      "notes": "FRED supplies the ten-year and three-month Treasury series and the recession-status labels. Weekly Billboard ranks define the music universe, rather than a year-end list. We identify 21,542 title-and-artist identities, select 19,096 OSF lyric candidates, and retain 16,290 songs after exploratory automated screens. Those songs were scored with a pinned RoBERTa GoEmotions classifier. That classifier is a measurement tool, not another observed outcome dataset. These counts describe the funnel, not verified recording quality. Matching, language and release evidence remain incomplete. Sources investigated for recovery, such as Kaggle and lyric APIs, were not additional admitted lyric sources in the reported experiment.",
+      "evidence": [
+        "README.md",
+        "docs/COMPLETE_RESEARCH_REPORT.md",
+        "docs/exploratory_course_policy.md"
+      ]
+    },
+    {
+      "id": "03",
+      "layout": "coverage",
+      "title": "Coverage changes the population we evaluate",
+      "subtitle": "Median monthly share of chart popularity weight scored",
+      "seconds": 60,
+      "body": [
+        "Coverage ≠ match accuracy",
+        "612 monthly rows → 429 / 348 / 291 feature-eligible months at 70% / 75% / 80%.",
+        "Missing lyrics lower coverage; they never become zero emotion scores."
+      ],
+      "notes": "The chart shows median monthly popularity-weight coverage, calculated from the bundled coverage table. It is highest in the 1980s and falls substantially in recent decades. Coverage uses all chart weight in its denominator; the emotion mean uses scored weight. A month can therefore have a valid emotion average but still fail the coverage gate. Four months also fail because chart rank slots are missing. After preparation, the three thresholds leave 429, 348 and 291 eligible feature months, before the training requirement. Tightening coverage changes which historical periods and recessions are represented. It does not create an independent replication or establish that higher coverage causes better forecasts. Pause briefly to read the downward pattern.",
+      "evidence": [
+        "docs/results/exploratory_primary_cov70/monthly_coverage.csv",
+        "docs/results/closeout_verification.json"
+      ]
+    },
+    {
+      "id": "04",
+      "layout": "pipeline",
+      "title": "An implemented chart-to-forecast pipeline",
+      "subtitle": "Source audit → frozen measurement → paired chronological evaluation",
+      "seconds": 65,
+      "body": [
+        "1  Weekly charts|Keep valid weekly appearances and ranks.",
+        "2  Match + screen|Reconcile title, artist and source; retain exclusions.",
+        "3  Frozen NLP|480-token chunks; token-weighted sigmoid scores.",
+        "4  Monthly features|Weight each appearance by 101 − rank.",
+        "5  Economic join|Six emotion means + continuous spread at month t.",
+        "6  Paired evaluation|Expanding Probit fits; save probabilities and dates."
+      ],
+      "notes": "This is the implemented architecture, not a proposed system. Chart records are validated, then title-and-artist identities are reconciled to source records and screened. The frozen classifier scores long lyrics in chunks of at most 480 content tokens; chunk outputs are pooled by token count. Each weekly appearance contributes weight 101 minus its rank. A song appearing in several weeks contributes repeatedly by design, while duplicate chart slots are rejected. We aggregate six monthly emotion means, retain coverage and exclusion information, join the economic predictors by month, and refit the two Probit specifications chronologically. Saved dates, probabilities, training counts and hashes support later verification without repeating expensive lyric inference. The delivery is a research pipeline, not a deployed forecasting service.",
+      "evidence": [
+        "src/music_recession/music_preparation.py",
+        "src/music_recession/emotions.py",
+        "src/music_recession/music_model.py"
+      ]
+    },
+    {
+      "id": "05",
+      "layout": "models",
+      "title": "Continuous inputs, binary target, probabilities",
+      "subtitle": "The existing model already uses the magnitude of the yield spread",
+      "seconds": 65,
+      "body": [
+        "Model A: p_A(t+6) = Φ(β0 + β1 spread_t)",
+        "Model B: p_B(t+6) = Φ(β0 + β1 spread_t + γ′E_t)",
+        "spread_t = GS10_t − TB3MS_t  (percentage points)",
+        "Joy · sadness · fear · anger · nervousness · optimism",
+        "Six preselected emotions; training-only scaling; no PCA or score-driven feature search."
+      ],
+      "notes": "Model A uses the continuous ten-year minus three-month yield spread, in percentage points. It is not an inversion indicator. Model B adds six preselected emotion means: joy, sadness, fear, anger, nervousness and optimism. Phi converts each fitted linear index into a recession probability. The outcome alone is binary. Model B has eight parameters including the intercept; Model A has two. Both are unregularized maximum-likelihood Probit models. Model B learns scaling within each training window for numerical conditioning. We retain the six interpretable features rather than adding PCA or searching for a favorable combination after seeing the scores. The TA feedback needs clarification only if a change in spread or a different target was intended; the continuous-spread interpretation is already implemented.",
+      "evidence": [
+        "src/music_recession/baseline.py",
+        "src/music_recession/music_model.py",
+        "config/music_model.json"
+      ]
+    },
+    {
+      "id": "06",
+      "layout": "timeline",
+      "title": "The six-month index starts at the predictor month",
+      "subtitle": "Schematic timeline · retrospective pseudo-out-of-sample",
+      "seconds": 70,
+      "body": [
+        "Train on the same eligible rows from January 1973; require at least 240 actual observations.",
+        "Training target i+6 ≤ t−1  so  training predictor i ≤ t−7.",
+        "Example: November 1993 predictor → December 15 issuance → May 1994 target.",
+        "Primary: 183 nonconsecutive predictor dates, November 1993–December 2023."
+      ],
+      "notes": "This timeline is essential. The observation period is predictor month t. Issuance is assumed on the fifteenth of t plus one, after that month ends. The outcome is recession status in the single month t plus six, not onset anywhere during six months and not six months after issuance. Both models train on the same eligible rows from January 1973. A training target must be no later than t minus one, so its predictor must be no later than t minus seven. We require at least 240 actual eligible rows and never fill gaps. The first primary predictor is November 1993: assumed issuance December fifteenth, target May 1994. This boundary does not prove that NBER labels or final economic values were historically available. Pause on the distinction between index and issuance.",
+      "evidence": [
+        "docs/forecast_protocol.md",
+        "docs/results/exploratory_primary_cov70/predictions.csv"
+      ]
+    },
+    {
+      "id": "07",
+      "layout": "benchmarks",
+      "title": "Observed loss rises when music is added",
+      "subtitle": "70% primary · the same 183 dates · 15 recession months · 3 episodes",
+      "seconds": 70,
+      "body": [
+        "Brier = mean squared probability error; lower is better.",
+        "Paired A and B use identical training rows. Full-history A uses earlier economic history.",
+        "B − paired A = +0.029867; neither beats the training-rate reference here."
+      ],
+      "notes": "Every bar uses exactly the same 183 primary evaluation dates. The training-rate reference predicts the recession fraction in each saved paired training window; it does not use evaluation prevalence. Its Brier loss is about .0830. The full-history spread model uses economic training history from April 1953 and scores .0848 on these same dates. Paired A and B instead share music-eligible training rows from January 1973; they score .0904 and .1202. That equal-training contrast isolates the addition of the six features. The original broad-history .094921 score uses 630 dates, so it is not a direct comparator here. Read the bar endpoints: the observed music penalty is about .0299. These are saved-result comparisons, without new model fitting in final delivery.",
+      "evidence": [
+        "docs/results/closeout_verification.json",
+        "reports/baseline_backtest/forecasts.csv"
+      ]
+    },
+    {
+      "id": "08",
+      "layout": "samples",
+      "title": "Related samples, not independent confirmations",
+      "subtitle": "Average precision is stepwise AP, not trapezoidal precision–recall area",
+      "seconds": 60,
+      "body": [
+        "Higher thresholds remove entire recession episodes and change both training and evaluation dates.",
+        "Constant-score AP references: evaluation prevalence 0.0820 / 0.0882 / 0.0889."
+      ],
+      "notes": "The stricter coverage samples contain 102 and 45 forecasts, with nine and four positive months. Their dates are subsets of the primary dates, reaching two and one recession episodes rather than three. The same direction of the loss difference is therefore not three independent confirmations. Average precision is especially useful to describe ranking with rare positives. Here it is a stepwise threshold-weighted metric, with ties grouped, not trapezoidal PR area. Primary A and B score .1688 and .0722, compared with prevalence .0820 as a constant-score reference. AP and ROC-AUC vary sharply across the stricter samples because the evaluated episodes and dates change. We should compare A and B within each row, without treating cross-row increases as an isolated coverage effect.",
+      "evidence": [
+        "docs/results/paired_inference.json",
+        "docs/results/closeout_verification.json"
+      ]
+    },
+    {
+      "id": "09",
+      "layout": "uncertainty",
+      "title": "Uncertainty depends on analysis settings",
+      "subtitle": "Primary sample · conditional on saved predictions and selected calendar",
+      "seconds": 75,
+      "body": [
+        "95% circular calendar block-bootstrap intervals for mean Brier B − A",
+        "Approximate Student-t HAC p-values, lags 5 / 12 / 24: 0.0399 / 0.0599 / 0.0479.",
+        "All settings reported; no convention selected for crossing a significance threshold."
+      ],
+      "notes": "The point estimate stays positive, but uncertainty changes with the dependence assumption. Keefer's implementation samples circular blocks of six, twelve or twenty-four calendar months, resampling the observation mask together with losses. The twelve- and twenty-four-month percentile intervals include zero. Approximate Student-t HAC p-values also move across .05 as the lag changes. We report every existing setting rather than selecting a favorable one. Circular endpoints impose artificial adjacency, and a thirty-year gappy sample is not obviously stationary. Only three recession episodes limit the approximations. This analysis conditions on fixed predictions and selected dates; it does not refit models or propagate source matching, classifier measurement, policy selection or economic-vintage uncertainty. The target is one future month, so an overlapping six-month outcome-window rationale would be incorrect. Pause to read which intervals cross zero.",
+      "evidence": [
+        "docs/paired_inference.md",
+        "docs/results/paired_inference.json"
+      ]
+    },
+    {
+      "id": "10",
+      "layout": "limits",
+      "title": "Four limits define what we can claim",
+      "subtitle": "A negative result does not identify its cause",
+      "seconds": 55,
+      "body": [
+        "Few episodes|15 positive primary months from only 3 recessions; nested samples.",
+        "Measurement + selection|Unverified matches and language; declining coverage; NLP unvalidated on lyrics.",
+        "Historical availability|Final vintages, retrospective labels and uncertain source publication times.",
+        "Incomplete current-code inference|Earlier audit: 7,490 shared vectors match; 8,800 songs lack a current-hash rerun."
+      ],
+      "notes": "There are four major limits. First, fifteen positive months are only three recession episodes, not fifteen independent downturns. Second, measurement and coverage selection remain unresolved: the corpus passes automated screens, but recording identity and language are not independently verified, and GoEmotions is unvalidated on these lyrics. Third, final economic values and retrospective labels prevent a real-time interpretation. Fourth, historical NLP scoring used a different implementation hash. An earlier local audit found 7,490 shared vectors identical, but 8,800 songs lack a current-hash rerun. We preserve that provenance rather than implying a new full inference run. Small events-per-parameter counts and calibration problems are diagnostics; they do not prove overfitting caused the result.",
+      "evidence": [
+        "docs/lyrics_validation.md",
+        "docs/results/exploratory_primary_cov70/CODE_VERSION_PROVENANCE.md",
+        "docs/results/closeout_verification.json"
+      ]
+    },
+    {
+      "id": "11",
+      "layout": "conclusion",
+      "title": "No demonstrated incremental benefit here",
+      "subtitle": "An auditable comparison, with a qualified negative finding",
+      "seconds": 45,
+      "body": [
+        "Observed music-model performance is worse on the selected samples.",
+        "Robust statistical degradation is not established.",
+        "Contribution: implemented pipeline, paired evaluation and explicit reproduction limits.",
+        "Next research priority: validate measurement and historical availability before redesigning models."
+      ],
+      "notes": "The conclusion is deliberately limited. These six lyric-emotion features show no demonstrated incremental benefit beyond the spread under this selected retrospective design. Their observed loss is higher, but robust statistical degradation is not established. We are not claiming that music contains no economic information, and we have not completed the reviewers' alternative experiments. The project contribution is the implemented pipeline, fair paired comparison, practical same-date references and transparent reproduction boundary. The report, deck and saved artifacts provide the evidence. The most useful next research step would be measurement and historical-availability validation, rather than adding experiments simply to improve a score. Thank you.",
+      "evidence": [
+        "docs/final/report.md",
+        "docs/final/team_handoff.md"
+      ]
+    },
+    {
+      "id": "A1",
+      "layout": "sensitivity",
+      "title": "Appendix A · all existing uncertainty settings",
+      "subtitle": "Circular percentile intervals and approximate HAC references are different approximations",
+      "seconds": 0,
+      "body": [
+        "10,000 draws; seed 20261026; missing-month mask resampled with losses.",
+        "80% empty draws dropped at 6 / 12 / 24 months: 1 / 4 / 31.",
+        "Bootstrap share ≤ 0 is not a null-centered p-value."
+      ],
+      "notes": "Use only for a methodological question. The full tables retain all block lengths and HAC lags, with no multiplicity-adjusted confirmatory test. Circular block assumptions and Student-t reference accuracy remain uncertain with few episodes. The 75% sample has percentile intervals excluding zero but lag-12 approximate p above .05; these methods need not agree. Source values are in paired_inference.json.",
+      "evidence": [
+        "docs/results/paired_inference.json",
+        "src/music_recession/inference.py"
+      ]
+    },
+    {
+      "id": "A2",
+      "layout": "diagnostics",
+      "title": "Appendix B · scores and descriptive diagnostics",
+      "subtitle": "Compare A/B within each sample; higher-threshold dates are nested",
+      "seconds": 0,
+      "body": [
+        "Calibration: 44 evaluated B probabilities in [0.3,0.8), including 1 recession.",
+        "Training events per parameter: 46–61 positives / 8 parameters = 5.75–7.625.",
+        "Sparse lag-24 cross-product ratio at 80%: 3.3566 from 3 pairs; not a correlation."
+      ],
+      "notes": "These diagnostics describe the saved experiment and do not establish why B performed worse. The events-per-parameter denominator includes the intercept and is a training quantity, distinct from fifteen positive evaluation months. The sparse cross-product ratio is normalized by global variance, is unbounded, and is not used as a HAC input or an independent-month count.",
+      "evidence": [
+        "docs/results/closeout_verification.json",
+        "docs/results/paired_inference.json"
+      ]
+    },
+    {
+      "id": "A3",
+      "layout": "reproduction",
+      "title": "Appendix C · three reproduction levels",
+      "subtitle": "Offline derived-result checks do not establish full current-code NLP inference",
+      "seconds": 0,
+      "body": [
+        "Saved predictions|Verify metrics, calibration, same-date benchmarks and conditional inference offline.",
+        "Bundled derived data|Regenerate the original ten figures without raw lyrics or model downloads.",
+        "Full inference|Requires external raw sources, audit inputs, weights and compatible caches.",
+        "Historical validation: 215 tests passed at PR #2 head; numerical code is unchanged in final delivery."
+      ],
+      "notes": "Use the documented fresh-output commands in the report and final README. Historical manifests and NLP implementation hashes remain unchanged. The earlier cache audit is not repeated by this deliverables work. The final validation record reports only content/export checks actually run, distinguishing them from the prior 215-test numerical validation. No raw lyrics or model caches are included in these deliverables.",
+      "evidence": [
+        "docs/closeout_validation.md",
+        "docs/paired_inference.md",
+        "docs/final/README.md"
+      ]
+    },
+    {
+      "id": "A4",
+      "layout": "crisp",
+      "title": "Appendix D · CRISP-DM and justified decisions",
+      "subtitle": "Delivery is a reproducible research bundle; no deployment claim",
+      "seconds": 0,
+      "body": [
+        "Understand|Question, economic baseline, source and coverage audit.",
+        "Prepare|Match, screen, chunk, rank-weight and join by calendar month.",
+        "Model + evaluate|Paired Probit; chronological refits; probability loss and conditional inference.",
+        "Deliver|Report, timed deck, saved outputs and reproducibility limits.",
+        "No PCA: six interpretable preselected features. No random split: preserve chronology. No score-driven extra models."
+      ],
+      "notes": "This mapping addresses the supplied syllabus expectations without adding techniques mechanically. Cleaning and dimensionality decisions are documented. Random splitting would violate chronology. PCA would change the interpretation of six preselected emotions. Alternative estimators and new horizons would be separately designed experiments, not undocumented repairs selected after observing the result.",
+      "evidence": [
+        "docs/final/report.md",
+        "docs/review_response.md"
+      ]
+    },
+    {
+      "id": "A5",
+      "layout": "references",
+      "title": "Appendix E · references and TA clarification",
+      "subtitle": "Detailed links and source versions are in the final report",
+      "seconds": 0,
+      "body": [
+        "Sources: FRED GS10 / TB3MS / USREC; weekly Billboard archive; OSF historical lyrics.",
+        "Measurement: pinned SamLowe/roberta-base-go_emotions; estimator: statsmodels Probit.",
+        "Evidence: original predictions/metrics, closeout verification and paired_inference.json.",
+        "TA question: continuous spread magnitude is already implemented. Did you intend a change in spread, or a different target?"
+      ],
+      "notes": "The exact clarification in the team handoff separates continuous predictor, binary target and probability output. If the TA intended a different predictor or target, ask for a precise definition and timing before modifying the experiment. References and clickable evidence links are provided in report.md section seven. Source use remains exploratory coursework guidance, not verified rights clearance.",
+      "evidence": [
+        "docs/final/report.md",
+        "docs/final/team_handoff.md"
+      ]
+    }
+  ]
+}

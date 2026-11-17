@@ -12,7 +12,7 @@ full-history yield-curve model scored **0.0848** on those same dates.
 The finding is **no demonstrated incremental predictive benefit from these
 features on this selected retrospective sample**. We make no significance,
 causal, real-time deployment, or general absence-of-music-signal claim.
-This PR #2 branch adds [calendar-aware uncertainty and average precision](docs/paired_inference.md)
+The integrated analysis includes [calendar-aware uncertainty and average precision](docs/paired_inference.md)
 from saved predictions. Primary intervals and approximate HAC p-values depend on
 settings; they do not establish robust statistical degradation.
 
@@ -26,6 +26,7 @@ settings; they do not establish robust statistical degradation.
 
 | Purpose | Document |
 |---|---|
+| Final report and presentation | [Delivery bundle](docs/final/README.md), [report PDF](docs/final/report.pdf), [editable slides](docs/final/presentation.pptx), [slide PDF](docs/final/presentation.pdf) |
 | Concise professor update with figures | [Professor README](README_PROFESSOR.md) |
 | Main results and benchmarks | [Exploratory results](docs/exploratory_results.md) |
 | Review dispositions and follow-up boundary | [PR #1 closeout](docs/review_response.md) |

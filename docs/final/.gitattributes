@@ -1,0 +1,3 @@
+# Fixed-layout/native document exports are binary, even with ASCII PDF headers.
+*.pdf binary
+*.pptx binary

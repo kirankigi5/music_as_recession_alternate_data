@@ -1,3 +1,8 @@
+> PR #2 is now merged as `eef070620a6621a601287334345fa683a6b61194`.
+> The current [final-delivery handoff](final/team_handoff.md) contains rehearsal,
+> submission questions and the unsent TA update. The implementation handoff below
+> records the PR #2 integration stage; historical validation is preserved.
+
 # Team handoff: integrated PR #2
 
 The six-month exploratory experiment is complete and its saved Brier/ROC-AUC
