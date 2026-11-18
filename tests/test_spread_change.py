@@ -154,7 +154,33 @@ class CommittedResultTests(unittest.TestCase):
             for key in ('brier_score', 'roc_auc', 'average_precision', 'log_loss'):
                 self.assertAlmostEqual(saved['summary'][model][key], fresh['summary'][model][key], places=12)
         with (self.directory / 'predictions.csv').open(newline='') as stream:
-            self.assertEqual(fresh_rows, list(csv.DictReader(stream)))
+            saved_rows = list(csv.DictReader(stream))
+        self.assert_rows_match(saved_rows, fresh_rows)
+
+    # Columns holding fitted floats. Different BLAS builds (e.g. Intel MKL vs
+    # OpenBLAS) or library versions change their last digits (~1e-16), so they
+    # are compared within a tolerance; every other column must match exactly.
+    FLOAT_COLUMNS = ('baseline_probability', 'spread_change_probability')
+    FIT_COLUMNS = ('baseline_fit_json', 'spread_change_fit_json')
+
+    def assert_rows_match(self, saved_rows, fresh_rows):
+        self.assertEqual(len(saved_rows), len(fresh_rows))
+        for saved, fresh in zip(saved_rows, fresh_rows):
+            month = saved['predictor_month']
+            self.assertEqual(saved.keys(), fresh.keys())
+            for column in saved:
+                if column in self.FLOAT_COLUMNS and saved[column]:
+                    self.assertAlmostEqual(float(saved[column]), float(fresh[column]), places=12,
+                                           msg='%s %s' % (month, column))
+                elif column in self.FIT_COLUMNS and saved[column]:
+                    old = json.loads(saved[column])['coefficients']
+                    new = json.loads(fresh[column])['coefficients']
+                    self.assertEqual(old.keys(), new.keys())
+                    for name in old:
+                        self.assertAlmostEqual(old[name], new[name], places=10,
+                                               msg='%s %s %s' % (month, column, name))
+                else:
+                    self.assertEqual(saved[column], fresh[column], msg='%s %s' % (month, column))
 
     def test_recomputed_baseline_differs_from_saved_only_by_the_dropped_row(self):
         rows = load_economic(ECONOMIC)
