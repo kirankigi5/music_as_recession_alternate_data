@@ -1,0 +1,27 @@
+{
+  "label": "SUPPLEMENTARY - not part of the original experiment",
+  "reproduce": "python scripts/run_spread_change_comparison.py --out <fresh directory>",
+  "inputs_sha256": {
+    "data/processed/economic_monthly.csv": "8b123a6118c7e9c296e3ba609d7de1e046c5dec6e2d54e07c4adb1d6f87a28e0",
+    "config/baseline.json": "6ffee5fbf575a81eea12b2f264276666f2873cf0b63c0f9536229d77b3b04715",
+    "reports/baseline_backtest/forecasts.csv": "ea1a289ba87b1b4155b84a4b37f5ac3ab18e198a5aed474322bba5e367fd2ac8"
+  },
+  "code_sha256": {
+    "src/music_recession/spread_change.py": "dac7c569db495e95c6dad1558bd0e3c8d4ff2aaa51022eb12dedfdaa97f6b1b0",
+    "src/music_recession/baseline.py": "ef3a8b543b428d45e81cd734fb5fde2ab8c5d85a0b1d96e785312beb9ba5f255",
+    "src/music_recession/backtest.py": "23a1154ccb319210a5d790ecf9c997d1017c5d79146a6d0c834d6120773ca972",
+    "src/music_recession/inference.py": "4f8576b6924dcd7bef622c199dafe4ef4e0aa8ec2412962c85eb73ab58455198",
+    "scripts/run_spread_change_comparison.py": "9731e7cc991276dcb4de57b1195af04dde648593f44f9855bb69ae86c7d21eb2"
+  },
+  "software": {
+    "python": "3.13.9",
+    "numpy": "2.3.5",
+    "scipy": "1.16.3",
+    "statsmodels": "0.14.5"
+  },
+  "outputs_sha256": {
+    "predictions.csv": "c7bfeb6f3039b2504630f70995293360e0493818ad384724e8b86658fa8f023e",
+    "calibration.csv": "2e6234ff573c190838c6b273755facf7228d547cf540d84a0936ebeb438f6e54",
+    "metrics.json": "873d253aab85fbcc78735f1854a387c3eff2e9cd57954563655a2e3b04468e53"
+  }
+}
