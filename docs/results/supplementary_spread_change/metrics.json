@@ -1,0 +1,350 @@
+{
+  "label": "SUPPLEMENTARY - not part of the original experiment",
+  "question": "Does adding delta_spread_t = spread_t - spread_(t-1) to the spread-only Probit change out-of-sample probability accuracy on identical forecast months?",
+  "definition": "delta_spread_t uses the previous calendar month only; undefined if it is unobserved",
+  "design": {
+    "horizon": "USREC at predictor month + 6 calendar months (single-month status)",
+    "window": "expanding; refit from scratch at every origin; no tuning",
+    "training_rule": "training targets <= t-1; >= 240 eligible rows; start 1953-04-01 or first common month",
+    "common_sample": "rows where delta_spread_t is defined; both models use exactly these rows",
+    "forecast_cutoff": "assumed 15th of t+1; retrospective pseudo-out-of-sample",
+    "scheduled_months": "1973-10-01 to 2026-03-01"
+  },
+  "scheduled_forecasts": 630,
+  "evaluated_forecasts": 629,
+  "evaluated_target_start": "1974-05-01",
+  "evaluated_target_end": "2026-09-01",
+  "recession_prevalence": 0.10969793322734499,
+  "not_evaluated": [
+    {
+      "predictor_month": "1973-10-01",
+      "status": "warmup",
+      "reason": "Need 240 eligible months; found 239"
+    }
+  ],
+  "result": {
+    "brier_spread_only": 0.09437396025589917,
+    "brier_spread_plus_change": 0.09238207200006804,
+    "brier_difference_change_minus_spread_only": -0.0019918882558311282,
+    "direction": "spread+change lower Brier"
+  },
+  "original_saved_baseline_same_months": {
+    "note": "Context only. Original reports/baseline_backtest forecasts restricted to these months; its training windows include 1953-04, one row more than the common sample.",
+    "brier_score": 0.09448881515126326,
+    "max_abs_probability_difference_vs_recomputed": 0.009869460689975296
+  },
+  "summary": {
+    "forecasts": 629,
+    "first_predictor_month": "1973-11-01",
+    "last_predictor_month": "2026-03-01",
+    "calendar_span_months": 629,
+    "recession_target_months": 69,
+    "recession_episodes_reached": [
+      "1973-12 to 1975-03",
+      "1980-02 to 1980-07",
+      "1981-08 to 1982-11",
+      "1990-08 to 1991-03",
+      "2001-04 to 2001-11",
+      "2008-01 to 2009-06",
+      "2020-03 to 2020-04"
+    ],
+    "average_precision_prevalence_reference": 0.10969793322734499,
+    "training_prevalence_brier_score": 0.10078687111546215,
+    "loss_differential": {
+      "definition": "Brier loss of spread+change minus spread-only per forecast month; positive = spread+change worse",
+      "mean": -0.0019918882558311282,
+      "months_b_worse": 198,
+      "months_b_better": 431,
+      "cross_product_ratio_by_calendar_lag": {
+        "1": {
+          "value": -0.13585956307911973,
+          "pairs": 628
+        },
+        "3": {
+          "value": 0.07784508223951815,
+          "pairs": 626
+        },
+        "6": {
+          "value": -0.17445895145827406,
+          "pairs": 623
+        },
+        "12": {
+          "value": 0.10243850794059749,
+          "pairs": 617
+        },
+        "24": {
+          "value": 0.01694061728509392,
+          "pairs": 605
+        }
+      },
+      "iid_bootstrap": {
+        "method": "iid_rows",
+        "replications": 10000,
+        "ci_lower": -0.007626248614809327,
+        "ci_upper": 0.003928722310433927,
+        "share_at_or_below_zero": 0.7498
+      },
+      "block_bootstrap": [
+        {
+          "method": "circular_calendar_blocks",
+          "block_length_months": 6,
+          "calendar_span_months": 629,
+          "empty_replicates_dropped": 0,
+          "replications": 10000,
+          "ci_lower": -0.007323923109748013,
+          "ci_upper": 0.003252145981235873,
+          "share_at_or_below_zero": 0.7709
+        },
+        {
+          "method": "circular_calendar_blocks",
+          "block_length_months": 12,
+          "calendar_span_months": 629,
+          "empty_replicates_dropped": 0,
+          "replications": 10000,
+          "ci_lower": -0.00740365001984727,
+          "ci_upper": 0.0029984433507981435,
+          "share_at_or_below_zero": 0.7738
+        },
+        {
+          "method": "circular_calendar_blocks",
+          "block_length_months": 24,
+          "calendar_span_months": 629,
+          "empty_replicates_dropped": 0,
+          "replications": 10000,
+          "ci_lower": -0.00693533064358234,
+          "ci_upper": 0.0027475925194087657,
+          "share_at_or_below_zero": 0.8014
+        }
+      ],
+      "diebold_mariano": [
+        {
+          "max_lag": 5,
+          "kernel": "bartlett",
+          "mean": -0.0019918882558311282,
+          "standard_error": 0.0027228799775262384,
+          "statistic": -0.7315372959041614,
+          "p_value_two_sided": 0.4647239086141076,
+          "reference_distribution": "student_t_approximation",
+          "reference_degrees_of_freedom": 628,
+          "small_sample_correction": false
+        },
+        {
+          "max_lag": 12,
+          "kernel": "bartlett",
+          "mean": -0.0019918882558311282,
+          "standard_error": 0.0026750679153573487,
+          "statistic": -0.744612218776151,
+          "p_value_two_sided": 0.45678472222806143,
+          "reference_distribution": "student_t_approximation",
+          "reference_degrees_of_freedom": 628,
+          "small_sample_correction": false
+        },
+        {
+          "max_lag": 24,
+          "kernel": "bartlett",
+          "mean": -0.0019918882558311282,
+          "standard_error": 0.002415116072458234,
+          "statistic": -0.8247588091298975,
+          "p_value_two_sided": 0.40982168944911446,
+          "reference_distribution": "student_t_approximation",
+          "reference_degrees_of_freedom": 628,
+          "small_sample_correction": false
+        }
+      ]
+    },
+    "settings": {
+      "horizon_months": 6,
+      "confidence_level": 0.95,
+      "replications": 10000,
+      "seed": 20261026,
+      "uncertainty_scope": "conditional_on_saved_predictions_and_selected_calendar",
+      "bootstrap_interval": "percentile",
+      "hac_lag_unit": "calendar_months"
+    },
+    "spread_only": {
+      "brier_score": 0.09437396025589917,
+      "brier_skill_vs_training_prevalence": 0.06362843482080427,
+      "roc_auc": 0.7165113871635611,
+      "average_precision": 0.30407809783906137,
+      "log_loss": 0.33716497536681367,
+      "mean_probability": 0.14381526673830441,
+      "calibration": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.1,
+          "upper_inclusive": false,
+          "count": 347,
+          "mean_predicted_probability": 0.0364822966801062,
+          "observed_recession_frequency": 0.05475504322766571
+        },
+        {
+          "bin_lower": 0.1,
+          "bin_upper": 0.2,
+          "upper_inclusive": false,
+          "count": 115,
+          "mean_predicted_probability": 0.14158347032685792,
+          "observed_recession_frequency": 0.1391304347826087
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.3,
+          "upper_inclusive": false,
+          "count": 80,
+          "mean_predicted_probability": 0.23939052512115727,
+          "observed_recession_frequency": 0.075
+        },
+        {
+          "bin_lower": 0.3,
+          "bin_upper": 0.4,
+          "upper_inclusive": false,
+          "count": 36,
+          "mean_predicted_probability": 0.3529925538609785,
+          "observed_recession_frequency": 0.16666666666666666
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.5,
+          "upper_inclusive": false,
+          "count": 21,
+          "mean_predicted_probability": 0.4491125228676339,
+          "observed_recession_frequency": 0.38095238095238093
+        },
+        {
+          "bin_lower": 0.5,
+          "bin_upper": 0.6,
+          "upper_inclusive": false,
+          "count": 16,
+          "mean_predicted_probability": 0.5425801823242451,
+          "observed_recession_frequency": 0.3125
+        },
+        {
+          "bin_lower": 0.6,
+          "bin_upper": 0.7,
+          "upper_inclusive": false,
+          "count": 2,
+          "mean_predicted_probability": 0.666130664244944,
+          "observed_recession_frequency": 0.5
+        },
+        {
+          "bin_lower": 0.7,
+          "bin_upper": 0.8,
+          "upper_inclusive": false,
+          "count": 4,
+          "mean_predicted_probability": 0.7495262544975532,
+          "observed_recession_frequency": 1.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "upper_inclusive": false,
+          "count": 4,
+          "mean_predicted_probability": 0.8605176032955798,
+          "observed_recession_frequency": 0.75
+        },
+        {
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "upper_inclusive": true,
+          "count": 4,
+          "mean_predicted_probability": 0.9435725342623775,
+          "observed_recession_frequency": 0.25
+        }
+      ]
+    },
+    "spread_plus_change": {
+      "brier_score": 0.09238207200006804,
+      "brier_skill_vs_training_prevalence": 0.08339180512673638,
+      "roc_auc": 0.7415113871635611,
+      "average_precision": 0.3397191470752494,
+      "log_loss": 0.33334187043782537,
+      "mean_probability": 0.14511978305549086,
+      "calibration": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.1,
+          "upper_inclusive": false,
+          "count": 365,
+          "mean_predicted_probability": 0.03264684783400249,
+          "observed_recession_frequency": 0.049315068493150684
+        },
+        {
+          "bin_lower": 0.1,
+          "bin_upper": 0.2,
+          "upper_inclusive": false,
+          "count": 97,
+          "mean_predicted_probability": 0.1436199709167392,
+          "observed_recession_frequency": 0.15463917525773196
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.3,
+          "upper_inclusive": false,
+          "count": 74,
+          "mean_predicted_probability": 0.23771854174202567,
+          "observed_recession_frequency": 0.08108108108108109
+        },
+        {
+          "bin_lower": 0.3,
+          "bin_upper": 0.4,
+          "upper_inclusive": false,
+          "count": 32,
+          "mean_predicted_probability": 0.34949795198193645,
+          "observed_recession_frequency": 0.15625
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.5,
+          "upper_inclusive": false,
+          "count": 21,
+          "mean_predicted_probability": 0.4481622376312891,
+          "observed_recession_frequency": 0.23809523809523808
+        },
+        {
+          "bin_lower": 0.5,
+          "bin_upper": 0.6,
+          "upper_inclusive": false,
+          "count": 16,
+          "mean_predicted_probability": 0.5419787881869582,
+          "observed_recession_frequency": 0.25
+        },
+        {
+          "bin_lower": 0.6,
+          "bin_upper": 0.7,
+          "upper_inclusive": false,
+          "count": 9,
+          "mean_predicted_probability": 0.6340177991235998,
+          "observed_recession_frequency": 0.6666666666666666
+        },
+        {
+          "bin_lower": 0.7,
+          "bin_upper": 0.8,
+          "upper_inclusive": false,
+          "count": 4,
+          "mean_predicted_probability": 0.7446833638620641,
+          "observed_recession_frequency": 1.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "upper_inclusive": false,
+          "count": 5,
+          "mean_predicted_probability": 0.844830193162687,
+          "observed_recession_frequency": 0.6
+        },
+        {
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "upper_inclusive": true,
+          "count": 6,
+          "mean_predicted_probability": 0.9443146894357982,
+          "observed_recession_frequency": 0.5
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Final FRED values and retrospective NBER dating contain hindsight.",
+    "Monthly errors are dependent and few recession episodes are represented; intervals are conditional sensitivities, not confirmatory tests.",
+    "One pre-specified feature; no feature, date, threshold or setting search was performed."
+  ]
+}
