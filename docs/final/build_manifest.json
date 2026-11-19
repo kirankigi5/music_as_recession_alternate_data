@@ -1,7 +1,7 @@
 {
   "source_sha256": {
-    "slides.json": "8de24af0c2b2b26d92fcf10659a0ec63a58b726b187286a78ea3ab464fa064ce",
-    "report.md": "2de1e18ae95cb3f6e824cf75d16c685d545768fe261ffed26a37951a164c5806",
+    "slides.json": "6c9dd3a72d1d3a043211946c36bbe311fa5c5be670d6cad9ef02a421290dc335",
+    "report.md": "0649377ef30ec47d9f691f16ba96ec2958103756a5b86bf18098b809b427327a",
     "build_final_deliverables.py": "8072bb57d41afb6f677019681d459d75fff66a827c05f7023a36e36ee502376b"
   },
   "evidence_sha256": {
@@ -2716,7 +2716,7 @@
           "lines": 1
         },
         {
-          "text": "Sources: FRED GS10 / TB3MS / USREC; weekly Billboard archive; OSF historical lyrics.",
+          "text": "Data: FRED GS10 / TB3MS / USREC; weekly Billboard; OSF lyrics (Foramitti et al., 2025).",
           "x": 40,
           "y": 190,
           "w": 880,
@@ -2725,7 +2725,7 @@
           "lines": 1
         },
         {
-          "text": "Measurement: pinned SamLowe/roberta-base-go_emotions; estimator: statsmodels Probit.",
+          "text": "Methods: Estrella & Mishkin (1998) Probit; GoEmotions (Demszky et al., 2020), RoBERTa.",
           "x": 40,
           "y": 253,
           "w": 880,
@@ -2734,7 +2734,7 @@
           "lines": 1
         },
         {
-          "text": "Evidence: original predictions/metrics, closeout verification and paired_inference.json.",
+          "text": "Related: Harvey (1986); Zullow (1991); de Lucio & Palomeque (2023); Musthyala et al. (2024).",
           "x": 40,
           "y": 316,
           "w": 880,

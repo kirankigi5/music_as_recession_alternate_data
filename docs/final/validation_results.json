@@ -5,16 +5,16 @@
     "presentation.pdf": 16,
     "report.pdf": 7
   },
-  "report_pdf_links": 52,
+  "report_pdf_links": 59,
   "native_editable_text_boxes": 294,
-  "pdf_text_spans_within_page": 749,
+  "pdf_text_spans_within_page": 790,
   "main_slides": 11,
   "appendix_slides": 5,
   "planned_seconds": 660,
   "narration_words": 1258,
   "links": {
-    "local_links": 201,
-    "markdown_anchors": 27,
+    "local_links": 203,
+    "markdown_anchors": 28,
     "failures": [],
     "external_urls": "Not exhaustively probed"
   },
