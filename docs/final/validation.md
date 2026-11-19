@@ -23,6 +23,8 @@ were not adopted. That draft and all unrelated local work remain preserved.
 The separate export environment used **Python 3.9.6**, python-pptx **1.0.2**,
 ReportLab **4.2.5**, PyMuPDF **1.26.5**, Markdown **3.9** and embedded Arial
 regular/bold fonts. Package versions and font hashes are recorded in `build_manifest.json`.
+The pitch-alignment rebuild (prior work, study period, percent improvement, manual-review
+status, literature references) used Python 3.12.5 with the same pinned packages and font hashes.
 The existing numerical environment was not altered. Initial export attempts
 identified an incompatible ReportLab 5.1.0 release and layout/glyph issues;
 the pinned compatible version, adjusted boxes and supported equation notation
@@ -47,13 +49,13 @@ git diff --cached --check
 - Report: **7 PDF pages**; deck: **16 PDF/PPTX slides**, comprising **11 main + 5 appendix**.
 - **294 native editable text boxes**, native vector charts/shapes, embedded notes
   on every slide, and no out-of-page PPTX shapes.
-- **749 PDF text spans** within page bounds; report contains **52 PDF links**.
+- **790 PDF text spans** within page bounds; report contains **59 PDF links**.
 - Reported Brier, ROC-AUC, AP, prevalence and all block/HAC tables match bundled
   outputs at the displayed precision. Benchmarks, coverage counts, first-origin
   timing example, economic-table bounds and song counts were cross-checked.
 - Source/evidence hashes match; both report images are generated from the same
   saved-results-bound presentation geometry.
-- **201 local file links and 27 Markdown anchors passed** with zero failures.
+- **203 local file links and 28 Markdown anchors passed** with zero failures.
   External URLs were not exhaustively probed.
 - Working and staged diff whitespace checks passed. Of 117 pre-existing main
   files, **115 are byte-identical**; only README navigation and the implementation

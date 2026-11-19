@@ -31,6 +31,10 @@ The main talk has **11 slides, planned for 11:00**. Five appendix slides have no
 | Why no PCA, random split or extra model? | Six features were preselected for interpretation; PCA would change the question. Random splitting breaks chronology. New models/horizons would be separate declared experiments, not post-result repairs. |
 | Is overfitting established? | No. Primary windows have 46–61 positives / eight parameters = 5.75–7.625 events per parameter. Model B has 44 evaluated probabilities in [0.3,0.8), one recession. These diagnostics do not prove a cause. |
 | Are lyrics, permissions and scores fully validated? | No. Exploratory automated screens are not recording/language/release verification or rights clearance. Strict policy admits zero records. GoEmotions is unvalidated on these lyrics. The earlier 7,490 shared vectors match, but 8,800 songs lack a current-hash rerun. |
+| The pitch said 1959–2023 and nine recessions. Why 1973? | The OSF lyrics corpus covers 1973–2023, so 1959–1972 is outside this analysis. With the 240-month training minimum, paired forecasts start in November 1993 and reach three recessions. See [report Section 2](report.md#2-data-preparation-and-measurement). |
+| The pitch said BERT. What model was used? | The pinned `SamLowe/roberta-base-go_emotions` checkpoint, a RoBERTa model trained on the GoEmotions labels. [Model config](../../config/music_model.json). |
+| Did you do the manual review of emotion scores from the pitch? | No. It was planned and not performed, so measurement failure and absence of signal cannot be told apart. |
+| What is the pitch's percent-improvement number? | 100 × (BS_A − BS_B) / BS_A is −33.0% (70%), −55.0% (75%) and −88.3% (80%). Negative means Model B is worse. |
 | Did you verify reviewers' alternative experiments? | No. Ridge, single-emotion, detrending and alternate-lag claims still need code/results. They are not final-project findings. |
 
 ## Precise TA clarification

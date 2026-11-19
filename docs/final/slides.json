@@ -283,9 +283,9 @@
       "subtitle": "Detailed links and source versions are in the final report",
       "seconds": 0,
       "body": [
-        "Sources: FRED GS10 / TB3MS / USREC; weekly Billboard archive; OSF historical lyrics.",
-        "Measurement: pinned SamLowe/roberta-base-go_emotions; estimator: statsmodels Probit.",
-        "Evidence: original predictions/metrics, closeout verification and paired_inference.json.",
+        "Data: FRED GS10 / TB3MS / USREC; weekly Billboard; OSF lyrics (Foramitti et al., 2025).",
+        "Methods: Estrella & Mishkin (1998) Probit; GoEmotions (Demszky et al., 2020), RoBERTa.",
+        "Related: Harvey (1986); Zullow (1991); de Lucio & Palomeque (2023); Musthyala et al. (2024).",
         "TA question: continuous spread magnitude is already implemented. Did you intend a change in spread, or a different target?"
       ],
       "notes": "The exact clarification in the team handoff separates continuous predictor, binary target and probability output. If the TA intended a different predictor or target, ask for a precise definition and timing before modifying the experiment. References and clickable evidence links are provided in report.md section seven. Source use remains exploratory coursework guidance, not verified rights clearance.",
