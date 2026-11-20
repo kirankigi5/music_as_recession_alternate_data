@@ -30,6 +30,7 @@ settings; they do not establish robust statistical degradation.
 | Main results and benchmarks | [Exploratory results](docs/exploratory_results.md) |
 | Review dispositions and follow-up boundary | [PR #1 closeout](docs/review_response.md) |
 | Tested release commands and limits | [PR #1 validation](docs/closeout_validation.md), [PR #2 methods and validation](docs/paired_inference.md) |
+| Yield-spread follow-up to TA feedback, with a supplementary spread-change test | [Yield-spread follow-up](docs/yield_spread_followup.md) |
 | Full research history, methods and figures | [Research report](docs/COMPLETE_RESEARCH_REPORT.md) |
 | Code map and next work | [Team handoff](docs/TEAM_HANDOFF.md) |
 | Timing and evidence contracts | [Forecast protocol](docs/forecast_protocol.md), [model execution](docs/model_comparison.md), [course policy](docs/exploratory_course_policy.md) |

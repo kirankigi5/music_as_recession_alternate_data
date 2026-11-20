@@ -72,15 +72,35 @@ no tuning.
 
 **What it means:**
 - Adding Δspread was **slightly better on every metric**, with about a 2% lower Brier score.
-- Most of the gain came during recession months.
-- A rising spread raised the predicted risk. This fits a known pattern: the curve often
-  steepens just before a recession, when the Fed starts cutting rates.
+- A rising spread raised the predicted risk. This fits the Fed cutting short-term rates
+  once a recession is under way, which steepens the curve.
 - **The improvement is not statistically clear.** The 95% ranges for the Brier
   difference include zero (about −0.007 to +0.003), and the p-values are about 0.4.
   With only 7 recessions, we can't tell it apart from noise.
 
-**Conclusion:** Δspread may help a little, but the evidence is weak. We kept the
-original model unchanged.
+**Where the gain comes from.** Splitting each month's Brier difference (Δspread model
+minus spread only) by whether the economy was in recession at the forecast month t and
+at the target month t+6:
+
+| Economy at t → at t+6 | Months | Mean difference | Share of net gain |
+|---|---:|---:|---:|
+| Expansion → expansion | 522 | −0.0001 | 5% |
+| Expansion → recession (early warning) | 33 | −0.0213 | 56% |
+| Recession → recession | 36 | −0.0471 | 135% |
+| Recession → expansion (recovery) | 38 | +0.0318 | −96% |
+
+Negative means Δspread did better. Shares add to 100%; they can exceed it or go below
+zero because recovery months give back gains made elsewhere. Ordinary expansion months
+are essentially unchanged, and genuine early warnings account for only about half of the
+net gain. Most of the gain is in months already inside a recession, and most of that is
+given back in months where the recession ends by t+6. **At this six-month horizon,
+Δspread behaves more like a coincident signal than a leading one.** To reproduce, join
+the `ok` rows of `predictions.csv` to `USREC_t` in `data/processed/economic_monthly.csv`
+by `predictor_month`.
+
+**Conclusion:** Δspread may help a little, but the evidence is weak, and the gain mostly
+reflects recessions already under way rather than earlier warnings. We kept the original
+model unchanged.
 
 ## Files and how to rerun
 

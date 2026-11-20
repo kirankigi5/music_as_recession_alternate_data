@@ -11,6 +11,7 @@ from dataclasses import replace
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 from scipy.special import ndtr
@@ -128,6 +129,31 @@ class ModelTests(unittest.TestCase):
         self.assertEqual(record['spread_change_probability'], '')
 
 
+class FailureLabelTests(unittest.TestCase):
+    """A failed fit must say which of the two models failed, keeping its error code."""
+
+    def setUp(self):
+        self.config = replace(BaselineConfig(), min_training_months=60)
+        self.rows, spreads = synthetic()
+        self.changes = changes_from_spreads(spreads)
+        self.month = add_months(BASE, 90)
+
+    def run_with_failure(self, target):
+        error = BaselineError('nonconvergence', 'did not converge')
+        with patch('music_recession.spread_change.' + target, side_effect=error):
+            return evaluate(self.rows, self.changes, self.config, self.month, self.month)[0]
+
+    def test_baseline_failure_is_labelled(self):
+        record = self.run_with_failure('fit_probit')
+        self.assertEqual((record['status'], record['error_code']), ('failed', 'nonconvergence'))
+        self.assertEqual(record['error_message'], 'baseline: did not converge')
+
+    def test_spread_change_failure_is_labelled(self):
+        record = self.run_with_failure('fit_spread_change_probit')
+        self.assertEqual((record['status'], record['error_code']), ('failed', 'nonconvergence'))
+        self.assertEqual(record['error_message'], 'spread+change: did not converge')
+
+
 class CommittedResultTests(unittest.TestCase):
     directory = ROOT / 'docs/results/supplementary_spread_change'
 
@@ -156,6 +182,10 @@ class CommittedResultTests(unittest.TestCase):
         with (self.directory / 'predictions.csv').open(newline='') as stream:
             saved_rows = list(csv.DictReader(stream))
         self.assert_rows_match(saved_rows, fresh_rows)
+        manifest = json.loads((self.directory / 'manifest.json').read_text(encoding='utf-8'))
+        for relative, digest in {**manifest['inputs_sha256'], **manifest['code_sha256']}.items():
+            self.assertEqual(hashlib.sha256((ROOT / relative).read_bytes()).hexdigest(), digest,
+                             msg='manifest hash differs from %s in the tree' % relative)
 
     # Columns holding fitted floats. Different BLAS builds (e.g. Intel MKL vs
     # OpenBLAS) or library versions change their last digits (~1e-16), so they
@@ -182,7 +212,7 @@ class CommittedResultTests(unittest.TestCase):
                 else:
                     self.assertEqual(saved[column], fresh[column], msg='%s %s' % (month, column))
 
-    def test_recomputed_baseline_differs_from_saved_only_by_the_dropped_row(self):
+    def test_saved_metrics_record_small_difference_from_original_baseline(self):
         rows = load_economic(ECONOMIC)
         self.assertEqual(rows[0].predictor_month, date(1953, 4, 1))
         saved = json.loads((self.directory / 'metrics.json').read_text())

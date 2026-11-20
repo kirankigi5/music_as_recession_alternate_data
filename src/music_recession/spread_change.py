@@ -18,6 +18,7 @@ import csv
 import hashlib
 import json
 import warnings
+from contextlib import contextmanager
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
@@ -166,6 +167,15 @@ def spread_change_probability(fit: dict, spread: float, delta: float) -> float:
     return value
 
 
+@contextmanager
+def _failure_label(model: str):
+    """Prefix a fit/prediction error with the model it came from, keeping its code."""
+    try:
+        yield
+    except BaselineError as exc:
+        raise BaselineError(exc.code, f"{model}: {exc}", exc.diagnostics) from exc
+
+
 def evaluate(rows: Sequence[Observation], changes: Dict[date, dict], config: BaselineConfig,
              start: date = START, end: date = END) -> list:
     """One record per scheduled calendar month; both models on the common sample."""
@@ -202,13 +212,15 @@ def evaluate(rows: Sequence[Observation], changes: Dict[date, dict], config: Bas
                 training_recession_count=sum(r.target for r in training),
                 training_months_sha256=hashlib.sha256("\n".join(
                     r.predictor_month.isoformat() for r in training).encode()).hexdigest())
-            baseline = fit_probit(training, config)
-            record["baseline_probability"] = float(baseline.predict_probability([observation.spread])[0])
+            with _failure_label("baseline"):
+                baseline = fit_probit(training, config)
+                record["baseline_probability"] = float(baseline.predict_probability([observation.spread])[0])
             record["baseline_fit_json"] = _diagnostic_json(
                 {k: baseline.report[k] for k in ("coefficients", "standard_errors", "diagnostics")})
-            extended = fit_spread_change_probit(training, deltas, config)
-            record["spread_change_probability"] = spread_change_probability(
-                extended, observation.spread, deltas[month])
+            with _failure_label("spread+change"):
+                extended = fit_spread_change_probit(training, deltas, config)
+                record["spread_change_probability"] = spread_change_probability(
+                    extended, observation.spread, deltas[month])
             record["spread_change_fit_json"] = _diagnostic_json(extended["report"])
             record["status"] = "ok" if observation.target is not None else "missing_actual"
         except BaselineError as exc:

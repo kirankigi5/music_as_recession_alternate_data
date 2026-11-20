@@ -23,9 +23,9 @@
     }
   ],
   "result": {
-    "brier_spread_only": 0.09437396025589917,
+    "brier_spread_only": 0.09437396025589914,
     "brier_spread_plus_change": 0.09238207200006804,
-    "brier_difference_change_minus_spread_only": -0.0019918882558311282,
+    "brier_difference_change_minus_spread_only": -0.001991888255831122,
     "direction": "spread+change lower Brier"
   },
   "original_saved_baseline_same_months": {
@@ -52,7 +52,7 @@
     "training_prevalence_brier_score": 0.10078687111546215,
     "loss_differential": {
       "definition": "Brier loss of spread+change minus spread-only per forecast month; positive = spread+change worse",
-      "mean": -0.0019918882558311282,
+      "mean": -0.001991888255831122,
       "months_b_worse": 198,
       "months_b_better": 431,
       "cross_product_ratio_by_calendar_lag": {
@@ -61,27 +61,27 @@
           "pairs": 628
         },
         "3": {
-          "value": 0.07784508223951815,
+          "value": 0.07784508223951812,
           "pairs": 626
         },
         "6": {
-          "value": -0.17445895145827406,
+          "value": -0.17445895145827392,
           "pairs": 623
         },
         "12": {
-          "value": 0.10243850794059749,
+          "value": 0.10243850794059736,
           "pairs": 617
         },
         "24": {
-          "value": 0.01694061728509392,
+          "value": 0.016940617285093985,
           "pairs": 605
         }
       },
       "iid_bootstrap": {
         "method": "iid_rows",
         "replications": 10000,
-        "ci_lower": -0.007626248614809327,
-        "ci_upper": 0.003928722310433927,
+        "ci_lower": -0.007626248614809316,
+        "ci_upper": 0.003928722310433931,
         "share_at_or_below_zero": 0.7498
       },
       "block_bootstrap": [
@@ -91,8 +91,8 @@
           "calendar_span_months": 629,
           "empty_replicates_dropped": 0,
           "replications": 10000,
-          "ci_lower": -0.007323923109748013,
-          "ci_upper": 0.003252145981235873,
+          "ci_lower": -0.007323923109748008,
+          "ci_upper": 0.003252145981235877,
           "share_at_or_below_zero": 0.7709
         },
         {
@@ -101,8 +101,8 @@
           "calendar_span_months": 629,
           "empty_replicates_dropped": 0,
           "replications": 10000,
-          "ci_lower": -0.00740365001984727,
-          "ci_upper": 0.0029984433507981435,
+          "ci_lower": -0.007403650019847267,
+          "ci_upper": 0.0029984433507981483,
           "share_at_or_below_zero": 0.7738
         },
         {
@@ -111,8 +111,8 @@
           "calendar_span_months": 629,
           "empty_replicates_dropped": 0,
           "replications": 10000,
-          "ci_lower": -0.00693533064358234,
-          "ci_upper": 0.0027475925194087657,
+          "ci_lower": -0.006935330643582337,
+          "ci_upper": 0.0027475925194087704,
           "share_at_or_below_zero": 0.8014
         }
       ],
@@ -120,10 +120,10 @@
         {
           "max_lag": 5,
           "kernel": "bartlett",
-          "mean": -0.0019918882558311282,
-          "standard_error": 0.0027228799775262384,
-          "statistic": -0.7315372959041614,
-          "p_value_two_sided": 0.4647239086141076,
+          "mean": -0.001991888255831122,
+          "standard_error": 0.0027228799775262397,
+          "statistic": -0.7315372959041588,
+          "p_value_two_sided": 0.46472390861410917,
           "reference_distribution": "student_t_approximation",
           "reference_degrees_of_freedom": 628,
           "small_sample_correction": false
@@ -131,10 +131,10 @@
         {
           "max_lag": 12,
           "kernel": "bartlett",
-          "mean": -0.0019918882558311282,
-          "standard_error": 0.0026750679153573487,
-          "statistic": -0.744612218776151,
-          "p_value_two_sided": 0.45678472222806143,
+          "mean": -0.001991888255831122,
+          "standard_error": 0.00267506791535735,
+          "statistic": -0.7446122187761484,
+          "p_value_two_sided": 0.456784722228063,
           "reference_distribution": "student_t_approximation",
           "reference_degrees_of_freedom": 628,
           "small_sample_correction": false
@@ -142,10 +142,10 @@
         {
           "max_lag": 24,
           "kernel": "bartlett",
-          "mean": -0.0019918882558311282,
-          "standard_error": 0.002415116072458234,
-          "statistic": -0.8247588091298975,
-          "p_value_two_sided": 0.40982168944911446,
+          "mean": -0.001991888255831122,
+          "standard_error": 0.0024151160724582353,
+          "statistic": -0.8247588091298945,
+          "p_value_two_sided": 0.40982168944911646,
           "reference_distribution": "student_t_approximation",
           "reference_degrees_of_freedom": 628,
           "small_sample_correction": false
@@ -162,12 +162,12 @@
       "hac_lag_unit": "calendar_months"
     },
     "spread_only": {
-      "brier_score": 0.09437396025589917,
-      "brier_skill_vs_training_prevalence": 0.06362843482080427,
+      "brier_score": 0.09437396025589914,
+      "brier_skill_vs_training_prevalence": 0.06362843482080449,
       "roc_auc": 0.7165113871635611,
       "average_precision": 0.30407809783906137,
       "log_loss": 0.33716497536681367,
-      "mean_probability": 0.14381526673830441,
+      "mean_probability": 0.14381526673830436,
       "calibration": [
         {
           "bin_lower": 0.0,
@@ -190,7 +190,7 @@
           "bin_upper": 0.3,
           "upper_inclusive": false,
           "count": 80,
-          "mean_predicted_probability": 0.23939052512115727,
+          "mean_predicted_probability": 0.23939052512115735,
           "observed_recession_frequency": 0.075
         },
         {
@@ -206,7 +206,7 @@
           "bin_upper": 0.5,
           "upper_inclusive": false,
           "count": 21,
-          "mean_predicted_probability": 0.4491125228676339,
+          "mean_predicted_probability": 0.4491125228676338,
           "observed_recession_frequency": 0.38095238095238093
         },
         {
@@ -222,7 +222,7 @@
           "bin_upper": 0.7,
           "upper_inclusive": false,
           "count": 2,
-          "mean_predicted_probability": 0.666130664244944,
+          "mean_predicted_probability": 0.6661306642449439,
           "observed_recession_frequency": 0.5
         },
         {
@@ -238,7 +238,7 @@
           "bin_upper": 0.9,
           "upper_inclusive": false,
           "count": 4,
-          "mean_predicted_probability": 0.8605176032955798,
+          "mean_predicted_probability": 0.8605176032955797,
           "observed_recession_frequency": 0.75
         },
         {
@@ -246,7 +246,7 @@
           "bin_upper": 1.0,
           "upper_inclusive": true,
           "count": 4,
-          "mean_predicted_probability": 0.9435725342623775,
+          "mean_predicted_probability": 0.9435725342623774,
           "observed_recession_frequency": 0.25
         }
       ]
@@ -264,7 +264,7 @@
           "bin_upper": 0.1,
           "upper_inclusive": false,
           "count": 365,
-          "mean_predicted_probability": 0.03264684783400249,
+          "mean_predicted_probability": 0.032646847834002485,
           "observed_recession_frequency": 0.049315068493150684
         },
         {
@@ -272,7 +272,7 @@
           "bin_upper": 0.2,
           "upper_inclusive": false,
           "count": 97,
-          "mean_predicted_probability": 0.1436199709167392,
+          "mean_predicted_probability": 0.14361997091673917,
           "observed_recession_frequency": 0.15463917525773196
         },
         {
@@ -312,7 +312,7 @@
           "bin_upper": 0.7,
           "upper_inclusive": false,
           "count": 9,
-          "mean_predicted_probability": 0.6340177991235998,
+          "mean_predicted_probability": 0.6340177991235999,
           "observed_recession_frequency": 0.6666666666666666
         },
         {
@@ -336,7 +336,7 @@
           "bin_upper": 1.0,
           "upper_inclusive": true,
           "count": 6,
-          "mean_predicted_probability": 0.9443146894357982,
+          "mean_predicted_probability": 0.9443146894357984,
           "observed_recession_frequency": 0.5
         }
       ]

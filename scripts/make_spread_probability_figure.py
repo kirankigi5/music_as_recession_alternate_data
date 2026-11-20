@@ -33,6 +33,12 @@ def read_rows(path):
         return list(csv.DictReader(handle))
 
 
+def write_text_lf(path, text):
+    # Path.write_text would write CRLF on Windows (and its newline= needs Python 3.10).
+    with open(path, 'w', encoding='utf-8', newline='\n') as handle:
+        handle.write(text)
+
+
 def phi(x):
     return .5 * (1 + math.erf(x / math.sqrt(2)))
 
@@ -64,7 +70,7 @@ def worked_examples(root):
 
 FIGURES = ('spread_vs_probability.png', 'refit_coefficients.png', 'probability_timeline.png')
 NOTE = ('Retrospective: final FRED values and NBER dates. Training uses only targets up to t-1; '
-        'predictor months 1953-04 to 1973-09 are the 240-month warm-up.')
+        'the first fit trains on 1953-04 to 1973-03 (240 months).')
 
 
 def draw(root, out):
@@ -174,7 +180,7 @@ def main(argv=None):
         if abs(e['reconstructed_probability'] - e['saved_probability']) > 1e-12:
             raise SystemExit('Reconstruction mismatch at %s' % e['predictor_month'])
     draw(root, out)
-    (out / 'worked_examples.json').write_text(json.dumps(examples, indent=2) + '\n', encoding='utf-8')
+    write_text_lf(out / 'worked_examples.json', json.dumps(examples, indent=2) + '\n')
     for e in examples:
         print('%s: %s - %s = %s pp; Phi(%.5f %+.5f*%s) = %.6f (saved %.6f); target %s USREC=%d' % (
             e['predictor_month'][:7], e['GS10_t'], e['TB3MS_t'], e['spread_t_pp'], e['intercept'],

@@ -48,6 +48,12 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def write_text_lf(path, text):
+    # Path.write_text would write CRLF on Windows (and its newline= needs Python 3.10).
+    with open(path, 'w', encoding='utf-8', newline='\n') as handle:
+        handle.write(text)
+
+
 def build(root):
     config = BaselineConfig.load(root / CONFIG)
     rows = load_economic(root / ECONOMIC)
@@ -138,7 +144,7 @@ def main(argv=None):
         writer.writeheader()
         for model in ('spread_only', 'spread_plus_change'):
             writer.writerows(dict(model=model, **b) for b in metrics['summary'][model]['calibration'])
-    (out / 'metrics.json').write_text(json.dumps(metrics, indent=2, allow_nan=False) + '\n', encoding='utf-8')
+    write_text_lf(out / 'metrics.json', json.dumps(metrics, indent=2, allow_nan=False) + '\n')
     manifest = dict(
         label=LABEL,
         reproduce='python scripts/run_spread_change_comparison.py --out <fresh directory>',
@@ -147,7 +153,7 @@ def main(argv=None):
         software=dict(python=platform.python_version(), **{
             p: importlib.metadata.version(p) for p in ('numpy', 'scipy', 'statsmodels')}),
         outputs_sha256={name: sha(out / name) for name in ('predictions.csv', 'calibration.csv', 'metrics.json')})
-    (out / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+    write_text_lf(out / 'manifest.json', json.dumps(manifest, indent=2) + '\n')
     s = metrics['summary']
     print(LABEL)
     print('forecasts %d (%s to %s), recession months %d, prevalence %.4f' % (

@@ -2,26 +2,26 @@
   "label": "SUPPLEMENTARY - not part of the original experiment",
   "reproduce": "python scripts/run_spread_change_comparison.py --out <fresh directory>",
   "inputs_sha256": {
-    "data/processed/economic_monthly.csv": "8b123a6118c7e9c296e3ba609d7de1e046c5dec6e2d54e07c4adb1d6f87a28e0",
-    "config/baseline.json": "6ffee5fbf575a81eea12b2f264276666f2873cf0b63c0f9536229d77b3b04715",
-    "reports/baseline_backtest/forecasts.csv": "ea1a289ba87b1b4155b84a4b37f5ac3ab18e198a5aed474322bba5e367fd2ac8"
+    "data/processed/economic_monthly.csv": "fcda68b547e62cd8c1fd314401c9788d8613ee84ad466318bd0c1d70c173e62b",
+    "config/baseline.json": "ce5b1c12cfaa1e07a1fd0cf39ef1a1c743dd11888fc5e30e5d3a142d50536a96",
+    "reports/baseline_backtest/forecasts.csv": "7fa97b3b708b040bf58618c2e65f568f893fad2097684d168fe93e10e2043fa4"
   },
   "code_sha256": {
-    "src/music_recession/spread_change.py": "dac7c569db495e95c6dad1558bd0e3c8d4ff2aaa51022eb12dedfdaa97f6b1b0",
-    "src/music_recession/baseline.py": "ef3a8b543b428d45e81cd734fb5fde2ab8c5d85a0b1d96e785312beb9ba5f255",
-    "src/music_recession/backtest.py": "23a1154ccb319210a5d790ecf9c997d1017c5d79146a6d0c834d6120773ca972",
-    "src/music_recession/inference.py": "4f8576b6924dcd7bef622c199dafe4ef4e0aa8ec2412962c85eb73ab58455198",
-    "scripts/run_spread_change_comparison.py": "9731e7cc991276dcb4de57b1195af04dde648593f44f9855bb69ae86c7d21eb2"
+    "src/music_recession/spread_change.py": "4b1b17016e58c5a3b9397681b0b0418854dc5ae32b17980e53d9d0ce42e4e81c",
+    "src/music_recession/baseline.py": "8dc72e2ad6be4b662598d8447ca1a2faa5da7600125c8299852267fb322c2b94",
+    "src/music_recession/backtest.py": "945e896d24aa8a852889e04a66db4e97f14e1f5463f89630a2a7df8cf28970e2",
+    "src/music_recession/inference.py": "9e4d8954cd3a55ca7c70e417667ba81e70e81958439f0c5e987fb47b214e1775",
+    "scripts/run_spread_change_comparison.py": "64d680ae1c82ad0d520624e9596095a454b41e4d686d70a112195f8c6971b5c9"
   },
   "software": {
-    "python": "3.13.9",
+    "python": "3.11.9",
     "numpy": "2.3.5",
     "scipy": "1.16.3",
     "statsmodels": "0.14.5"
   },
   "outputs_sha256": {
-    "predictions.csv": "c7bfeb6f3039b2504630f70995293360e0493818ad384724e8b86658fa8f023e",
-    "calibration.csv": "2e6234ff573c190838c6b273755facf7228d547cf540d84a0936ebeb438f6e54",
-    "metrics.json": "873d253aab85fbcc78735f1854a387c3eff2e9cd57954563655a2e3b04468e53"
+    "predictions.csv": "9e40f34ec0a44364740fc95ccd182bdf3de7e34111924b0eea0c28dd3d78c3e3",
+    "calibration.csv": "ffb858d19bb438bce8b253f0e5b3f2449f09e3ef5d3c25680d60c1fa012e41f9",
+    "metrics.json": "c98d642ecf07c15c6ac8a9f0f1f169204d834699b6f562b50b0db3fe1370eefc"
   }
 }
